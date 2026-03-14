@@ -4,6 +4,7 @@ import su.nsk.iae.post.poST.Process
 import su.nsk.iae.post.poST.State
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.statement.StatementListGenerator
+import su.nsk.iae.post.generator.java.common.util.MemoryUtil
 
 class ProcessGenerator {
 
@@ -16,6 +17,11 @@ class ProcessGenerator {
     }
 
     def String generate(Process p, GenerationContext ctx, String indent) {
+    	
+    	if (p.states.empty)
+	        throw new IllegalStateException(
+	            "Process must contain at least one STATE: " + p.name
+	        )
 
         val builder = new StringBuilder
 
@@ -27,6 +33,10 @@ class ProcessGenerator {
 «indent»class «name» implements IProcess {
 
 «generateStateEnum(p, nextIndent)»
+
+«nextIndent»private final java.util.Map<String,Object> memory;
+
+«generateConstructor(name, nextIndent)»
 
 «nextIndent»private State state = State.Stop;
 
@@ -46,6 +56,17 @@ class ProcessGenerator {
 
         builder.toString
     }
+    
+    // ================= CONSTRUCTOR =================
+
+	private def String generateConstructor(String name, String indent) {
+
+    '''
+«indent»public «name»(java.util.Map<String,Object> memory) {
+«indent»    this.memory = memory;
+«indent»}
+'''
+	}
 
     // ================= ENUM STATE =================
 
@@ -67,26 +88,27 @@ class ProcessGenerator {
     private def String generateControlMethods(Process p, String indent) {
 
         val firstState = p.states.head.name
+        val globalTime = MemoryUtil.globalTime()
 
         '''
 «indent»public void start() {
 «indent»    state = State.«firstState»;
-«indent»    timerBaseTime = ((Long)memory.get("_global_time"));
+«indent»    timerBaseTime = ((Long)memory.get("«globalTime»"));
 «indent»}
 
 «indent»public void stop() {
 «indent»    state = State.Stop;
-«indent»    timerBaseTime = ((Long)memory.get("_global_time"));
+«indent»    timerBaseTime = ((Long)memory.get("«globalTime»"));
 «indent»}
 
 «indent»public void error() {
 «indent»    state = State.Error;
-«indent»    timerBaseTime = ((Long)memory.get("_global_time"));
+«indent»    timerBaseTime = ((Long)memory.get("«globalTime»"));
 «indent»}
 
 «indent»public void setState(State s) {
 «indent»    state = s;
-«indent»    timerBaseTime = ((Long)memory.get("_global_time"));
+«indent»    timerBaseTime = ((Long)memory.get("«globalTime»"));
 «indent»}
 
 «generateSetNext(p, indent)»
@@ -134,7 +156,7 @@ class ProcessGenerator {
 «indent»        default -> { }
 «indent»    }
 
-«indent»    timerBaseTime = ((Long)memory.get("_global_time"));
+«indent»    timerBaseTime = ((Long)memory.get("«MemoryUtil.globalTime()»"));
 «indent»}
 '''
         )

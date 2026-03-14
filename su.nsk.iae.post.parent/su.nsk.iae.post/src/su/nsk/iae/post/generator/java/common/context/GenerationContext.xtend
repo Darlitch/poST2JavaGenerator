@@ -3,6 +3,7 @@ package su.nsk.iae.post.generator.java.common.context
 import java.util.HashMap
 import java.util.HashSet
 import java.util.Map
+import java.util.Set
 
 // контекст генерации: хранит registry типов переменных
 class GenerationContext {
@@ -69,6 +70,45 @@ class GenerationContext {
 	// есть ли такая константа
 	def boolean hasConst(String name) {
 		constValues.containsKey(name)
+	}
+	
+	// ================= VARIABLE REGISTRY =================
+
+	val Set<String> inputVars = new HashSet
+	val Set<String> outputVars = new HashSet
+	val Set<String> globalVars = new HashSet
+	val Set<String> localVars = new HashSet
+	
+	def void registerInputVar(String name) {
+	    inputVars.add(name)
+	}
+	
+	def void registerOutputVar(String name) {
+	    outputVars.add(name)
+	}
+	
+	def void registerGlobalVar(String name) {
+	    globalVars.add(name)
+	}
+	
+	def void registerLocalVar(String name) {
+	    localVars.add(name)
+	}
+	
+	def Set<String> getInputVars() {
+	    inputVars
+	}
+	
+	def Set<String> getOutputVars() {
+	    outputVars
+	}
+	
+	def Set<String> getGlobalVars() {
+	    globalVars
+	}
+	
+	def Set<String> getLocalVars() {
+	    localVars
 	}
 	
 	// ================= ARRAY BOUNDS =================

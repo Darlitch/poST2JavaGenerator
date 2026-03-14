@@ -9,6 +9,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.statement.StatementListGenerator;
+import su.nsk.iae.post.generator.java.common.util.MemoryUtil;
 import su.nsk.iae.post.poST.State;
 
 @SuppressWarnings("all")
@@ -27,6 +28,12 @@ public class ProcessGenerator {
   public String generate(final su.nsk.iae.post.poST.Process p, final GenerationContext ctx, final String indent) {
     String _xblockexpression = null;
     {
+      boolean _isEmpty = p.getStates().isEmpty();
+      if (_isEmpty) {
+        String _name = p.getName();
+        String _plus = ("Process must contain at least one STATE: " + _name);
+        throw new IllegalStateException(_plus);
+      }
       final StringBuilder builder = new StringBuilder();
       final String name = p.getName();
       final String nextIndent = (indent + "    ");
@@ -39,6 +46,14 @@ public class ProcessGenerator {
       _builder.newLine();
       String _generateStateEnum = this.generateStateEnum(p, nextIndent);
       _builder.append(_generateStateEnum);
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
+      _builder.append(nextIndent);
+      _builder.append("private final java.util.Map<String,Object> memory;");
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
+      String _generateConstructor = this.generateConstructor(name, nextIndent);
+      _builder.append(_generateConstructor);
       _builder.newLineIfNotEmpty();
       _builder.newLine();
       _builder.append(nextIndent);
@@ -72,6 +87,22 @@ public class ProcessGenerator {
       _xblockexpression = builder.toString();
     }
     return _xblockexpression;
+  }
+
+  private String generateConstructor(final String name, final String indent) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append("public ");
+    _builder.append(name);
+    _builder.append("(java.util.Map<String,Object> memory) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    this.memory = memory;");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 
   private String generateStateEnum(final su.nsk.iae.post.poST.Process p, final String indent) {
@@ -118,6 +149,7 @@ public class ProcessGenerator {
     String _xblockexpression = null;
     {
       final String firstState = IterableExtensions.<State>head(p.getStates()).getName();
+      final String globalTime = MemoryUtil.globalTime();
       StringConcatenation _builder = new StringConcatenation();
       _builder.append(indent);
       _builder.append("public void start() {");
@@ -128,7 +160,9 @@ public class ProcessGenerator {
       _builder.append(";");
       _builder.newLineIfNotEmpty();
       _builder.append(indent);
-      _builder.append("    timerBaseTime = ((Long)memory.get(\"_global_time\"));");
+      _builder.append("    timerBaseTime = ((Long)memory.get(\"");
+      _builder.append(globalTime);
+      _builder.append("\"));");
       _builder.newLineIfNotEmpty();
       _builder.append(indent);
       _builder.append("}");
@@ -141,7 +175,9 @@ public class ProcessGenerator {
       _builder.append("    state = State.Stop;");
       _builder.newLineIfNotEmpty();
       _builder.append(indent);
-      _builder.append("    timerBaseTime = ((Long)memory.get(\"_global_time\"));");
+      _builder.append("    timerBaseTime = ((Long)memory.get(\"");
+      _builder.append(globalTime);
+      _builder.append("\"));");
       _builder.newLineIfNotEmpty();
       _builder.append(indent);
       _builder.append("}");
@@ -154,7 +190,9 @@ public class ProcessGenerator {
       _builder.append("    state = State.Error;");
       _builder.newLineIfNotEmpty();
       _builder.append(indent);
-      _builder.append("    timerBaseTime = ((Long)memory.get(\"_global_time\"));");
+      _builder.append("    timerBaseTime = ((Long)memory.get(\"");
+      _builder.append(globalTime);
+      _builder.append("\"));");
       _builder.newLineIfNotEmpty();
       _builder.append(indent);
       _builder.append("}");
@@ -167,7 +205,9 @@ public class ProcessGenerator {
       _builder.append("    state = s;");
       _builder.newLineIfNotEmpty();
       _builder.append(indent);
-      _builder.append("    timerBaseTime = ((Long)memory.get(\"_global_time\"));");
+      _builder.append("    timerBaseTime = ((Long)memory.get(\"");
+      _builder.append(globalTime);
+      _builder.append("\"));");
       _builder.newLineIfNotEmpty();
       _builder.append(indent);
       _builder.append("}");
@@ -243,7 +283,10 @@ public class ProcessGenerator {
       _builder_1.newLineIfNotEmpty();
       _builder_1.newLine();
       _builder_1.append(indent);
-      _builder_1.append("    timerBaseTime = ((Long)memory.get(\"_global_time\"));");
+      _builder_1.append("    timerBaseTime = ((Long)memory.get(\"");
+      String _globalTime = MemoryUtil.globalTime();
+      _builder_1.append(_globalTime);
+      _builder_1.append("\"));");
       _builder_1.newLineIfNotEmpty();
       _builder_1.append(indent);
       _builder_1.append("}");

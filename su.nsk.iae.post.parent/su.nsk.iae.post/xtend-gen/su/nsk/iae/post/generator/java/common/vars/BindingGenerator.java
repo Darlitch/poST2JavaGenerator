@@ -9,7 +9,9 @@ import su.nsk.iae.post.poST.IntegerLiteral;
 import su.nsk.iae.post.poST.NumericLiteral;
 import su.nsk.iae.post.poST.RealLiteral;
 import su.nsk.iae.post.poST.SymbolicVariable;
+import su.nsk.iae.post.poST.TemplateProcessAttachVariableConfElement;
 import su.nsk.iae.post.poST.TimeLiteral;
+import su.nsk.iae.post.poST.Variable;
 
 @SuppressWarnings("all")
 public class BindingGenerator {
@@ -31,6 +33,31 @@ public class BindingGenerator {
         ctx.registerProcess(left, fieldName, type);
         return;
       }
+      final String target = ctx.resolveAlias(right);
+      ctx.registerAlias(left, target);
+      boolean _hasArrayStart = ctx.hasArrayStart(target);
+      if (_hasArrayStart) {
+        ctx.registerArrayStart(left, ctx.getArrayStart(target));
+        ctx.registerArrayType(left, ctx.getArrayElementType(target));
+      }
+      return;
+    }
+    Constant _const = bind.getConst();
+    boolean _tripleNotEquals_1 = (_const != null);
+    if (_tripleNotEquals_1) {
+      final Object value = CompileTimeEvaluator.eval(bind.getConst());
+      ctx.registerConst(left, value);
+      ctx.registerVar(left, BindingGenerator.inferConstType(bind.getConst()));
+      return;
+    }
+  }
+
+  public static void generate(final TemplateProcessAttachVariableConfElement bind, final GenerationContext ctx) {
+    final String left = bind.getProgramVar().getName();
+    Variable _attVar = bind.getAttVar();
+    boolean _tripleNotEquals = (_attVar != null);
+    if (_tripleNotEquals) {
+      final String right = bind.getAttVar().getName();
       final String target = ctx.resolveAlias(right);
       ctx.registerAlias(left, target);
       boolean _hasArrayStart = ctx.hasArrayStart(target);

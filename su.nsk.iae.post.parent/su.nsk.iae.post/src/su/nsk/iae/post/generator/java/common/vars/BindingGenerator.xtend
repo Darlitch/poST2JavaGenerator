@@ -1,6 +1,7 @@
 package su.nsk.iae.post.generator.java.common.vars
 
 import su.nsk.iae.post.poST.AttachVariableConfElement
+import su.nsk.iae.post.poST.TemplateProcessAttachVariableConfElement
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator
 import su.nsk.iae.post.poST.Constant
@@ -55,6 +56,42 @@ class BindingGenerator {
 			ctx.registerVar(left, inferConstType(bind.const))
 			return
 		}
+	}
+	
+	def static void generate(
+	    TemplateProcessAttachVariableConfElement bind,
+	    GenerationContext ctx
+	) {
+	
+	    val left = bind.programVar.name
+	
+	    // ===== variable → variable =====
+	    if (bind.attVar !== null) {
+	
+	        val right = bind.attVar.name
+	
+	        val target = ctx.resolveAlias(right)
+	
+	        ctx.registerAlias(left, target)
+	
+	        if (ctx.hasArrayStart(target)) {
+	            ctx.registerArrayStart(left, ctx.getArrayStart(target))
+	            ctx.registerArrayType(left, ctx.getArrayElementType(target))
+	        }
+	
+	        return
+	    }
+	
+	    // ===== variable → constant =====
+	    if (bind.const !== null) {
+	
+	        val value = CompileTimeEvaluator.eval(bind.const)
+	
+	        ctx.registerConst(left, value)
+	        ctx.registerVar(left, inferConstType(bind.const))
+	
+	        return
+	    }
 	}
 	
 	// ================= INFER CONST TYPE =================

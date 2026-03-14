@@ -3,6 +3,7 @@ package su.nsk.iae.post.generator.java.common.context;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("all")
 public class GenerationContext {
@@ -57,6 +58,46 @@ public class GenerationContext {
 
   public boolean hasConst(final String name) {
     return this.constValues.containsKey(name);
+  }
+
+  private final Set<String> inputVars = new HashSet<String>();
+
+  private final Set<String> outputVars = new HashSet<String>();
+
+  private final Set<String> globalVars = new HashSet<String>();
+
+  private final Set<String> localVars = new HashSet<String>();
+
+  public void registerInputVar(final String name) {
+    this.inputVars.add(name);
+  }
+
+  public void registerOutputVar(final String name) {
+    this.outputVars.add(name);
+  }
+
+  public void registerGlobalVar(final String name) {
+    this.globalVars.add(name);
+  }
+
+  public void registerLocalVar(final String name) {
+    this.localVars.add(name);
+  }
+
+  public Set<String> getInputVars() {
+    return this.inputVars;
+  }
+
+  public Set<String> getOutputVars() {
+    return this.outputVars;
+  }
+
+  public Set<String> getGlobalVars() {
+    return this.globalVars;
+  }
+
+  public Set<String> getLocalVars() {
+    return this.localVars;
   }
 
   private final Map<String, Integer> arrayStarts = new HashMap<String, Integer>();
