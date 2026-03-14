@@ -9,6 +9,8 @@ import org.eclipse.xtext.generator.AbstractGenerator;
 import org.eclipse.xtext.generator.IFileSystemAccess2;
 import org.eclipse.xtext.generator.IGeneratorContext;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.IteratorExtensions;
+import su.nsk.iae.post.generator.java.JavaGenerator;
 
 @SuppressWarnings("all")
 public class PoSTGenerator extends AbstractGenerator {
@@ -34,10 +36,17 @@ public class PoSTGenerator extends AbstractGenerator {
 
   @Override
   public void beforeGenerate(final Resource resource, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nPyGenerator cannot be resolved."
-      + "\nPyGenerator cannot be resolved."
-      + "\ndoGenerate cannot be resolved");
+    boolean _isEmpty = IteratorExtensions.isEmpty(resource.getAllContents());
+    if (_isEmpty) {
+      final JavaGenerator gen = new JavaGenerator();
+      gen.doGenerate(resource, fsa, context);
+      return;
+    }
+    JavaGenerator _javaGenerator = new JavaGenerator();
+    PoSTGenerator.generators.add(_javaGenerator);
+    for (final IPoSTGenerator g : PoSTGenerator.generators) {
+      g.beforeGenerate(resource, fsa, context);
+    }
   }
 
   @Override
