@@ -39,7 +39,7 @@ public class Main {
 		}
 		Injector injector = new PoSTStandaloneSetup().createInjectorAndDoEMFRegistration();
 		Main main = injector.getInstance(Main.class);
-		String filename = Arrays.stream(args).filter(x -> x.startsWith("-o=")).map(x -> x.substring(3)).findFirst().orElse("poST_code.py");
+		String filename = Arrays.stream(args).filter(x -> x.startsWith("-o=")).map(x -> x.substring(3)).findFirst().orElse("generated");
 		main.runGenerator(Arrays.stream(args).filter(x -> x.contains(".post")).findFirst().get(),
 				Arrays.stream(args).anyMatch(x -> x.equals("-l")), filename);
 	}
@@ -61,7 +61,7 @@ public class Main {
 			String file = scanner.next();
 			String filename = scanner.nextLine().trim();
 			if (filename.isEmpty()) {
-				filename = "poST_code.py";
+				filename = "generated";
 			}
 			main.runGenerator(file, local, filename);
 		}
@@ -94,7 +94,7 @@ public class Main {
 
 		// Configure and start the generator
 		if (filename == null || filename.isEmpty()) {
-			filename = "poST_code.py";
+			filename = "generated";
 		}
 		fileAccess.setOutputPath("./" + filename);
 		GeneratorContext context = new GeneratorContext();
