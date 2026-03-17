@@ -49,8 +49,15 @@ class StatementListGenerator {
 		val builder = new StringBuilder
 	
 		for (stmt : list.statements) {
-			builder.append(generateStatement(stmt, ctx, indent))
-		}
+            val code = generateStatement(stmt, ctx, indent)
+
+            if (code !== null && !code.trim.empty) {
+                builder.append(code)
+                if (!code.endsWith("\n")) {
+                    builder.append("\n")
+                }
+            }
+        }
 
 		builder.toString
 	}

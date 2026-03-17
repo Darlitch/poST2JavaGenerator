@@ -53,7 +53,17 @@ public class StatementListGenerator {
       final StringBuilder builder = new StringBuilder();
       EList<Statement> _statements = list.getStatements();
       for (final Statement stmt : _statements) {
-        builder.append(this.generateStatement(stmt, ctx, indent));
+        {
+          final String code = this.generateStatement(stmt, ctx, indent);
+          if (((code != null) && (!code.trim().isEmpty()))) {
+            builder.append(code);
+            boolean _endsWith = code.endsWith("\n");
+            boolean _not = (!_endsWith);
+            if (_not) {
+              builder.append("\n");
+            }
+          }
+        }
       }
       _xblockexpression = builder.toString();
     }

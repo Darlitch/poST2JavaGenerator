@@ -72,16 +72,22 @@ class ProcessGenerator {
 
     private def String generateStateEnum(Process p, String indent) {
 
-        val states = p.states.map[it.name]
-
-        '''
-«indent»enum State {
-«indent»    «FOR s : states SEPARATOR ",\n"»«s»«ENDFOR»,
-«indent»    Stop,
-«indent»    Error
-«indent»}
-'''
-    }
+	    val builder = new StringBuilder
+	    val states = p.states.map[it.name]
+	
+	    builder.append(indent + "enum State {\n")
+	
+	    for (i : 0 ..< states.size) {
+		    val s = states.get(i)
+		    builder.append(indent + "    " + s + ",\n")
+		}
+	
+	    builder.append(indent + "    Stop,\n")
+	    builder.append(indent + "    Error\n")
+	    builder.append(indent + "}\n")
+	
+	    return builder.toString
+	}
 
     // ================= CONTROL METHODS =================
 

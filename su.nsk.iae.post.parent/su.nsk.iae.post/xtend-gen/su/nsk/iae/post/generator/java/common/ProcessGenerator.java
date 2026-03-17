@@ -106,43 +106,24 @@ public class ProcessGenerator {
   }
 
   private String generateStateEnum(final su.nsk.iae.post.poST.Process p, final String indent) {
-    String _xblockexpression = null;
-    {
-      final Function1<State, String> _function = (State it) -> {
-        return it.getName();
-      };
-      final List<String> states = ListExtensions.<State, String>map(p.getStates(), _function);
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append(indent);
-      _builder.append("enum State {");
-      _builder.newLineIfNotEmpty();
-      _builder.append(indent);
-      _builder.append("    ");
+    final StringBuilder builder = new StringBuilder();
+    final Function1<State, String> _function = (State it) -> {
+      return it.getName();
+    };
+    final List<String> states = ListExtensions.<State, String>map(p.getStates(), _function);
+    builder.append((indent + "enum State {\n"));
+    int _size = states.size();
+    ExclusiveRange _doubleDotLessThan = new ExclusiveRange(0, _size, true);
+    for (final Integer i : _doubleDotLessThan) {
       {
-        boolean _hasElements = false;
-        for(final String s : states) {
-          if (!_hasElements) {
-            _hasElements = true;
-          } else {
-            _builder.appendImmediate(",\n", "");
-          }
-          _builder.append(s);
-        }
+        final String s = states.get((i).intValue());
+        builder.append((((indent + "    ") + s) + ",\n"));
       }
-      _builder.append(",");
-      _builder.newLineIfNotEmpty();
-      _builder.append(indent);
-      _builder.append("    Stop,");
-      _builder.newLineIfNotEmpty();
-      _builder.append(indent);
-      _builder.append("    Error");
-      _builder.newLineIfNotEmpty();
-      _builder.append(indent);
-      _builder.append("}");
-      _builder.newLineIfNotEmpty();
-      _xblockexpression = _builder.toString();
     }
-    return _xblockexpression;
+    builder.append((indent + "    Stop,\n"));
+    builder.append((indent + "    Error\n"));
+    builder.append((indent + "}\n"));
+    return builder.toString();
   }
 
   private String generateControlMethods(final su.nsk.iae.post.poST.Process p, final String indent) {

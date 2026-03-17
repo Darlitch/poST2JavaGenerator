@@ -17,95 +17,95 @@ public class Controller {
 
     private final java.util.Set<String> varNames =
         new java.util.HashSet<>();
-private final Light light;
-private final Control control;
-public Controller() {
+    private final Light light;
+    private final Control control;
+    public Controller() {
 
-    memory.put("_global_time", 0L);
-globalNames.add("lightsArray1");
-globalNames.add("lightsArray2");
-globalNames.add("red2");
-globalNames.add("red1");
-globalNames.add("green2");
-globalNames.add("green1");
-globalNames.add("sensor");
-globalNames.add("yellow1");
-globalNames.add("yellow2");
-light = new Light(memory);
-processes.add(light);
-control = new Control(memory);
-processes.add(control);
-}
-public void runIter(long cycleTimeMs) {
+        memory.put("_global_time", 0L);
+        globalNames.add("lightsArray1");
+        globalNames.add("lightsArray2");
+        globalNames.add("red2");
+        globalNames.add("red1");
+        globalNames.add("green2");
+        globalNames.add("green1");
+        globalNames.add("sensor");
+        globalNames.add("yellow1");
+        globalNames.add("yellow2");
+        light = new Light(memory);
+        processes.add(light);
+        control = new Control(memory);
+        processes.add(control);
+    }
+    public void runIter(long cycleTimeMs) {
 
-    memory.put(
-        "_global_time",
-        ((Long)memory.get("_global_time")) + cycleTimeMs
-    );
+        memory.put(
+            "_global_time",
+            ((Long)memory.get("_global_time")) + cycleTimeMs
+        );
 
-    for (IProcess p : processes)
-        p.run();
-}
-public java.util.Map<String,String> dumpProcessStates() {
+        for (IProcess p : processes)
+            p.run();
+    }
+    public java.util.Map<String,String> dumpProcessStates() {
 
-    java.util.Map<String,String> res =
-        new java.util.HashMap<>();
+        java.util.Map<String,String> res =
+            new java.util.HashMap<>();
 
-    for (IProcess p : processes)
-        p.dumpStates(res);
+        for (IProcess p : processes)
+            p.dumpStates(res);
 
-    return res;
-}
-public java.util.Map<String,Long> dumpProcessTimers() {
+        return res;
+    }
+    public java.util.Map<String,Long> dumpProcessTimers() {
 
-    java.util.Map<String,Long> res =
-        new java.util.HashMap<>();
+        java.util.Map<String,Long> res =
+            new java.util.HashMap<>();
 
-    for (IProcess p : processes)
-        p.dumpTimers(res);
+        for (IProcess p : processes)
+            p.dumpTimers(res);
 
-    return res;
-}
-public java.util.Map<String,Object> dumpInputs() {
+        return res;
+    }
+    public java.util.Map<String,Object> dumpInputs() {
 
-    java.util.Map<String,Object> res =
-        new java.util.HashMap<>();
+        java.util.Map<String,Object> res =
+            new java.util.HashMap<>();
 
-    for (String n : inputNames)
-        res.put(n, memory.get(n));
+        for (String n : inputNames)
+            res.put(n, memory.get(n));
 
-    return res;
-}
-public java.util.Map<String,Object> dumpOutputs() {
+        return res;
+    }
+    public java.util.Map<String,Object> dumpOutputs() {
 
-    java.util.Map<String,Object> res =
-        new java.util.HashMap<>();
+        java.util.Map<String,Object> res =
+            new java.util.HashMap<>();
 
-    for (String n : outputNames)
-        res.put(n, memory.get(n));
+        for (String n : outputNames)
+            res.put(n, memory.get(n));
 
-    return res;
-}
-public java.util.Map<String,Object> dumpGlobals() {
+        return res;
+    }
+    public java.util.Map<String,Object> dumpGlobals() {
 
-    java.util.Map<String,Object> res =
-        new java.util.HashMap<>();
+        java.util.Map<String,Object> res =
+            new java.util.HashMap<>();
 
-    for (String n : globalNames)
-        res.put(n, memory.get(n));
+        for (String n : globalNames)
+            res.put(n, memory.get(n));
 
-    return res;
-}
-public java.util.Map<String,Object> dumpVars() {
+        return res;
+    }
+    public java.util.Map<String,Object> dumpVars() {
 
-    java.util.Map<String,Object> res =
-        new java.util.HashMap<>();
+        java.util.Map<String,Object> res =
+            new java.util.HashMap<>();
 
-    for (String n : varNames)
-        res.put(n, memory.get(n));
+        for (String n : varNames)
+            res.put(n, memory.get(n));
 
-    return res;
-}
+        return res;
+    }
     class Light implements IProcess {
 
         enum State {
@@ -184,8 +184,8 @@ public java.util.Map<String,Object> dumpVars() {
 
         enum State {
             Work,
-delay10,
-delay30,
+            delay10,
+            delay30,
             Stop,
             Error
         }
@@ -242,7 +242,8 @@ delay30,
             switch(state) {
                 case Work -> {
                     if (((Boolean)memory.get("pressed"))) {
-                        memory.put("prev_light", 0);                        memory.put("pressed", false);
+                        memory.put("prev_light", 0);
+                        memory.put("pressed", false);
                     }
                     else if ((((((pRed.getState() == Light.State.Stop || pRed.getState() == Light.State.Error)) && ((pGreen.getState() != Light.State.Stop && pGreen.getState() != Light.State.Error)))) || ((((pGreen.getState() == Light.State.Stop || pGreen.getState() == Light.State.Error)) && ((pRed.getState() != Light.State.Stop && pRed.getState() != Light.State.Error)))))) {
                         int __start = ((Number)(0)).intValue();
@@ -387,7 +388,8 @@ delay30,
                 }
                 case delay30 -> {
                     if ((((Boolean)memory.get("control_sensor")) && (pRed.getState() != Light.State.Stop && pRed.getState() != Light.State.Error))) {
-                        memory.put("pressed", true);                        setState(State.Work);
+                        memory.put("pressed", true);
+                        setState(State.Work);
                     }
                 }
                 case Stop, Error -> { }
