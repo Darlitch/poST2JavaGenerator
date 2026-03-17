@@ -3,13 +3,19 @@ package su.nsk.iae.post.generator.java.common;
 import java.util.Set;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator;
+import su.nsk.iae.post.poST.ArraySpecificationInit;
 import su.nsk.iae.post.poST.InputOutputVarDeclaration;
 import su.nsk.iae.post.poST.InputVarDeclaration;
 import su.nsk.iae.post.poST.OutputVarDeclaration;
+import su.nsk.iae.post.poST.ProcessVarDeclaration;
+import su.nsk.iae.post.poST.ProcessVarInitDeclaration;
+import su.nsk.iae.post.poST.ProcessVariable;
 import su.nsk.iae.post.poST.Program;
+import su.nsk.iae.post.poST.SimpleSpecificationInit;
 import su.nsk.iae.post.poST.SymbolicVariable;
 import su.nsk.iae.post.poST.TempVarDeclaration;
 import su.nsk.iae.post.poST.VarDeclaration;
@@ -22,6 +28,7 @@ public class ProgramGenerator {
   public String generate(final Program program, final GenerationContext ctx) {
     String _xblockexpression = null;
     {
+      this.registerAll(program, ctx);
       final StringBuilder builder = new StringBuilder();
       final String name = program.getName();
       StringConcatenation _builder = new StringConcatenation();
@@ -457,5 +464,144 @@ public class ProgramGenerator {
     _builder.append("}");
     _builder.newLine();
     return _builder.toString();
+  }
+
+  public void registerAll(final Program program, final GenerationContext ctx) {
+    EList<InputVarDeclaration> _progInVars = program.getProgInVars();
+    for (final InputVarDeclaration v : _progInVars) {
+      EList<VarInitDeclaration> _vars = v.getVars();
+      for (final VarInitDeclaration decl : _vars) {
+        final Procedure1<String> _function = (String name) -> {
+          ctx.registerInputVar(name);
+        };
+        this.registerVarDecl(decl, ctx, _function);
+      }
+    }
+    EList<OutputVarDeclaration> _progOutVars = program.getProgOutVars();
+    for (final OutputVarDeclaration v_1 : _progOutVars) {
+      EList<VarInitDeclaration> _vars_1 = v_1.getVars();
+      for (final VarInitDeclaration decl_1 : _vars_1) {
+        final Procedure1<String> _function_1 = (String name) -> {
+          ctx.registerOutputVar(name);
+        };
+        this.registerVarDecl(decl_1, ctx, _function_1);
+      }
+    }
+    EList<VarDeclaration> _progVars = program.getProgVars();
+    for (final VarDeclaration v_2 : _progVars) {
+      EList<VarInitDeclaration> _vars_2 = v_2.getVars();
+      for (final VarInitDeclaration decl_2 : _vars_2) {
+        final Procedure1<String> _function_2 = (String name) -> {
+          ctx.registerLocalVar(name);
+        };
+        this.registerVarDecl(decl_2, ctx, _function_2);
+      }
+    }
+    EList<InputOutputVarDeclaration> _progInOutVars = program.getProgInOutVars();
+    for (final InputOutputVarDeclaration v_3 : _progInOutVars) {
+      EList<VarInitDeclaration> _vars_3 = v_3.getVars();
+      for (final VarInitDeclaration decl_3 : _vars_3) {
+        final Procedure1<String> _function_3 = (String name) -> {
+          ctx.registerInputVar(name);
+          ctx.registerOutputVar(name);
+        };
+        this.registerVarDecl(decl_3, ctx, _function_3);
+      }
+    }
+    EList<TempVarDeclaration> _progTempVars = program.getProgTempVars();
+    for (final TempVarDeclaration v_4 : _progTempVars) {
+      EList<VarInitDeclaration> _vars_4 = v_4.getVars();
+      for (final VarInitDeclaration decl_4 : _vars_4) {
+        final Procedure1<String> _function_4 = (String name) -> {
+          ctx.registerLocalVar(name);
+        };
+        this.registerVarDecl(decl_4, ctx, _function_4);
+      }
+    }
+    EList<su.nsk.iae.post.poST.Process> _processes = program.getProcesses();
+    for (final su.nsk.iae.post.poST.Process p : _processes) {
+      {
+        final String field = StringExtensions.toFirstLower(p.getName());
+        ctx.registerProcess(p.getName(), field, p.getName());
+      }
+    }
+    EList<su.nsk.iae.post.poST.Process> _processes_1 = program.getProcesses();
+    for (final su.nsk.iae.post.poST.Process p_1 : _processes_1) {
+      {
+        EList<InputVarDeclaration> _procInVars = p_1.getProcInVars();
+        for (final InputVarDeclaration v_5 : _procInVars) {
+          EList<VarInitDeclaration> _vars_5 = v_5.getVars();
+          for (final VarInitDeclaration decl_5 : _vars_5) {
+            final Procedure1<String> _function_5 = (String name) -> {
+            };
+            this.registerVarDecl(decl_5, ctx, _function_5);
+          }
+        }
+        EList<OutputVarDeclaration> _procOutVars = p_1.getProcOutVars();
+        for (final OutputVarDeclaration v_6 : _procOutVars) {
+          EList<VarInitDeclaration> _vars_6 = v_6.getVars();
+          for (final VarInitDeclaration decl_6 : _vars_6) {
+            final Procedure1<String> _function_6 = (String name) -> {
+            };
+            this.registerVarDecl(decl_6, ctx, _function_6);
+          }
+        }
+        EList<VarDeclaration> _procVars = p_1.getProcVars();
+        for (final VarDeclaration v_7 : _procVars) {
+          EList<VarInitDeclaration> _vars_7 = v_7.getVars();
+          for (final VarInitDeclaration decl_7 : _vars_7) {
+            final Procedure1<String> _function_7 = (String name) -> {
+            };
+            this.registerVarDecl(decl_7, ctx, _function_7);
+          }
+        }
+        EList<ProcessVarDeclaration> _procProcessVars = p_1.getProcProcessVars();
+        for (final ProcessVarDeclaration v_8 : _procProcessVars) {
+          EList<ProcessVarInitDeclaration> _vars_8 = v_8.getVars();
+          for (final ProcessVarInitDeclaration decl_8 : _vars_8) {
+            EList<ProcessVariable> _vars_9 = decl_8.getVarList().getVars();
+            for (final ProcessVariable vname : _vars_9) {
+              {
+                final String procType = decl_8.getProcess().getName();
+                final String field = vname.getName();
+                ctx.registerProcess(field, field, procType);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private String resolveType(final VarInitDeclaration decl) {
+    SimpleSpecificationInit _spec = decl.getSpec();
+    boolean _tripleNotEquals = (_spec != null);
+    if (_tripleNotEquals) {
+      return decl.getSpec().getType();
+    }
+    ArraySpecificationInit _arrSpec = decl.getArrSpec();
+    boolean _tripleNotEquals_1 = (_arrSpec != null);
+    if (_tripleNotEquals_1) {
+      return decl.getArrSpec().getInit().getType();
+    }
+    throw new IllegalStateException(
+      ("Unknown declaration type: " + decl));
+  }
+
+  private void registerVarDecl(final VarInitDeclaration decl, final GenerationContext ctx, final Procedure1<? super String> registry) {
+    final String type = this.resolveType(decl);
+    EList<SymbolicVariable> _vars = decl.getVarList().getVars();
+    for (final SymbolicVariable vname : _vars) {
+      {
+        ctx.registerVar(vname.getName(), type);
+        registry.apply(vname.getName());
+        ArraySpecificationInit _arrSpec = decl.getArrSpec();
+        boolean _tripleNotEquals = (_arrSpec != null);
+        if (_tripleNotEquals) {
+          ctx.registerArrayType(vname.getName(), type);
+          ctx.registerArrayStart(vname.getName(), 0);
+        }
+      }
+    }
   }
 }

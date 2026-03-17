@@ -416,7 +416,7 @@ public class PoSTParser extends AbstractContentAssistParser {
 
 	@Override
 	protected String[] getInitialHiddenTokens() {
-		return new String[] {  };
+		return new String[] { "RULE_WS", "RULE_ML_COMMENT", "RULE_SL_COMMENT" };
 	}
 
 	public PoSTGrammarAccess getGrammarAccess() {

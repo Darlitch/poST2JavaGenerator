@@ -156,7 +156,54 @@ public class ExpressionGenerator {
       SymbolicVariable _variable = ((PrimaryExpression)exp).getVariable();
       boolean _tripleNotEquals = (_variable != null);
       if (_tripleNotEquals) {
-        return ctx.resolveVarType(((PrimaryExpression)exp).getVariable().getName());
+        final String name = ((PrimaryExpression)exp).getVariable().getName();
+        final String resolved = ctx.resolveAlias(name);
+        boolean _hasConst = ctx.hasConst(resolved);
+        if (_hasConst) {
+          final Object value = ctx.getConst(resolved);
+          String _switchResult_1 = null;
+          boolean _matched_1 = false;
+          if (value instanceof Boolean) {
+            _matched_1=true;
+            _switchResult_1 = "BOOL";
+          }
+          if (!_matched_1) {
+            if (value instanceof Integer) {
+              _matched_1=true;
+              _switchResult_1 = "INT";
+            }
+          }
+          if (!_matched_1) {
+            if (value instanceof Long) {
+              _matched_1=true;
+              _switchResult_1 = "LINT";
+            }
+          }
+          if (!_matched_1) {
+            if (value instanceof Double) {
+              _matched_1=true;
+              _switchResult_1 = "LREAL";
+            }
+          }
+          if (!_matched_1) {
+            if (value instanceof Float) {
+              _matched_1=true;
+              _switchResult_1 = "REAL";
+            }
+          }
+          if (!_matched_1) {
+            if (value instanceof String) {
+              _matched_1=true;
+              _switchResult_1 = "STRING";
+            }
+          }
+          if (!_matched_1) {
+            throw new IllegalStateException(
+              ("Unsupported const type: " + value));
+          }
+          return _switchResult_1;
+        }
+        return ctx.resolveVarType(resolved);
       }
       ArrayVariable _array = ((PrimaryExpression)exp).getArray();
       boolean _tripleNotEquals_1 = (_array != null);
@@ -629,15 +676,32 @@ public class ExpressionGenerator {
   public static String readVar(final String name, final GenerationContext ctx) {
     String _xblockexpression = null;
     {
-      final String resolved = ctx.resolveVarName(name);
+      final String resolved = ctx.resolveAlias(name);
+      boolean _hasConst = ctx.hasConst(name);
+      if (_hasConst) {
+        return ctx.getConst(name).toString();
+      }
+      boolean _hasConst_1 = ctx.hasConst(resolved);
+      if (_hasConst_1) {
+        final Object value = ctx.getConst(resolved);
+        if ((value instanceof String)) {
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("\"");
+          _builder.append(((String)value));
+          _builder.append("\"");
+          return _builder.toString();
+        }
+        return value.toString();
+      }
+      String resolved2 = ctx.resolveVarName(name);
       final String javaType = TypeUtil.javaType(ctx.resolveVarType(name));
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("((");
-      _builder.append(javaType);
-      _builder.append(")memory.get(\"");
-      _builder.append(resolved);
-      _builder.append("\"))");
-      _xblockexpression = _builder.toString();
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("((");
+      _builder_1.append(javaType);
+      _builder_1.append(")memory.get(\"");
+      _builder_1.append(resolved2);
+      _builder_1.append("\"))");
+      _xblockexpression = _builder_1.toString();
     }
     return _xblockexpression;
   }

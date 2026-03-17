@@ -1,4 +1,4 @@
-grammar su.nsk.iae.post.PoST
+grammar su.nsk.iae.post.PoST hidden(WS, ML_COMMENT, SL_COMMENT)
 
 generate poST "http://www.nsk.su/iae/post/PoST"
 

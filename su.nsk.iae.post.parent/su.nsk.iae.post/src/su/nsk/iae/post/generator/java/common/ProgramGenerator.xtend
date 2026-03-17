@@ -2,6 +2,8 @@ package su.nsk.iae.post.generator.java.common
 
 import su.nsk.iae.post.poST.Program
 import su.nsk.iae.post.poST.Process
+import su.nsk.iae.post.poST.VarInitDeclaration
+import su.nsk.iae.post.poST.Model
 
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator
@@ -12,6 +14,7 @@ class ProgramGenerator {
 
     def String generate(Program program, GenerationContext ctx) {
 
+		registerAll(program, ctx)
         val builder = new StringBuilder
         val name = program.name
 
@@ -347,5 +350,113 @@ public class Ђnameї {
     }
 '''
     }
+    
+    def void registerAll(Program program, GenerationContext ctx) {
+
+	    // ===== INPUT =====
+	    for (v : program.progInVars)
+	        for (decl : v.vars)
+	            registerVarDecl(decl, ctx, [name |
+	                ctx.registerInputVar(name)
+	            ])
+	
+	    // ===== OUTPUT =====
+	    for (v : program.progOutVars)
+	        for (decl : v.vars)
+	            registerVarDecl(decl, ctx, [name |
+	                ctx.registerOutputVar(name)
+	            ])
+	
+	    // ===== VAR =====
+	    for (v : program.progVars)
+	        for (decl : v.vars)
+	            registerVarDecl(decl, ctx, [name |
+	                ctx.registerLocalVar(name)
+	            ])
+	
+	    // ===== IN_OUT =====
+	    for (v : program.progInOutVars)
+	        for (decl : v.vars)
+	            registerVarDecl(decl, ctx, [name |
+	                ctx.registerInputVar(name)
+	                ctx.registerOutputVar(name)
+	            ])
+	
+	    // ===== TEMP =====
+	    for (v : program.progTempVars)
+	        for (decl : v.vars)
+	            registerVarDecl(decl, ctx, [name |
+	                ctx.registerLocalVar(name)
+	            ])
+	
+	    // ===== PROCESSES =====
+	    for (p : program.processes) {
+	        val field = p.name.toFirstLower
+	        ctx.registerProcess(p.name, field, p.name)
+	    }
+	
+	    // ===== PROCESS VARIABLES =====
+	    for (p : program.processes) {
+	
+	        // VAR_INPUT
+	        for (v : p.procInVars)
+	            for (decl : v.vars)
+	                registerVarDecl(decl, ctx, [name | ])
+	
+	        // VAR_OUTPUT
+	        for (v : p.procOutVars)
+	            for (decl : v.vars)
+	                registerVarDecl(decl, ctx, [name | ])
+	
+	        // VAR
+	        for (v : p.procVars)
+	            for (decl : v.vars)
+	                registerVarDecl(decl, ctx, [name | ])
+	
+	        // VAR_PROCESS
+	        for (v : p.procProcessVars)
+	            for (decl : v.vars)
+	                for (vname : decl.varList.vars) {
+	
+	                    val procType = decl.process.name
+	                    val field = vname.name
+	
+	                    ctx.registerProcess(field, field, procType)
+	                }
+	    }
+	}
+	
+	private def String resolveType(VarInitDeclaration decl) {
+	    if (decl.spec !== null)
+	        return decl.spec.type
+	
+	    if (decl.arrSpec !== null)
+	        return decl.arrSpec.init.type
+	
+	    throw new IllegalStateException(
+	        "Unknown declaration type: " + decl
+	    )
+	}
+	
+	private def void registerVarDecl(
+	    VarInitDeclaration decl,
+	    GenerationContext ctx,
+	    (String)=>void registry
+	) {
+	    val type = resolveType(decl)
+	
+	    for (vname : decl.varList.vars) {
+	        ctx.registerVar(vname.name, type)
+	        registry.apply(vname.name)
+	
+	        // если массив Ч регистрируем как массив
+	        if (decl.arrSpec !== null) {
+	            ctx.registerArrayType(vname.name, type)
+	
+	            // старт можно временно 0 (потом улучшим)
+	            ctx.registerArrayStart(vname.name, 0)
+	        }
+	    }
+	}
 
 }

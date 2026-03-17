@@ -94,8 +94,28 @@ class ExpressionGenerator {
 	
 	            // ----- variable -----
 	            if (exp.variable !== null) {
-	                return ctx.resolveVarType(exp.variable.name)
-	            }
+
+				    val name = exp.variable.name
+				    val resolved = ctx.resolveAlias(name)
+				
+				    if (ctx.hasConst(resolved)) {
+				        val value = ctx.getConst(resolved)
+				
+				        return switch value {
+				            Boolean: "BOOL"
+				            Integer: "INT"
+				            Long: "LINT"
+				            Double: "LREAL"
+				            Float: "REAL"
+				            String: "STRING"
+				            default: throw new IllegalStateException(
+				                "Unsupported const type: " + value
+				            )
+				        }
+				    }
+				
+				    return ctx.resolveVarType(resolved)
+				}
 	
 	            // ----- array access -----
 	            if (exp.array !== null) {
@@ -470,10 +490,20 @@ class ExpressionGenerator {
 	}
 
 	def static String readVar(String name, GenerationContext ctx) {
-		val resolved = ctx.resolveVarName(name)
+		val resolved = ctx.resolveAlias(name)
+		if (ctx.hasConst(name))
+    		return ctx.getConst(name).toString
+		if (ctx.hasConst(resolved)) {
+	        val value = ctx.getConst(resolved)
+	        if (value instanceof String) {
+	            return '''"«value»"'''
+	        }
+	        return value.toString
+	    }
+		var resolved2 = ctx.resolveVarName(name)
 		val javaType = ctx.resolveVarType(name).javaType
 
-		'''((«javaType»)memory.get("«resolved»"))'''
+		'''((«javaType»)memory.get("«resolved2»"))'''
 	}
 	
 	// ================= VARIABLE WRITE =================

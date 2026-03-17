@@ -38,10 +38,10 @@ public class AssignmentStatementGenerator implements IStatementGenerator {
       builder.append(_plus);
       return builder.toString();
     }
-    SymbolicVariable _variable_2 = s.getVariable();
-    if ((_variable_2 instanceof ArrayVariable)) {
-      SymbolicVariable _variable_3 = s.getVariable();
-      final ArrayVariable arr = ((ArrayVariable) _variable_3);
+    ArrayVariable _array = s.getArray();
+    boolean _tripleNotEquals = (_array != null);
+    if (_tripleNotEquals) {
+      final ArrayVariable arr = s.getArray();
       final String arrName = ctx.resolveAlias(arr.getVariable().getName());
       final String elementType = ctx.getArrayElementType(arrName);
       final String exprType_1 = ExpressionGenerator.getExprType(s.getValue(), ctx);
@@ -109,8 +109,8 @@ public class AssignmentStatementGenerator implements IStatementGenerator {
       builder.append(_builder);
       return builder.toString();
     }
-    SymbolicVariable _variable_4 = s.getVariable();
-    String _plus_1 = ("Unsupported assignment target: " + _variable_4);
+    SymbolicVariable _variable_2 = s.getVariable();
+    String _plus_1 = ("Unsupported assignment target: " + _variable_2);
     throw new IllegalStateException(_plus_1);
   }
 }

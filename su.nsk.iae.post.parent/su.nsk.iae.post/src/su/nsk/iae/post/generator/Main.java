@@ -40,6 +40,7 @@ public class Main {
 		Injector injector = new PoSTStandaloneSetup().createInjectorAndDoEMFRegistration();
 		Main main = injector.getInstance(Main.class);
 		String filename = Arrays.stream(args).filter(x -> x.startsWith("-o=")).map(x -> x.substring(3)).findFirst().orElse("generated");
+		System.out.println("Output dir: " + new java.io.File("./" + filename).getAbsolutePath());
 		main.runGenerator(Arrays.stream(args).filter(x -> x.contains(".post")).findFirst().get(),
 				Arrays.stream(args).anyMatch(x -> x.equals("-l")), filename);
 	}
@@ -122,6 +123,9 @@ public class Main {
 
 	private void printIssues(List<Issue> issues) {
 		for (Issue issue : issues) {
+			if (issue.getMessage().contains("State should be LOOPED")) {
+	            continue;
+	        }
 			System.err.println(issue);
 		}
 	}

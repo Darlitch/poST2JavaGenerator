@@ -48,9 +48,9 @@ class AssignmentStatementGenerator implements IStatementGenerator {
 		}
 
 		// ===== элемент массива =====
-		if (s.variable instanceof ArrayVariable) {
+		if (s.array !== null) {
 
-			val arr = s.variable as ArrayVariable
+    		val arr = s.array
 			val arrName = ctx.resolveAlias(arr.variable.name)
 			
 			val elementType = ctx.getArrayElementType(arrName)

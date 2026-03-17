@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//src/su/nsk/iae/post/generator/java/JavaGenerator.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/context/GenerationContext.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/util/CompileTimeEvaluator.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/util/ExpressionGenerator.xtend=UTF-8

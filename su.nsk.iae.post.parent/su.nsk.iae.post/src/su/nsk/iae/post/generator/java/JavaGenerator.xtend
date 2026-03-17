@@ -3,20 +3,23 @@ package su.nsk.iae.post.generator.java
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import su.nsk.iae.post.poST.GlobalVarDeclaration
 
 import su.nsk.iae.post.poST.Model
 import su.nsk.iae.post.poST.Program
+import su.nsk.iae.post.poST.Constant
 
 import su.nsk.iae.post.generator.IPoSTGenerator
 import su.nsk.iae.post.generator.java.common.ProgramGenerator
 import su.nsk.iae.post.generator.java.common.IProcessGenerator
 import su.nsk.iae.post.generator.java.configuration.ConfigurationGenerator
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
+import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator
 
 class JavaGenerator implements IPoSTGenerator {
 
     override setModel(Model model) {
-        // ÌÂ ÚÂ·ÛÂÚÒˇ
+        // –Ω–µ —Ç—Ä–µ–±—É–µ—Ç—Å—è
     }
 
     override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {}
@@ -31,15 +34,18 @@ class JavaGenerator implements IPoSTGenerator {
 
         val ctx = new GenerationContext
 
+        println("Generating IProcess.java")
         fsa.generateFile(
             "IProcess.java",
             IProcessGenerator.generate()
         )
+        registerGlobals(model, ctx)
 
         for (Program p : model.programs) {
 
             val code = new ProgramGenerator().generate(p, ctx)
 
+            println("Generating program: " + p.name + ".java")
             fsa.generateFile(
                 p.name + ".java",
                 code
@@ -52,12 +58,84 @@ class JavaGenerator implements IPoSTGenerator {
                 new ConfigurationGenerator()
                     .generate(model.conf, ctx)
 
+            println("Generating Simulation.java")
             fsa.generateFile(
                 model.conf.name + "Simulation.java",
                 code
             )
         }
     }
+    
+    def void registerGlobals(Model model, GenerationContext ctx) {
+
+	    if (model.conf === null) {
+	        return
+	    }
+	    
+	    // ===== GLOBALS –ù–ê –£–†–û–í–ù–ï CONFIGURATION =====
+		for (g : model.conf.eContents.filter(GlobalVarDeclaration)) {
+		
+		    for (decl : g.varsSimple) {
+		
+		        if (g.isConst()) {
+		
+		            for (vname : decl.varList.vars) {
+		
+		                val value = CompileTimeEvaluator.evalExpression(decl.spec.value)
+		
+		                ctx.registerConst(vname.name, value)
+		                ctx.registerVar(vname.name, decl.spec.type)
+		            }
+		
+		        } else {
+		
+		            for (vname : decl.varList.vars) {
+		
+		                val type =
+		                    if (decl.spec !== null)
+		                        decl.spec.type
+		                    else
+		                        decl.arrSpec.init.type
+		
+		                ctx.registerVar(vname.name, type)
+		                ctx.registerGlobalVar(vname.name)
+		            }
+		        }
+		    }
+		}
+	
+	    for (res : model.conf.resources)
+	        for (g : res.resGlobVars)
+	            for (decl : g.varsSimple) {
+	
+	                if (g.isConst()) {
+	
+	                    for (vname : decl.varList.vars) {
+	
+	                        val value = CompileTimeEvaluator.evalExpression(decl.spec.value)
+	
+	                        ctx.registerConst(vname.name, value)
+	                        ctx.registerVar(vname.name, decl.spec.type)
+	
+	                        println("CONST REGISTERED: " + vname.name) // debug
+	                    }
+	
+	                } else {
+	
+	                    for (vname : decl.varList.vars) {
+	
+	                        val type =
+	                            if (decl.spec !== null)
+	                                decl.spec.type
+	                            else
+	                                decl.arrSpec.init.type
+	
+	                        ctx.registerVar(vname.name, type)
+	                        ctx.registerGlobalVar(vname.name)
+	                    }
+	                }
+	            }
+	}
 
     override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {}
 }

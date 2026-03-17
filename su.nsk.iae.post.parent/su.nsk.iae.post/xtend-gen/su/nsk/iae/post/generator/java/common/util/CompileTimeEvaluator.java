@@ -114,4 +114,17 @@ public class CompileTimeEvaluator {
     throw new IllegalStateException(
       ("Unsupported compile-time integer expression: " + expr));
   }
+
+  public static Object evalExpression(final Expression expr) {
+    if ((expr instanceof PrimaryExpression)) {
+      final PrimaryExpression pe = ((PrimaryExpression) expr);
+      Constant _const = pe.getConst();
+      boolean _tripleNotEquals = (_const != null);
+      if (_tripleNotEquals) {
+        return CompileTimeEvaluator.eval(pe.getConst());
+      }
+    }
+    throw new IllegalStateException(
+      ("Unsupported constant expression: " + expr));
+  }
 }
