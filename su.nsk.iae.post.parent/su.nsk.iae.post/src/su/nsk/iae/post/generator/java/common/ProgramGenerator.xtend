@@ -58,11 +58,44 @@ public class «name» {
             builder.append(processGen.generate(p, ctx, INDENT))
         }
 
-        builder.append(
+builder.append(
 '''
+
+«INDENT»private Object getArrayValue(String name, int index, int start) {
+«INDENT»    java.util.List<String> list =
+«INDENT»        (java.util.List<String>) memory.get(name);
+
+«INDENT»    int offset = index - start;
+
+«INDENT»    if (offset < 0 || offset >= list.size()) {
+«INDENT»        throw new RuntimeException(
+«INDENT»            "Array index out of bounds: " + name + "[" + index + "]"
+«INDENT»        );
+«INDENT»    }
+
+«INDENT»    String cell = list.get(offset);
+«INDENT»    return memory.get(cell);
+«INDENT»}
+
+«INDENT»private void setArrayValue(String name, int index, int start, Object value) {
+«INDENT»    java.util.List<String> list =
+«INDENT»        (java.util.List<String>) memory.get(name);
+
+«INDENT»    int offset = index - start;
+
+«INDENT»    if (offset < 0 || offset >= list.size()) {
+«INDENT»        throw new RuntimeException(
+«INDENT»            "Array index out of bounds: " + name + "[" + index + "]"
+«INDENT»        );
+«INDENT»    }
+
+«INDENT»    String cell = list.get(offset);
+«INDENT»    memory.put(cell, value);
+«INDENT»}
+
 }
 '''
-        )
+)
 
         builder.toString
     }

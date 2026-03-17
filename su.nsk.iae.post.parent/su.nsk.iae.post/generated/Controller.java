@@ -259,40 +259,10 @@ public class Controller {
                                (__step >= 0 && ((Integer)memory.get("alight")) <= __end)
                             || (__step < 0  && ((Integer)memory.get("alight")) >= __end)
                         ) {
-                            if ((() -> {
-    int __idx = ((Number)(((Integer)memory.get("alight")))).intValue();
-    int __offset = __idx - 0;
-
-    java.util.List<String> __list =
-        (java.util.List<String>) memory.get("rLightsArray");
-
-    if (__offset < 0 || __offset >= __list.size())
-        throw new RuntimeException(
-            "Array index out of bounds: rLightsArray[" + __idx + "]"
-        );
-
-    String __cell = __list.get(__offset);
-    return (Boolean) memory.get(__cell);
-})()
-) {
+                            if (((Boolean) getArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0))) {
                                 memory.put("prev_light", ((Integer)memory.get("alight")));
                             }
-                            {
-                                int __idx = ((Number)(((Integer)memory.get("alight")))).intValue();
-                                int __offset = __idx - 0;
-
-                                java.util.List<String> __list =
-                                    (java.util.List<String>) memory.get("rLightsArray");
-
-                                if (__offset < 0 || __offset >= __list.size())
-                                    throw new RuntimeException(
-                                        "Array index out of bounds: rLightsArray[" + __idx + "]"
-                                    );
-
-                                String __cell = __list.get(__offset);
-
-                                memory.put(__cell, false);
-                            }
+                            setArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0, false);
                             memory.put(
                                 "alight",
                                 ((Integer)memory.get("alight")) + __step
@@ -317,22 +287,7 @@ public class Controller {
                                (__step >= 0 && ((Integer)memory.get("alight")) <= __end)
                             || (__step < 0  && ((Integer)memory.get("alight")) >= __end)
                         ) {
-                            {
-                                int __idx = ((Number)(((Integer)memory.get("alight")))).intValue();
-                                int __offset = __idx - 0;
-
-                                java.util.List<String> __list =
-                                    (java.util.List<String>) memory.get("rLightsArray");
-
-                                if (__offset < 0 || __offset >= __list.size())
-                                    throw new RuntimeException(
-                                        "Array index out of bounds: rLightsArray[" + __idx + "]"
-                                    );
-
-                                String __cell = __list.get(__offset);
-
-                                memory.put(__cell, false);
-                            }
+                            setArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0, false);
                             memory.put(
                                 "alight",
                                 ((Integer)memory.get("alight")) + __step
@@ -357,22 +312,7 @@ public class Controller {
                                (__step >= 0 && ((Integer)memory.get("alight")) <= __end)
                             || (__step < 0  && ((Integer)memory.get("alight")) >= __end)
                         ) {
-                            {
-                                int __idx = ((Number)(((Integer)memory.get("alight")))).intValue();
-                                int __offset = __idx - 0;
-
-                                java.util.List<String> __list =
-                                    (java.util.List<String>) memory.get("rLightsArray");
-
-                                if (__offset < 0 || __offset >= __list.size())
-                                    throw new RuntimeException(
-                                        "Array index out of bounds: rLightsArray[" + __idx + "]"
-                                    );
-
-                                String __cell = __list.get(__offset);
-
-                                memory.put(__cell, false);
-                            }
+                            setArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0, false);
                             memory.put(
                                 "alight",
                                 ((Integer)memory.get("alight")) + __step
@@ -407,4 +347,37 @@ public class Controller {
         }
 
     }
+
+    private Object getArrayValue(String name, int index, int start) {
+        java.util.List<String> list =
+            (java.util.List<String>) memory.get(name);
+
+        int offset = index - start;
+
+        if (offset < 0 || offset >= list.size()) {
+            throw new RuntimeException(
+                "Array index out of bounds: " + name + "[" + index + "]"
+            );
+        }
+
+        String cell = list.get(offset);
+        return memory.get(cell);
+    }
+
+    private void setArrayValue(String name, int index, int start, Object value) {
+        java.util.List<String> list =
+            (java.util.List<String>) memory.get(name);
+
+        int offset = index - start;
+
+        if (offset < 0 || offset >= list.size()) {
+            throw new RuntimeException(
+                "Array index out of bounds: " + name + "[" + index + "]"
+            );
+        }
+
+        String cell = list.get(offset);
+        memory.put(cell, value);
+    }
+
 }

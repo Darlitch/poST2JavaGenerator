@@ -455,29 +455,13 @@ class ExpressionGenerator {
 		if (exp.array !== null) {
 
 		    val arrName = ctx.resolveAlias(exp.array.variable.name)
-		    val start = ctx.getArrayStart(arrName)
-		    val type = ctx.getArrayElementType(arrName)
-		    val javaType = type.javaType
-		
 		    val indexExpr = generate(exp.array.index, ctx)
 		
-		    return '''
-(() -> {
-    int __idx = «toInt(indexExpr)»;
-    int __offset = __idx - «start»;
-
-    java.util.List<String> __list =
-        (java.util.List<String>) memory.get("«arrName»");
-
-    if (__offset < 0 || __offset >= __list.size())
-        throw new RuntimeException(
-            "Array index out of bounds: «arrName»[" + __idx + "]"
-        );
-
-    String __cell = __list.get(__offset);
-    return («javaType») memory.get(__cell);
-})()
-'''
+		    val type = ctx.getArrayElementType(arrName)
+		    val javaType = type.javaType
+			val start = ctx.getArrayStart(arrName)
+	
+			return '''((«javaType») getArrayValue("«arrName»", «indexExpr», «start»))'''
 		}	
 
 		if (exp.procStatus !== null)

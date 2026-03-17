@@ -65,28 +65,9 @@ class AssignmentStatementGenerator implements IStatementGenerator {
 			val start = ctx.getArrayStart(arrName)
 
 			val indexExpr = generate(arr.index, ctx)
-
-			val nextIndent = indent + "    "
-
+			
 			builder.append(
-'''
-«indent»{
-«nextIndent»int __idx = «toInt(indexExpr)»;
-«nextIndent»int __offset = __idx - «start»;
-
-«nextIndent»java.util.List<String> __list =
-«nextIndent»    (java.util.List<String>) memory.get("«arrName»");
-
-«nextIndent»if (__offset < 0 || __offset >= __list.size())
-«nextIndent»    throw new RuntimeException(
-«nextIndent»        "Array index out of bounds: «arrName»[" + __idx + "]"
-«nextIndent»    );
-
-«nextIndent»String __cell = __list.get(__offset);
-
-«nextIndent»memory.put(__cell, «valueExpr»);
-«indent»}
-'''
+			    indent + '''setArrayValue("«arrName»", «indexExpr», «start», «valueExpr»);'''
 			)
 
 			return builder.toString
