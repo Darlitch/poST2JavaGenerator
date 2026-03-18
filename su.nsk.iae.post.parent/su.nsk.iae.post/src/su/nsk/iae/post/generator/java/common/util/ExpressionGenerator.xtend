@@ -378,10 +378,10 @@ class ExpressionGenerator {
 	    if (leftType == "STRING" || leftType == "WSTRING") {
 	
 	        if (op == CompOperator.EQUAL)
-	            return '''java.util.Objects.equals(«left», «right»)'''
+	            return '''Objects.equals(«left», «right»)'''
 	
 	        if (op == CompOperator.NOT_EQUAL)
-	            return '''!java.util.Objects.equals(«left», «right»)'''
+	            return '''!Objects.equals(«left», «right»)'''
 	
 	        throw new IllegalStateException(
 	            "Ordering comparison not supported for STRING type"
@@ -573,21 +573,17 @@ class ExpressionGenerator {
 	) {
 	
 		val fieldName = ctx.resolveProcess(exp.process.name)
-		val processType = ctx.getProcessTypeByFieldName(fieldName)
+
+	    if (exp.active)
+	        return '''isActive(«fieldName»)'''
 	
-		val stop  = processType + ".State.Stop"
-		val error = processType + ".State.Error"
+	    if (exp.inactive)
+	        return '''isInactive(«fieldName»)'''
 	
-		if (exp.active)
-			return '''(«fieldName».getState() != «stop» && «fieldName».getState() != «error»)'''
+	    if (exp.stop)
+	        return '''isStop(«fieldName»)'''
 	
-		if (exp.inactive)
-			return '''(«fieldName».getState() == «stop» || «fieldName».getState() == «error»)'''
-	
-		if (exp.stop)
-			return '''(«fieldName».getState() == «stop»)'''
-	
-		'''(«fieldName».getState() == «error»)'''
+	    '''isError(«fieldName»)'''
 	}
 
 	// ================= OPERATORS =================

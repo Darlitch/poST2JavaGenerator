@@ -20,6 +20,11 @@ public class IProcessGenerator {
     _builder.append("    ");
     _builder.append("void dumpTimers(java.util.Map<String,Long> out);");
     _builder.newLine();
+    _builder.append("    ");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("String getStateName();");
+    _builder.newLine();
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();

@@ -22,48 +22,86 @@ class ProgramGenerator {
 
         builder.append(
 '''
+import java.util.Map;
+import java.util.List;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
+
 public class «name» {
 
-«INDENT»private final java.util.Map<String,Object> memory =
-«INDENT»    new java.util.HashMap<>();
+«INDENT»private final Map<String,Object> memory = new HashMap<>();
+«INDENT»private final List<IProcess> processes = new ArrayList<>();
+«INDENT»private final Set<String> inputNames = new HashSet<>();
+«INDENT»private final Set<String> outputNames = new HashSet<>();
+«INDENT»private final Set<String> globalNames = new HashSet<>();
+«INDENT»private final Set<String> varNames = new HashSet<>();
 
-«INDENT»private final java.util.List<IProcess> processes =
-«INDENT»    new java.util.ArrayList<>();
-
-«INDENT»private final java.util.Set<String> inputNames =
-«INDENT»    new java.util.HashSet<>();
-
-«INDENT»private final java.util.Set<String> outputNames =
-«INDENT»    new java.util.HashSet<>();
-
-«INDENT»private final java.util.Set<String> globalNames =
-«INDENT»    new java.util.HashSet<>();
-
-«INDENT»private final java.util.Set<String> varNames =
-«INDENT»    new java.util.HashSet<>();
 '''
         )
 
         builder.append(generateProcessFields(program))
         builder.append(generateConstructor(program, ctx))
         builder.append(generateRunIter())
+        builder.append("\n")
         builder.append(generateDumpStates())
+        builder.append("\n")
         builder.append(generateDumpTimers())
+        builder.append("\n")
         builder.append(generateDumpInputs())
+        builder.append("\n")
         builder.append(generateDumpOutputs())
+        builder.append("\n")
         builder.append(generateDumpGlobals())
+        builder.append("\n")
         builder.append(generateDumpVars())
+        builder.append("\n")
 
         for (Process p : program.processes) {
             builder.append(processGen.generate(p, ctx, INDENT))
         }
+        
+        builder.append(
+'''
 
-builder.append(
+«INDENT»private boolean isActive(IProcess p) {
+«INDENT»    String s = p.getStateName();
+«INDENT»    return !s.equals("Stop") && !s.equals("Error");
+«INDENT»}
+
+«INDENT»private boolean isInactive(IProcess p) {
+«INDENT»    String s = p.getStateName();
+«INDENT»    return s.equals("Stop") || s.equals("Error");
+«INDENT»}
+
+«INDENT»private boolean isStop(IProcess p) {
+«INDENT»    return p.getStateName().equals("Stop");
+«INDENT»}
+
+«INDENT»private boolean isError(IProcess p) {
+«INDENT»    return p.getStateName().equals("Error");
+«INDENT»}
+'''
+		)
+		
+		builder.append(
+'''
+
+«INDENT»private boolean loopCond(String var, int end, int step) {
+«INDENT»    int value = ((Number)memory.get(var)).intValue();
+«INDENT»    return (step >= 0 && value <= end)
+«INDENT»        || (step < 0 && value >= end);
+«INDENT»}
+'''
+		)
+
+		builder.append(
 '''
 
 «INDENT»private Object getArrayValue(String name, int index, int start) {
-«INDENT»    java.util.List<String> list =
-«INDENT»        (java.util.List<String>) memory.get(name);
+«INDENT»    List<String> list = (List<String>) memory.get(name);
 
 «INDENT»    int offset = index - start;
 
@@ -78,8 +116,7 @@ builder.append(
 «INDENT»}
 
 «INDENT»private void setArrayValue(String name, int index, int start, Object value) {
-«INDENT»    java.util.List<String> list =
-«INDENT»        (java.util.List<String>) memory.get(name);
+«INDENT»    List<String> list = (List<String>) memory.get(name);
 
 «INDENT»    int offset = index - start;
 
@@ -95,7 +132,7 @@ builder.append(
 
 }
 '''
-)
+		)
 
         builder.toString
     }
@@ -127,8 +164,8 @@ builder.append(
 
         builder.append(
 '''
-«INDENT»public «program.name»() {
 
+«INDENT»public «program.name»() {
 «INDENT»    memory.put("_global_time", 0L);
 '''
         )
@@ -217,7 +254,7 @@ builder.append(
 
 '''
 «INDENT»public void runIter(long cycleTimeMs) {
-
+	
 «INDENT»    memory.put(
 «INDENT»        "_global_time",
 «INDENT»        ((Long)memory.get("_global_time")) + cycleTimeMs
@@ -234,10 +271,9 @@ builder.append(
     private def String generateDumpStates() {
 
 '''
-«INDENT»public java.util.Map<String,String> dumpProcessStates() {
+«INDENT»public Map<String,String> dumpProcessStates() {
 
-«INDENT»    java.util.Map<String,String> res =
-«INDENT»        new java.util.HashMap<>();
+«INDENT»    Map<String,String> res = new HashMap<>();
 
 «INDENT»    for (IProcess p : processes)
 «INDENT»        p.dumpStates(res);
@@ -250,10 +286,9 @@ builder.append(
     private def String generateDumpTimers() {
 
 '''
-«INDENT»public java.util.Map<String,Long> dumpProcessTimers() {
+«INDENT»public Map<String,Long> dumpProcessTimers() {
 
-«INDENT»    java.util.Map<String,Long> res =
-«INDENT»        new java.util.HashMap<>();
+«INDENT»    Map<String,Long> res = new HashMap<>();
 
 «INDENT»    for (IProcess p : processes)
 «INDENT»        p.dumpTimers(res);
@@ -268,10 +303,9 @@ builder.append(
     private def String generateDumpInputs() {
 
 '''
-«INDENT»public java.util.Map<String,Object> dumpInputs() {
+«INDENT»public Map<String,Object> dumpInputs() {
 
-«INDENT»    java.util.Map<String,Object> res =
-«INDENT»        new java.util.HashMap<>();
+«INDENT»    Map<String,Object> res = new HashMap<>();
 
 «INDENT»    for (String n : inputNames)
 «INDENT»        res.put(n, memory.get(n));
@@ -284,10 +318,9 @@ builder.append(
     private def String generateDumpOutputs() {
 
 '''
-«INDENT»public java.util.Map<String,Object> dumpOutputs() {
+«INDENT»public Map<String,Object> dumpOutputs() {
 
-«INDENT»    java.util.Map<String,Object> res =
-«INDENT»        new java.util.HashMap<>();
+«INDENT»    Map<String,Object> res = new HashMap<>();
 
 «INDENT»    for (String n : outputNames)
 «INDENT»        res.put(n, memory.get(n));
@@ -300,10 +333,9 @@ builder.append(
     private def String generateDumpGlobals() {
 
 '''
-«INDENT»public java.util.Map<String,Object> dumpGlobals() {
+«INDENT»public Map<String,Object> dumpGlobals() {
 
-«INDENT»    java.util.Map<String,Object> res =
-«INDENT»        new java.util.HashMap<>();
+«INDENT»    Map<String,Object> res = new HashMap<>();
 
 «INDENT»    for (String n : globalNames)
 «INDENT»        res.put(n, memory.get(n));
@@ -316,10 +348,9 @@ builder.append(
     private def String generateDumpVars() {
 
 '''
-«INDENT»public java.util.Map<String,Object> dumpVars() {
+«INDENT»public Map<String,Object> dumpVars() {
 
-«INDENT»    java.util.Map<String,Object> res =
-«INDENT»        new java.util.HashMap<>();
+«INDENT»    Map<String,Object> res = new HashMap<>();
 
 «INDENT»    for (String n : varNames)
 «INDENT»        res.put(n, memory.get(n));

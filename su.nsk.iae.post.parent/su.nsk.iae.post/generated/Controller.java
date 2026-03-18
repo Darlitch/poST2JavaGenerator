@@ -1,26 +1,24 @@
+import java.util.Map;
+import java.util.List;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
+
 public class Controller {
 
-    private final java.util.Map<String,Object> memory =
-        new java.util.HashMap<>();
+    private final Map<String,Object> memory = new HashMap<>();
+    private final List<IProcess> processes = new ArrayList<>();
+    private final Set<String> inputNames = new HashSet<>();
+    private final Set<String> outputNames = new HashSet<>();
+    private final Set<String> globalNames = new HashSet<>();
+    private final Set<String> varNames = new HashSet<>();
 
-    private final java.util.List<IProcess> processes =
-        new java.util.ArrayList<>();
-
-    private final java.util.Set<String> inputNames =
-        new java.util.HashSet<>();
-
-    private final java.util.Set<String> outputNames =
-        new java.util.HashSet<>();
-
-    private final java.util.Set<String> globalNames =
-        new java.util.HashSet<>();
-
-    private final java.util.Set<String> varNames =
-        new java.util.HashSet<>();
     private final Light light;
     private final Control control;
-    public Controller() {
 
+    public Controller() {
         memory.put("_global_time", 0L);
         globalNames.add("lightsArray1");
         globalNames.add("lightsArray2");
@@ -37,7 +35,7 @@ public class Controller {
         processes.add(control);
     }
     public void runIter(long cycleTimeMs) {
-
+	
         memory.put(
             "_global_time",
             ((Long)memory.get("_global_time")) + cycleTimeMs
@@ -46,66 +44,67 @@ public class Controller {
         for (IProcess p : processes)
             p.run();
     }
-    public java.util.Map<String,String> dumpProcessStates() {
 
-        java.util.Map<String,String> res =
-            new java.util.HashMap<>();
+    public Map<String,String> dumpProcessStates() {
+
+        Map<String,String> res = new HashMap<>();
 
         for (IProcess p : processes)
             p.dumpStates(res);
 
         return res;
     }
-    public java.util.Map<String,Long> dumpProcessTimers() {
 
-        java.util.Map<String,Long> res =
-            new java.util.HashMap<>();
+    public Map<String,Long> dumpProcessTimers() {
+
+        Map<String,Long> res = new HashMap<>();
 
         for (IProcess p : processes)
             p.dumpTimers(res);
 
         return res;
     }
-    public java.util.Map<String,Object> dumpInputs() {
 
-        java.util.Map<String,Object> res =
-            new java.util.HashMap<>();
+    public Map<String,Object> dumpInputs() {
+
+        Map<String,Object> res = new HashMap<>();
 
         for (String n : inputNames)
             res.put(n, memory.get(n));
 
         return res;
     }
-    public java.util.Map<String,Object> dumpOutputs() {
 
-        java.util.Map<String,Object> res =
-            new java.util.HashMap<>();
+    public Map<String,Object> dumpOutputs() {
+
+        Map<String,Object> res = new HashMap<>();
 
         for (String n : outputNames)
             res.put(n, memory.get(n));
 
         return res;
     }
-    public java.util.Map<String,Object> dumpGlobals() {
 
-        java.util.Map<String,Object> res =
-            new java.util.HashMap<>();
+    public Map<String,Object> dumpGlobals() {
+
+        Map<String,Object> res = new HashMap<>();
 
         for (String n : globalNames)
             res.put(n, memory.get(n));
 
         return res;
     }
-    public java.util.Map<String,Object> dumpVars() {
 
-        java.util.Map<String,Object> res =
-            new java.util.HashMap<>();
+    public Map<String,Object> dumpVars() {
+
+        Map<String,Object> res = new HashMap<>();
 
         for (String n : varNames)
             res.put(n, memory.get(n));
 
         return res;
     }
+
     class Light implements IProcess {
 
         enum State {
@@ -114,9 +113,9 @@ public class Controller {
             Error
         }
 
-        private final java.util.Map<String,Object> memory;
+        private final Map<String,Object> memory;
 
-        public Light(java.util.Map<String,Object> memory) {
+        public Light(Map<String,Object> memory) {
             this.memory = memory;
         }
 
@@ -170,13 +169,18 @@ public class Controller {
         }
 
         @Override
-        public void dumpStates(java.util.Map<String,String> out) {
+        public void dumpStates(Map<String,String> out) {
             out.put("Light_state", state.name());
         }
 
         @Override
-        public void dumpTimers(java.util.Map<String,Long> out) {
+        public void dumpTimers(Map<String,Long> out) {
             out.put("Light_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
         }
 
     }
@@ -190,9 +194,9 @@ public class Controller {
             Error
         }
 
-        private final java.util.Map<String,Object> memory;
+        private final Map<String,Object> memory;
 
-        public Control(java.util.Map<String,Object> memory) {
+        public Control(Map<String,Object> memory) {
             this.memory = memory;
         }
 
@@ -245,7 +249,7 @@ public class Controller {
                         memory.put("prev_light", 0);
                         memory.put("pressed", false);
                     }
-                    else if ((((((pRed.getState() == Light.State.Stop || pRed.getState() == Light.State.Error)) && ((pGreen.getState() != Light.State.Stop && pGreen.getState() != Light.State.Error)))) || ((((pGreen.getState() == Light.State.Stop || pGreen.getState() == Light.State.Error)) && ((pRed.getState() != Light.State.Stop && pRed.getState() != Light.State.Error)))))) {
+                    else if (((((isInactive(pRed)) && (isActive(pGreen)))) || (((isInactive(pGreen)) && (isActive(pRed)))))) {
                         int __start = ((Number)(0)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
@@ -255,10 +259,7 @@ public class Controller {
 
                         memory.put("alight", __start);
 
-                        while (
-                               (__step >= 0 && ((Integer)memory.get("alight")) <= __end)
-                            || (__step < 0  && ((Integer)memory.get("alight")) >= __end)
-                        ) {
+                        while (loopCond("alight", __end, __step)) {
                             if (((Boolean) getArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0))) {
                                 memory.put("prev_light", ((Integer)memory.get("alight")));
                             }
@@ -283,10 +284,7 @@ public class Controller {
 
                         memory.put("alight", __start);
 
-                        while (
-                               (__step >= 0 && ((Integer)memory.get("alight")) <= __end)
-                            || (__step < 0  && ((Integer)memory.get("alight")) >= __end)
-                        ) {
+                        while (loopCond("alight", __end, __step)) {
                             setArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0, false);
                             memory.put(
                                 "alight",
@@ -308,10 +306,7 @@ public class Controller {
 
                         memory.put("alight", __start);
 
-                        while (
-                               (__step >= 0 && ((Integer)memory.get("alight")) <= __end)
-                            || (__step < 0  && ((Integer)memory.get("alight")) >= __end)
-                        ) {
+                        while (loopCond("alight", __end, __step)) {
                             setArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0, false);
                             memory.put(
                                 "alight",
@@ -327,7 +322,7 @@ public class Controller {
                 case delay10 -> {
                 }
                 case delay30 -> {
-                    if ((((Boolean)memory.get("control_sensor")) && (pRed.getState() != Light.State.Stop && pRed.getState() != Light.State.Error))) {
+                    if ((((Boolean)memory.get("control_sensor")) && isActive(pRed))) {
                         memory.put("pressed", true);
                         setState(State.Work);
                     }
@@ -337,20 +332,48 @@ public class Controller {
         }
 
         @Override
-        public void dumpStates(java.util.Map<String,String> out) {
+        public void dumpStates(Map<String,String> out) {
             out.put("Control_state", state.name());
         }
 
         @Override
-        public void dumpTimers(java.util.Map<String,Long> out) {
+        public void dumpTimers(Map<String,Long> out) {
             out.put("Control_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
         }
 
     }
 
+    private boolean isActive(IProcess p) {
+        String s = p.getStateName();
+        return !s.equals("Stop") && !s.equals("Error");
+    }
+
+    private boolean isInactive(IProcess p) {
+        String s = p.getStateName();
+        return s.equals("Stop") || s.equals("Error");
+    }
+
+    private boolean isStop(IProcess p) {
+        return p.getStateName().equals("Stop");
+    }
+
+    private boolean isError(IProcess p) {
+        return p.getStateName().equals("Error");
+    }
+
+    private boolean loopCond(String var, int end, int step) {
+        int value = ((Number)memory.get(var)).intValue();
+        return (step >= 0 && value <= end)
+            || (step < 0 && value >= end);
+    }
+
     private Object getArrayValue(String name, int index, int start) {
-        java.util.List<String> list =
-            (java.util.List<String>) memory.get(name);
+        List<String> list = (List<String>) memory.get(name);
 
         int offset = index - start;
 
@@ -365,8 +388,7 @@ public class Controller {
     }
 
     private void setArrayValue(String name, int index, int start, Object value) {
-        java.util.List<String> list =
-            (java.util.List<String>) memory.get(name);
+        List<String> list = (List<String>) memory.get(name);
 
         int offset = index - start;
 

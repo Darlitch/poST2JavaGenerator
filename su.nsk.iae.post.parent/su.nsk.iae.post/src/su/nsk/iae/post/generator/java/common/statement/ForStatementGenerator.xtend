@@ -55,10 +55,7 @@ class ForStatementGenerator implements IStatementGenerator {
 
 «indent»memory.put("«resolved»", __start);
 
-«indent»while (
-«indent»       (__step >= 0 && «readVar(varName, ctx)» <= __end)
-«indent»    || (__step < 0  && «readVar(varName, ctx)» >= __end)
-«indent») {
+«indent»while (loopCond("«resolved»", __end, __step)) {
 «stmtGen.generate(s.statement, ctx, nextIndent)»
 «nextIndent»memory.put(
 «nextIndent»    "«resolved»",

@@ -479,7 +479,7 @@ public class ExpressionGenerator {
       boolean _equals = Objects.equals(op, CompOperator.EQUAL);
       if (_equals) {
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("java.util.Objects.equals(");
+        _builder.append("Objects.equals(");
         _builder.append(left);
         _builder.append(", ");
         _builder.append(right);
@@ -489,7 +489,7 @@ public class ExpressionGenerator {
       boolean _equals_1 = Objects.equals(op, CompOperator.NOT_EQUAL);
       if (_equals_1) {
         StringConcatenation _builder_1 = new StringConcatenation();
-        _builder_1.append("!java.util.Objects.equals(");
+        _builder_1.append("!Objects.equals(");
         _builder_1.append(left);
         _builder_1.append(", ");
         _builder_1.append(right);
@@ -797,52 +797,33 @@ public class ExpressionGenerator {
     String _xblockexpression = null;
     {
       final String fieldName = ctx.resolveProcess(exp.getProcess().getName());
-      final String processType = ctx.getProcessTypeByFieldName(fieldName);
-      final String stop = (processType + ".State.Stop");
-      final String error = (processType + ".State.Error");
       boolean _isActive = exp.isActive();
       if (_isActive) {
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("(");
+        _builder.append("isActive(");
         _builder.append(fieldName);
-        _builder.append(".getState() != ");
-        _builder.append(stop);
-        _builder.append(" && ");
-        _builder.append(fieldName);
-        _builder.append(".getState() != ");
-        _builder.append(error);
         _builder.append(")");
         return _builder.toString();
       }
       boolean _isInactive = exp.isInactive();
       if (_isInactive) {
         StringConcatenation _builder_1 = new StringConcatenation();
-        _builder_1.append("(");
+        _builder_1.append("isInactive(");
         _builder_1.append(fieldName);
-        _builder_1.append(".getState() == ");
-        _builder_1.append(stop);
-        _builder_1.append(" || ");
-        _builder_1.append(fieldName);
-        _builder_1.append(".getState() == ");
-        _builder_1.append(error);
         _builder_1.append(")");
         return _builder_1.toString();
       }
       boolean _isStop = exp.isStop();
       if (_isStop) {
         StringConcatenation _builder_2 = new StringConcatenation();
-        _builder_2.append("(");
+        _builder_2.append("isStop(");
         _builder_2.append(fieldName);
-        _builder_2.append(".getState() == ");
-        _builder_2.append(stop);
         _builder_2.append(")");
         return _builder_2.toString();
       }
       StringConcatenation _builder_3 = new StringConcatenation();
-      _builder_3.append("(");
+      _builder_3.append("isError(");
       _builder_3.append(fieldName);
-      _builder_3.append(".getState() == ");
-      _builder_3.append(error);
       _builder_3.append(")");
       _xblockexpression = _builder_3.toString();
     }

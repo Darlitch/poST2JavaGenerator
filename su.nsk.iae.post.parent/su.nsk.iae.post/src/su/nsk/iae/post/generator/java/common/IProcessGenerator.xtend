@@ -12,6 +12,8 @@ public interface IProcess {
     void dumpStates(java.util.Map<String,String> out);
 
     void dumpTimers(java.util.Map<String,Long> out);
+    
+    String getStateName();
 
 }
 '''

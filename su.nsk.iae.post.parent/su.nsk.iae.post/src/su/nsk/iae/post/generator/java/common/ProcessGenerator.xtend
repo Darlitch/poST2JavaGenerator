@@ -34,7 +34,7 @@ class ProcessGenerator {
 
 «generateStateEnum(p, nextIndent)»
 
-«nextIndent»private final java.util.Map<String,Object> memory;
+«nextIndent»private final Map<String,Object> memory;
 
 «generateConstructor(name, nextIndent)»
 
@@ -50,6 +50,8 @@ class ProcessGenerator {
 
 «generateDumpTimers(name, nextIndent)»
 
+«generateGetStateName(nextIndent)»
+
 «indent»}
 '''
         )
@@ -62,7 +64,7 @@ class ProcessGenerator {
 	private def String generateConstructor(String name, String indent) {
 
     '''
-«indent»public «name»(java.util.Map<String,Object> memory) {
+«indent»public «name»(Map<String,Object> memory) {
 «indent»    this.memory = memory;
 «indent»}
 '''
@@ -208,7 +210,7 @@ class ProcessGenerator {
 
         '''
 «indent»@Override
-«indent»public void dumpStates(java.util.Map<String,String> out) {
+«indent»public void dumpStates(Map<String,String> out) {
 «indent»    out.put("«name»_state", state.name());
 «indent»}
 '''
@@ -218,10 +220,20 @@ class ProcessGenerator {
 
         '''
 «indent»@Override
-«indent»public void dumpTimers(java.util.Map<String,Long> out) {
+«indent»public void dumpTimers(Map<String,Long> out) {
 «indent»    out.put("«name»_time", timerBaseTime);
 «indent»}
 '''
     }
+    
+    private def String generateGetStateName(String indent) {
+
+	'''
+	«indent»@Override
+	«indent»public String getStateName() {
+	«indent»    return state.name();
+	«indent»}
+	'''
+	}
 
 }

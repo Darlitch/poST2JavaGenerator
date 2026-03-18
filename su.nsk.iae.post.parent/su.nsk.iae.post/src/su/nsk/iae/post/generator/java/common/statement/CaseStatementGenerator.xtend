@@ -143,7 +143,7 @@ class CaseStatementGenerator implements IStatementGenerator {
 	        } else if (caseType == "STRING" || caseType == "WSTRING") {
 	
 	            parts.add(
-	                '''java.util.Objects.equals(__caseVal, «valueExpr»)'''
+	                '''Objects.equals(__caseVal, «valueExpr»)'''
 	            )
 	
 	        } else {

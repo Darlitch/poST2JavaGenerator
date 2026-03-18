@@ -49,7 +49,7 @@ public class ProcessGenerator {
       _builder.newLineIfNotEmpty();
       _builder.newLine();
       _builder.append(nextIndent);
-      _builder.append("private final java.util.Map<String,Object> memory;");
+      _builder.append("private final Map<String,Object> memory;");
       _builder.newLineIfNotEmpty();
       _builder.newLine();
       String _generateConstructor = this.generateConstructor(name, nextIndent);
@@ -80,6 +80,10 @@ public class ProcessGenerator {
       _builder.append(_generateDumpTimers);
       _builder.newLineIfNotEmpty();
       _builder.newLine();
+      String _generateGetStateName = this.generateGetStateName(nextIndent);
+      _builder.append(_generateGetStateName);
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
       _builder.append(indent);
       _builder.append("}");
       _builder.newLineIfNotEmpty();
@@ -94,7 +98,7 @@ public class ProcessGenerator {
     _builder.append(indent);
     _builder.append("public ");
     _builder.append(name);
-    _builder.append("(java.util.Map<String,Object> memory) {");
+    _builder.append("(Map<String,Object> memory) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("    this.memory = memory;");
@@ -321,7 +325,7 @@ public class ProcessGenerator {
     _builder.append("@Override");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
-    _builder.append("public void dumpStates(java.util.Map<String,String> out) {");
+    _builder.append("public void dumpStates(Map<String,String> out) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("    out.put(\"");
@@ -340,12 +344,29 @@ public class ProcessGenerator {
     _builder.append("@Override");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
-    _builder.append("public void dumpTimers(java.util.Map<String,Long> out) {");
+    _builder.append("public void dumpTimers(Map<String,Long> out) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("    out.put(\"");
     _builder.append(name);
     _builder.append("_time\", timerBaseTime);");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+
+  private String generateGetStateName(final String indent) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append("@Override");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("public String getStateName() {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    return state.name();");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("}");

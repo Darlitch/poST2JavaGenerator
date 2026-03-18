@@ -166,7 +166,7 @@ public class CaseStatementGenerator implements IStatementGenerator {
               } else {
                 if ((Objects.equals(caseType, "STRING") || Objects.equals(caseType, "WSTRING"))) {
                   StringConcatenation _builder_3 = new StringConcatenation();
-                  _builder_3.append("java.util.Objects.equals(__caseVal, ");
+                  _builder_3.append("Objects.equals(__caseVal, ");
                   _builder_3.append(valueExpr);
                   _builder_3.append(")");
                   parts.add(_builder_3.toString());
