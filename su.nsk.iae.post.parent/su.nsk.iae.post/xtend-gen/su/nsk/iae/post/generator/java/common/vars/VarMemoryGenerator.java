@@ -11,7 +11,7 @@ import su.nsk.iae.post.poST.VarInitDeclaration;
 
 @SuppressWarnings("all")
 public class VarMemoryGenerator {
-  public static String generate(final VarInitDeclaration decl, final GenerationContext ctx) {
+  public static String generate(final VarInitDeclaration decl, final GenerationContext ctx, final String indent) {
     String _xblockexpression = null;
     {
       final StringBuilder builder = new StringBuilder();
@@ -30,6 +30,7 @@ public class VarMemoryGenerator {
           }
           final String init = _xifexpression;
           StringConcatenation _builder = new StringConcatenation();
+          _builder.append(indent);
           _builder.append("memory.put(\"");
           _builder.append(name);
           _builder.append("\", ");

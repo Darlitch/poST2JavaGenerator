@@ -25,7 +25,7 @@ import su.nsk.iae.post.poST.VarInitDeclaration;
 public class ArrayMemoryGenerator {
   private static final int MAX_ARRAY_SIZE = 1_000_000;
 
-  public static String generate(final VarInitDeclaration decl, final GenerationContext ctx) {
+  public static String generate(final VarInitDeclaration decl, final GenerationContext ctx, final String indent) {
     String _xblockexpression = null;
     {
       final StringBuilder builder = new StringBuilder();
@@ -37,6 +37,7 @@ public class ArrayMemoryGenerator {
         for (final SymbolicVariable v : _vars) {
           {
             StringConcatenation _builder = new StringConcatenation();
+            _builder.append(indent);
             _builder.append("memory.put(\"");
             String _name = v.getName();
             _builder.append(_name);
@@ -128,50 +129,51 @@ public class ArrayMemoryGenerator {
                 }
               }
               StringConcatenation _builder = new StringConcatenation();
+              _builder.append(indent);
               _builder.append("memory.put(");
-              _builder.newLine();
-              _builder.append("\t\t\t\t\t\t    ");
-              _builder.append("\"");
-              _builder.append(arrName, "\t\t\t\t\t\t    ");
+              _builder.newLineIfNotEmpty();
+              _builder.append(indent);
+              _builder.append("    \"");
+              _builder.append(arrName);
               _builder.append("\",");
               _builder.newLineIfNotEmpty();
-              _builder.append("\t\t\t\t\t\t    ");
-              _builder.append("new java.util.ArrayList<String>(");
-              _builder.newLine();
-              _builder.append("\t\t\t\t\t\t        ");
-              _builder.append("java.util.List.of(");
-              _builder.newLine();
+              _builder.append(indent);
+              _builder.append("    new java.util.ArrayList<String>(");
+              _builder.newLineIfNotEmpty();
+              _builder.append(indent);
+              _builder.append("        java.util.List.of(");
+              _builder.newLineIfNotEmpty();
               {
                 boolean _hasElements = false;
                 for(final Expression e_2 : values) {
                   if (!_hasElements) {
                     _hasElements = true;
                   } else {
-                    _builder.appendImmediate(", ", "\t\t\t\t\t\t            ");
+                    _builder.appendImmediate(", ", "");
                   }
-                  _builder.append("\t\t\t\t\t\t            ");
-                  _builder.append("\"");
+                  _builder.append(indent);
+                  _builder.append("                \"");
                   String _resolveAlias = ctx.resolveAlias(((PrimaryExpression) e_2).getVariable().getName());
-                  _builder.append(_resolveAlias, "\t\t\t\t\t\t            ");
+                  _builder.append(_resolveAlias);
                   _builder.append("\"");
                   _builder.newLineIfNotEmpty();
                 }
               }
-              _builder.append("\t\t\t\t\t\t        ");
-              _builder.append(")");
-              _builder.newLine();
-              _builder.append("\t\t\t\t\t\t    ");
-              _builder.append(")");
-              _builder.newLine();
-              _builder.append("\t\t\t\t\t\t");
+              _builder.append(indent);
+              _builder.append("        )");
+              _builder.newLineIfNotEmpty();
+              _builder.append(indent);
+              _builder.append("    )");
+              _builder.newLineIfNotEmpty();
+              _builder.append(indent);
               _builder.append(");");
-              _builder.newLine();
+              _builder.newLineIfNotEmpty();
               builder.append(_builder);
             } else {
-              ArrayMemoryGenerator.generateValueArray(builder, arrName, start, end, type, values, ctx);
+              ArrayMemoryGenerator.generateValueArray(builder, arrName, start, end, type, values, ctx, indent);
             }
           } else {
-            ArrayMemoryGenerator.generateDefaultArray(builder, arrName, start, end, type, ctx);
+            ArrayMemoryGenerator.generateDefaultArray(builder, arrName, start, end, type, ctx, indent);
           }
         }
       }
@@ -180,7 +182,7 @@ public class ArrayMemoryGenerator {
     return _xblockexpression;
   }
 
-  private static void generateValueArray(final StringBuilder builder, final String arrName, final int start, final int end, final String type, final List<Expression> values, final GenerationContext ctx) {
+  private static void generateValueArray(final StringBuilder builder, final String arrName, final int start, final int end, final String type, final List<Expression> values, final GenerationContext ctx, final String indent) {
     final ArrayList<String> cellNames = CollectionLiterals.<String>newArrayList();
     int idx = 0;
     IntegerRange _upTo = new IntegerRange(start, end);
@@ -198,6 +200,7 @@ public class ArrayMemoryGenerator {
         }
         final String init = _xifexpression;
         StringConcatenation _builder = new StringConcatenation();
+        _builder.append(indent);
         _builder.append("memory.put(\"");
         _builder.append(cell);
         _builder.append("\", ");
@@ -210,43 +213,48 @@ public class ArrayMemoryGenerator {
       }
     }
     StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
     _builder.append("memory.put(");
-    _builder.newLine();
-    _builder.append("\t            ");
-    _builder.append("\"");
-    _builder.append(arrName, "\t            ");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    \"");
+    _builder.append(arrName);
     _builder.append("\",");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t            ");
-    _builder.append("new java.util.ArrayList<String>(");
-    _builder.newLine();
-    _builder.append("\t                ");
-    _builder.append("java.util.List.of(");
+    _builder.append(indent);
+    _builder.append("    new java.util.ArrayList<String>(");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("        java.util.List.of(");
+    _builder.newLineIfNotEmpty();
     {
       boolean _hasElements = false;
       for(final String c : cellNames) {
         if (!_hasElements) {
           _hasElements = true;
         } else {
-          _builder.appendImmediate(", ", "\t                ");
+          _builder.appendImmediate(",\n", "");
         }
+        _builder.append(indent);
+        _builder.append("            \"");
+        _builder.append(c);
         _builder.append("\"");
-        _builder.append(c, "\t                ");
-        _builder.append("\"");
+        _builder.newLineIfNotEmpty();
       }
     }
-    _builder.append(")");
+    _builder.append(indent);
+    _builder.append("        )");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t            ");
-    _builder.append(")");
-    _builder.newLine();
-    _builder.append("\t        ");
+    _builder.append(indent);
+    _builder.append("    )");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
     _builder.append(");");
-    _builder.newLine();
+    _builder.newLineIfNotEmpty();
     builder.append(_builder);
   }
 
-  private static void generateDefaultArray(final StringBuilder builder, final String arrName, final int start, final int end, final String type, final GenerationContext ctx) {
+  private static void generateDefaultArray(final StringBuilder builder, final String arrName, final int start, final int end, final String type, final GenerationContext ctx, final String indent) {
     final ArrayList<String> cellNames = CollectionLiterals.<String>newArrayList();
     IntegerRange _upTo = new IntegerRange(start, end);
     for (final Integer i : _upTo) {
@@ -254,6 +262,7 @@ public class ArrayMemoryGenerator {
         final String cell = ((arrName + "_") + i);
         cellNames.add(cell);
         StringConcatenation _builder = new StringConcatenation();
+        _builder.append(indent);
         _builder.append("memory.put(\"");
         _builder.append(cell);
         _builder.append("\", ");
@@ -266,39 +275,40 @@ public class ArrayMemoryGenerator {
       }
     }
     StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
     _builder.append("memory.put(");
-    _builder.newLine();
-    _builder.append("\t            ");
-    _builder.append("\"");
-    _builder.append(arrName, "\t            ");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    \"");
+    _builder.append(arrName);
     _builder.append("\",");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t            ");
-    _builder.append("new java.util.ArrayList<String>(");
-    _builder.newLine();
-    _builder.append("\t                ");
-    _builder.append("java.util.List.of(");
+    _builder.append(indent);
+    _builder.append("    new java.util.ArrayList<String>(");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("        java.util.List.of(");
     {
       boolean _hasElements = false;
       for(final String c : cellNames) {
         if (!_hasElements) {
           _hasElements = true;
         } else {
-          _builder.appendImmediate(", ", "\t                ");
+          _builder.appendImmediate(", ", "");
         }
         _builder.append("\"");
-        _builder.append(c, "\t                ");
+        _builder.append(c);
         _builder.append("\"");
       }
     }
     _builder.append(")");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t            ");
-    _builder.append(")");
-    _builder.newLine();
-    _builder.append("\t        ");
+    _builder.append(indent);
+    _builder.append("    )");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
     _builder.append(");");
-    _builder.newLine();
+    _builder.newLineIfNotEmpty();
     builder.append(_builder);
   }
 }

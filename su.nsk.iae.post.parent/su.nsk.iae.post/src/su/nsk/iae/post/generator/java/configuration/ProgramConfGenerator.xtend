@@ -8,7 +8,7 @@ import su.nsk.iae.post.generator.java.common.vars.BindingGenerator
 
 class ProgramConfGenerator {
 
-    def String generate(ProgramConfiguration conf, GenerationContext ctx) {
+    def String generate(ProgramConfiguration conf, GenerationContext ctx, String indent) {
 
         val builder = new StringBuilder
 
@@ -18,7 +18,7 @@ class ProgramConfGenerator {
         // ===== ñîçäàíèå ïğîãğàììû =====
         builder.append(
 '''
-«programType» «instanceName» = new «programType»();
+«indent»«programType» «instanceName» = new «programType»(memory);
 '''
         )
 

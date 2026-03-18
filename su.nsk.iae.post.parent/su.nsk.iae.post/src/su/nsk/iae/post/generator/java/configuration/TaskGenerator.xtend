@@ -5,7 +5,7 @@ import static extension su.nsk.iae.post.generator.java.common.util.MemoryUtil.*
 
 class TaskGenerator {
 
-    def String generate(Task task) {
+    def String generate(Task task, String indent) {
 
         val init = task.init
 
@@ -17,7 +17,8 @@ class TaskGenerator {
         val intervalMs = parseTime(init.interval.time)
 
         '''
-long taskTimeMs = «intervalMs»;
+        
+«indent»long taskTimeMs = «intervalMs»;
 '''
     }
 

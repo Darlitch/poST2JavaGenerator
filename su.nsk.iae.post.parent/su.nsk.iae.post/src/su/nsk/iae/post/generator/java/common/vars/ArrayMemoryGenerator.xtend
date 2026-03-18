@@ -14,7 +14,7 @@ import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator
 class ArrayMemoryGenerator {
 	static val int MAX_ARRAY_SIZE = 1_000_000
 
-	def static String generate(VarInitDeclaration decl, GenerationContext ctx) {
+	def static String generate(VarInitDeclaration decl, GenerationContext ctx, String indent) {
 
 		val builder = new StringBuilder
 		val arrSpec = decl.arrSpec
@@ -24,7 +24,7 @@ class ArrayMemoryGenerator {
 
 			for (v : decl.varList.vars) {
 				builder.append(
-					'''memory.put("«v.name»", new java.util.ArrayList<String>());
+					'''«indent»memory.put("«v.name»", new java.util.ArrayList<String>());
 '''
 				)
 				ctx.registerArrayStart(v.name, 0)
@@ -121,16 +121,17 @@ class ArrayMemoryGenerator {
 					}
 
 					builder.append(
-						'''memory.put(
-						    "«arrName»",
-						    new java.util.ArrayList<String>(
-						        java.util.List.of(
-						            «FOR e : values SEPARATOR ", "»
-						                "«ctx.resolveAlias((e as PrimaryExpression).variable.name)»"
-						            «ENDFOR»
-						        )
-						    )
-						);
+'''
+«indent»memory.put(
+«indent»    "«arrName»",
+«indent»    new java.util.ArrayList<String>(
+«indent»        java.util.List.of(
+«FOR e : values SEPARATOR ", "»
+«indent»                "«ctx.resolveAlias((e as PrimaryExpression).variable.name)»"
+«ENDFOR»
+«indent»        )
+«indent»    )
+«indent»);
 '''
 					)
 				}
@@ -143,7 +144,8 @@ class ArrayMemoryGenerator {
 					    end,
 					    type,
 					    values,
-					    ctx
+					    ctx,
+					    indent
 					)
 				}
 			}
@@ -155,7 +157,8 @@ class ArrayMemoryGenerator {
 				    start,
 				    end,
 				    type,
-				    ctx
+				    ctx,
+				    indent
 				)
 			}
 		}
@@ -171,7 +174,8 @@ class ArrayMemoryGenerator {
 	    int end,
 	    String type,
 	    java.util.List<Expression> values,
-	    GenerationContext ctx
+	    GenerationContext ctx,
+	    String indent
 	) {
 	
 	    val cellNames = newArrayList
@@ -189,7 +193,7 @@ class ArrayMemoryGenerator {
 	                defaultValue(type)
 	
 	        builder.append(
-	            '''memory.put("«cell»", «init»);
+	            '''«indent»memory.put("«cell»", «init»);
 	'''
 	        )
 	
@@ -198,13 +202,18 @@ class ArrayMemoryGenerator {
 	    }
 	
 	    builder.append(
-	        '''memory.put(
-	            "«arrName»",
-	            new java.util.ArrayList<String>(
-	                java.util.List.of(«FOR c : cellNames SEPARATOR ", "»"«c»"«ENDFOR»)
-	            )
-	        );
-	'''
+'''
+«indent»memory.put(
+«indent»    "«arrName»",
+«indent»    new java.util.ArrayList<String>(
+«indent»        java.util.List.of(
+«FOR c : cellNames SEPARATOR ",\n"»
+«indent»            "«c»"
+«ENDFOR»
+«indent»        )
+«indent»    )
+«indent»);
+'''
 	    )
 	}
 	
@@ -214,7 +223,8 @@ class ArrayMemoryGenerator {
 	    int start,
 	    int end,
 	    String type,
-	    GenerationContext ctx
+	    GenerationContext ctx,
+	    String indent
 	) {
 	
 	    val cellNames = newArrayList
@@ -225,7 +235,7 @@ class ArrayMemoryGenerator {
 	        cellNames.add(cell)
 	
 	        builder.append(
-	            '''memory.put("«cell»", «defaultValue(type)»);
+	            '''«indent»memory.put("«cell»", «defaultValue(type)»);
 	'''
 	        )
 	
@@ -233,13 +243,14 @@ class ArrayMemoryGenerator {
 	    }
 	
 	    builder.append(
-	        '''memory.put(
-	            "«arrName»",
-	            new java.util.ArrayList<String>(
-	                java.util.List.of(«FOR c : cellNames SEPARATOR ", "»"«c»"«ENDFOR»)
-	            )
-	        );
-	'''
+'''
+«indent»memory.put(
+«indent»    "«arrName»",
+«indent»    new java.util.ArrayList<String>(
+«indent»        java.util.List.of(«FOR c : cellNames SEPARATOR ", "»"«c»"«ENDFOR»)
+«indent»    )
+«indent»);
+'''
 	    )
 	}
 }

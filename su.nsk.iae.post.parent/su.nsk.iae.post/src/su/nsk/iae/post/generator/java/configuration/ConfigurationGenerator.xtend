@@ -5,12 +5,15 @@ import su.nsk.iae.post.poST.Resource
 import su.nsk.iae.post.poST.ProgramConfiguration
 
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
+import su.nsk.iae.post.generator.java.common.vars.GlobalVarDeclarationGenerator
+import su.nsk.iae.post.poST.GlobalVarDeclaration
 
 class ConfigurationGenerator {
 
     val ResourceGenerator resourceGen = new ResourceGenerator
 
     def String generate(Configuration conf, GenerationContext ctx) {
+    	val IND = "        "
 
         val builder = new StringBuilder
         val name = conf.name
@@ -20,18 +23,36 @@ class ConfigurationGenerator {
 
         builder.append(
 '''
+import java.util.Map;
+import java.util.HashMap;
+
 public class «name»Simulation {
 
     public static void main(String[] args) throws Exception {
 
 '''
         )
+        
+        builder.append(
+'''
+«IND»Map<String,Object> memory = new HashMap<>();
 
+«IND»memory.put("_global_time", 0L);
+'''
+		)
+	
         // ===== ðåñóðñû =====
+        for (g : conf.eAllContents.toIterable.filter(GlobalVarDeclaration)) {
+		    if (g.eContainer instanceof Configuration) {
+		        builder.append(
+		            GlobalVarDeclarationGenerator.generate(g, ctx, IND)
+		        )
+		    }
+		}
         for (Resource r : conf.resources) {
 
             builder.append(
-                resourceGen.generate(r, ctx)
+                resourceGen.generate(r, ctx, IND)
             )
 
             // îïðåäåëÿåì èìÿ program instance
@@ -45,12 +66,13 @@ public class «name»Simulation {
 
         builder.append(
 '''
-        while (true) {
 
-            «programInstance».runIter(taskTimeMs);
+«IND»while (true) {
 
-            Thread.sleep(taskTimeMs);
-        }
+«IND»    «programInstance».runIter(taskTimeMs);
+
+«IND»    Thread.sleep(taskTimeMs);
+«IND»}
     }
 
 }

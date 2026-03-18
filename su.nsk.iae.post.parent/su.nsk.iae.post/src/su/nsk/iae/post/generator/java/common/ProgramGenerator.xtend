@@ -32,7 +32,7 @@ import java.util.Objects;
 
 public class «name» {
 
-«INDENT»private final Map<String,Object> memory = new HashMap<>();
+«INDENT»private final Map<String,Object> memory;
 «INDENT»private final List<IProcess> processes = new ArrayList<>();
 «INDENT»private final Set<String> inputNames = new HashSet<>();
 «INDENT»private final Set<String> outputNames = new HashSet<>();
@@ -165,8 +165,8 @@ public class «name» {
         builder.append(
 '''
 
-«INDENT»public «program.name»() {
-«INDENT»    memory.put("_global_time", 0L);
+«INDENT»public «program.name»(Map<String,Object> memory) {
+«INDENT»    this.memory = memory;
 '''
         )
 
@@ -174,23 +174,23 @@ public class «name» {
 
         for (v : program.progInVars)
             for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx))
+                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
 
         for (v : program.progOutVars)
             for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx))
+                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
 
         for (v : program.progVars)
             for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx))
+                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
 
         for (v : program.progInOutVars)
             for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx))
+                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
 
         for (v : program.progTempVars)
             for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx))
+                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
 
         // ===== registry =====
 

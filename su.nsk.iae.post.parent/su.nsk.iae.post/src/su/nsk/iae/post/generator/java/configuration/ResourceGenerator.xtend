@@ -12,13 +12,15 @@ class ResourceGenerator {
     val TaskGenerator taskGen = new TaskGenerator
     val ProgramConfGenerator programGen = new ProgramConfGenerator
 
-    def String generate(Resource resource, GenerationContext ctx) {
+    def String generate(Resource resource, GenerationContext ctx, String indent) {
 
         val builder = new StringBuilder
         
         // ===== GLOBAL VARS =====
 		for (g : resource.resGlobVars) {
-	        GlobalVarDeclarationGenerator.generate(g, ctx)
+	        builder.append(
+		        GlobalVarDeclarationGenerator.generate(g, ctx, indent)
+		    )
 		}
 
         val single = resource.resStatement
@@ -26,14 +28,14 @@ class ResourceGenerator {
         // ===== TASK =====
         for (Task t : single.tasks) {
             builder.append(
-                taskGen.generate(t)
+                taskGen.generate(t, indent)
             )
         }
 
         // ===== PROGRAM CONFIG =====
         for (ProgramConfiguration pc : single.programConfs) {
             builder.append(
-                programGen.generate(pc, ctx)
+                programGen.generate(pc, ctx, indent)
             )
         }
 

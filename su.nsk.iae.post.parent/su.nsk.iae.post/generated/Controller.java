@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class Controller {
 
-    private final Map<String,Object> memory = new HashMap<>();
+    private final Map<String,Object> memory;
     private final List<IProcess> processes = new ArrayList<>();
     private final Set<String> inputNames = new HashSet<>();
     private final Set<String> outputNames = new HashSet<>();
@@ -18,8 +18,8 @@ public class Controller {
     private final Light light;
     private final Control control;
 
-    public Controller() {
-        memory.put("_global_time", 0L);
+    public Controller(Map<String,Object> memory) {
+        this.memory = memory;
         globalNames.add("lightsArray1");
         globalNames.add("lightsArray2");
         globalNames.add("red2");

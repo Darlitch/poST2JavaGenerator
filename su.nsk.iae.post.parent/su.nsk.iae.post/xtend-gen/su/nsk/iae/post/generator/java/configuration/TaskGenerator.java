@@ -8,7 +8,7 @@ import su.nsk.iae.post.poST.TaskInitialization;
 
 @SuppressWarnings("all")
 public class TaskGenerator {
-  public String generate(final Task task) {
+  public String generate(final Task task, final String indent) {
     String _xblockexpression = null;
     {
       final TaskInitialization init = task.getInit();
@@ -20,6 +20,8 @@ public class TaskGenerator {
       }
       final String intervalMs = MemoryUtil.parseTime(init.getInterval().getTime());
       StringConcatenation _builder = new StringConcatenation();
+      _builder.newLine();
+      _builder.append(indent);
       _builder.append("long taskTimeMs = ");
       _builder.append(intervalMs);
       _builder.append(";");

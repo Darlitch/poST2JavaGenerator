@@ -55,7 +55,7 @@ public class ProgramGenerator {
       _builder.newLineIfNotEmpty();
       _builder.newLine();
       _builder.append(ProgramGenerator.INDENT);
-      _builder.append("private final Map<String,Object> memory = new HashMap<>();");
+      _builder.append("private final Map<String,Object> memory;");
       _builder.newLineIfNotEmpty();
       _builder.append(ProgramGenerator.INDENT);
       _builder.append("private final List<IProcess> processes = new ArrayList<>();");
@@ -277,45 +277,45 @@ public class ProgramGenerator {
       _builder.append("public ");
       String _name = program.getName();
       _builder.append(_name);
-      _builder.append("() {");
+      _builder.append("(Map<String,Object> memory) {");
       _builder.newLineIfNotEmpty();
       _builder.append(ProgramGenerator.INDENT);
-      _builder.append("    memory.put(\"_global_time\", 0L);");
+      _builder.append("    this.memory = memory;");
       _builder.newLineIfNotEmpty();
       builder.append(_builder);
       EList<InputVarDeclaration> _progInVars = program.getProgInVars();
       for (final InputVarDeclaration v : _progInVars) {
         EList<VarInitDeclaration> _vars = v.getVars();
         for (final VarInitDeclaration decl : _vars) {
-          builder.append(VarMemoryGenerator.generate(decl, ctx));
+          builder.append(VarMemoryGenerator.generate(decl, ctx, ProgramGenerator.INDENT));
         }
       }
       EList<OutputVarDeclaration> _progOutVars = program.getProgOutVars();
       for (final OutputVarDeclaration v_1 : _progOutVars) {
         EList<VarInitDeclaration> _vars_1 = v_1.getVars();
         for (final VarInitDeclaration decl_1 : _vars_1) {
-          builder.append(VarMemoryGenerator.generate(decl_1, ctx));
+          builder.append(VarMemoryGenerator.generate(decl_1, ctx, ProgramGenerator.INDENT));
         }
       }
       EList<VarDeclaration> _progVars = program.getProgVars();
       for (final VarDeclaration v_2 : _progVars) {
         EList<VarInitDeclaration> _vars_2 = v_2.getVars();
         for (final VarInitDeclaration decl_2 : _vars_2) {
-          builder.append(VarMemoryGenerator.generate(decl_2, ctx));
+          builder.append(VarMemoryGenerator.generate(decl_2, ctx, ProgramGenerator.INDENT));
         }
       }
       EList<InputOutputVarDeclaration> _progInOutVars = program.getProgInOutVars();
       for (final InputOutputVarDeclaration v_3 : _progInOutVars) {
         EList<VarInitDeclaration> _vars_3 = v_3.getVars();
         for (final VarInitDeclaration decl_3 : _vars_3) {
-          builder.append(VarMemoryGenerator.generate(decl_3, ctx));
+          builder.append(VarMemoryGenerator.generate(decl_3, ctx, ProgramGenerator.INDENT));
         }
       }
       EList<TempVarDeclaration> _progTempVars = program.getProgTempVars();
       for (final TempVarDeclaration v_4 : _progTempVars) {
         EList<VarInitDeclaration> _vars_4 = v_4.getVars();
         for (final VarInitDeclaration decl_4 : _vars_4) {
-          builder.append(VarMemoryGenerator.generate(decl_4, ctx));
+          builder.append(VarMemoryGenerator.generate(decl_4, ctx, ProgramGenerator.INDENT));
         }
       }
       Set<String> _inputVars = ctx.getInputVars();

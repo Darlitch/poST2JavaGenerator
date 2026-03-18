@@ -8,7 +8,7 @@ import static extension su.nsk.iae.post.generator.java.common.util.TypeUtil.*
 class VarMemoryGenerator {
 
 	// генерирует memory.put + регистрирует типы
-	def static String generate(VarInitDeclaration decl, GenerationContext ctx) {
+	def static String generate(VarInitDeclaration decl, GenerationContext ctx, String indent) {
 
 		val builder = new StringBuilder
 
@@ -25,7 +25,7 @@ class VarMemoryGenerator {
 					defaultValue(type)
 
 			builder.append(
-				'''memory.put("«name»", «init»);
+				'''«indent»memory.put("«name»", «init»);
 '''
 			)
 
