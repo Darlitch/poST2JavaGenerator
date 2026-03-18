@@ -318,6 +318,32 @@ public class ProgramGenerator {
           builder.append(VarMemoryGenerator.generate(decl_4, ctx, ProgramGenerator.INDENT));
         }
       }
+      EList<su.nsk.iae.post.poST.Process> _processes = program.getProcesses();
+      for (final su.nsk.iae.post.poST.Process p : _processes) {
+        {
+          EList<VarDeclaration> _procVars = p.getProcVars();
+          for (final VarDeclaration v_5 : _procVars) {
+            EList<VarInitDeclaration> _vars_5 = v_5.getVars();
+            for (final VarInitDeclaration decl_5 : _vars_5) {
+              builder.append(VarMemoryGenerator.generate(decl_5, ctx, (ProgramGenerator.INDENT + "    ")));
+            }
+          }
+          EList<InputVarDeclaration> _procInVars = p.getProcInVars();
+          for (final InputVarDeclaration v_6 : _procInVars) {
+            EList<VarInitDeclaration> _vars_6 = v_6.getVars();
+            for (final VarInitDeclaration decl_6 : _vars_6) {
+              builder.append(VarMemoryGenerator.generate(decl_6, ctx, (ProgramGenerator.INDENT + "    ")));
+            }
+          }
+          EList<OutputVarDeclaration> _procOutVars = p.getProcOutVars();
+          for (final OutputVarDeclaration v_7 : _procOutVars) {
+            EList<VarInitDeclaration> _vars_7 = v_7.getVars();
+            for (final VarInitDeclaration decl_7 : _vars_7) {
+              builder.append(VarMemoryGenerator.generate(decl_7, ctx, (ProgramGenerator.INDENT + "    ")));
+            }
+          }
+        }
+      }
       Set<String> _inputVars = ctx.getInputVars();
       for (final String n : _inputVars) {
         StringConcatenation _builder_1 = new StringConcatenation();
@@ -358,16 +384,16 @@ public class ProgramGenerator {
         _builder_4.newLineIfNotEmpty();
         builder.append(_builder_4);
       }
-      EList<su.nsk.iae.post.poST.Process> _processes = program.getProcesses();
-      for (final su.nsk.iae.post.poST.Process p : _processes) {
+      EList<su.nsk.iae.post.poST.Process> _processes_1 = program.getProcesses();
+      for (final su.nsk.iae.post.poST.Process p_1 : _processes_1) {
         {
-          final String field = StringExtensions.toFirstLower(p.getName());
+          final String field = StringExtensions.toFirstLower(p_1.getName());
           StringConcatenation _builder_5 = new StringConcatenation();
           _builder_5.append(ProgramGenerator.INDENT);
           _builder_5.append("    ");
           _builder_5.append(field);
           _builder_5.append(" = new ");
-          String _name_1 = p.getName();
+          String _name_1 = p_1.getName();
           _builder_5.append(_name_1);
           _builder_5.append("(memory);");
           _builder_5.newLineIfNotEmpty();

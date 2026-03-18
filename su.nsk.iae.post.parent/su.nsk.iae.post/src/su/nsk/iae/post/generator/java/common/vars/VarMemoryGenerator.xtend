@@ -12,17 +12,25 @@ class VarMemoryGenerator {
 
 		val builder = new StringBuilder
 
-		val type = decl.spec.type
+		val type =
+		    if (decl.spec !== null)
+		        decl.spec.type
+		    else if (decl.arrSpec !== null)
+		        decl.arrSpec.init.type
+		    else
+		        null
 
 		for (v : decl.varList.vars) {
 
 			val name = v.name
 
 			val init =
-				if (decl.spec.value !== null)
-					generate(decl.spec.value, ctx)
-				else
-					defaultValue(type)
+			    if (decl.spec !== null && decl.spec.value !== null)
+			        generate(decl.spec.value, ctx)
+			    else if (type !== null)
+			        defaultValue(type)
+			    else
+			        "null"
 
 			builder.append(
 				'''«indent»memory.put("«name»", «init»);

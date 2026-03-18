@@ -20,6 +20,12 @@ public class Controller {
 
     public Controller(Map<String,Object> memory) {
         this.memory = memory;
+        memory.put("b_light", false);
+        memory.put("prev_light", 0);
+        memory.put("alight", 0);
+        memory.put("pressed", false);
+        memory.put("control_sensor", false);
+        memory.put("rLightsArray", false);
         globalNames.add("lightsArray1");
         globalNames.add("lightsArray2");
         globalNames.add("red2");

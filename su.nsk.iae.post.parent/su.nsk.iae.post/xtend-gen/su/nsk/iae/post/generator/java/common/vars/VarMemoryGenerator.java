@@ -5,7 +5,8 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.util.ExpressionGenerator;
 import su.nsk.iae.post.generator.java.common.util.TypeUtil;
-import su.nsk.iae.post.poST.Expression;
+import su.nsk.iae.post.poST.ArraySpecificationInit;
+import su.nsk.iae.post.poST.SimpleSpecificationInit;
 import su.nsk.iae.post.poST.SymbolicVariable;
 import su.nsk.iae.post.poST.VarInitDeclaration;
 
@@ -15,20 +16,40 @@ public class VarMemoryGenerator {
     String _xblockexpression = null;
     {
       final StringBuilder builder = new StringBuilder();
-      final String type = decl.getSpec().getType();
+      String _xifexpression = null;
+      SimpleSpecificationInit _spec = decl.getSpec();
+      boolean _tripleNotEquals = (_spec != null);
+      if (_tripleNotEquals) {
+        _xifexpression = decl.getSpec().getType();
+      } else {
+        String _xifexpression_1 = null;
+        ArraySpecificationInit _arrSpec = decl.getArrSpec();
+        boolean _tripleNotEquals_1 = (_arrSpec != null);
+        if (_tripleNotEquals_1) {
+          _xifexpression_1 = decl.getArrSpec().getInit().getType();
+        } else {
+          _xifexpression_1 = null;
+        }
+        _xifexpression = _xifexpression_1;
+      }
+      final String type = _xifexpression;
       EList<SymbolicVariable> _vars = decl.getVarList().getVars();
       for (final SymbolicVariable v : _vars) {
         {
           final String name = v.getName();
-          String _xifexpression = null;
-          Expression _value = decl.getSpec().getValue();
-          boolean _tripleNotEquals = (_value != null);
-          if (_tripleNotEquals) {
-            _xifexpression = ExpressionGenerator.generate(decl.getSpec().getValue(), ctx);
+          String _xifexpression_2 = null;
+          if (((decl.getSpec() != null) && (decl.getSpec().getValue() != null))) {
+            _xifexpression_2 = ExpressionGenerator.generate(decl.getSpec().getValue(), ctx);
           } else {
-            _xifexpression = TypeUtil.defaultValue(type);
+            String _xifexpression_3 = null;
+            if ((type != null)) {
+              _xifexpression_3 = TypeUtil.defaultValue(type);
+            } else {
+              _xifexpression_3 = "null";
+            }
+            _xifexpression_2 = _xifexpression_3;
           }
-          final String init = _xifexpression;
+          final String init = _xifexpression_2;
           StringConcatenation _builder = new StringConcatenation();
           _builder.append(indent);
           _builder.append("memory.put(\"");
