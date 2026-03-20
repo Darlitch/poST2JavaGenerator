@@ -39,6 +39,7 @@ public class ProgramConfGenerator {
             final TemplateProcessConfElement proc = ((TemplateProcessConfElement)arg);
             final String procName = proc.getName();
             final String procType = proc.getProcess().getName();
+            ctx.registerProcess(procName, procName, procType);
             StringConcatenation _builder_1 = new StringConcatenation();
             _builder_1.newLine();
             _builder_1.append(indent);
@@ -77,6 +78,18 @@ public class ProgramConfGenerator {
             _builder_2.append(");");
             _builder_2.newLineIfNotEmpty();
             builder.append(_builder_2);
+            TemplateProcessElements _args_2 = proc.getArgs();
+            boolean _tripleNotEquals_2 = (_args_2 != null);
+            if (_tripleNotEquals_2) {
+              EList<TemplateProcessAttachVariableConfElement> _elements_2 = proc.getArgs().getElements();
+              for (final TemplateProcessAttachVariableConfElement p_1 : _elements_2) {
+                if (((p_1 instanceof AttachVariableConfElement) || 
+                  (p_1 instanceof TemplateProcessAttachVariableConfElement))) {
+                  builder.append(
+                    BindingGenerator.generateProcessBinding(p_1, ctx, procName, indent));
+                }
+              }
+            }
             boolean _isActive = proc.isActive();
             if (_isActive) {
               StringConcatenation _builder_3 = new StringConcatenation();

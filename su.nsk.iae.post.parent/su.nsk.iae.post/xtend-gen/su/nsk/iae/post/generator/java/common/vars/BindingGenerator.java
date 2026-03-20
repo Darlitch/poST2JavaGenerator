@@ -127,90 +127,102 @@ public class BindingGenerator {
   }
 
   public static String generateAlias(final AttachVariableConfElement bind, final GenerationContext ctx, final String procName, final String indent) {
-    final String left = bind.getProgramVar().getName();
     SymbolicVariable _attVar = bind.getAttVar();
-    boolean _tripleNotEquals = (_attVar != null);
-    if (_tripleNotEquals) {
-      final String right = bind.getAttVar().getName();
-      boolean _hasProcess = ctx.hasProcess(right);
-      if (_hasProcess) {
-        final String field = ctx.resolveProcess(right);
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append(indent);
-        _builder.append(procName);
-        _builder.append(".setProcess(\"");
-        _builder.append(left);
-        _builder.append("\", ");
-        _builder.append(field);
-        _builder.append(");");
-        _builder.newLineIfNotEmpty();
-        return _builder.toString();
-      }
-      StringConcatenation _builder_1 = new StringConcatenation();
-      _builder_1.append(indent);
-      _builder_1.append(procName);
-      _builder_1.append("_aliases.put(\"");
-      _builder_1.append(left);
-      _builder_1.append("\", \"");
-      _builder_1.append(right);
-      _builder_1.append("\");");
-      _builder_1.newLineIfNotEmpty();
-      return _builder_1.toString();
+    boolean _tripleEquals = (_attVar == null);
+    if (_tripleEquals) {
+      return "";
     }
-    return "";
+    final String left = bind.getProgramVar().getName();
+    final String right = bind.getAttVar().getName();
+    boolean _hasProcess = ctx.hasProcess(right);
+    if (_hasProcess) {
+      return "";
+    }
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append(procName);
+    _builder.append("_aliases.put(\"");
+    _builder.append(left);
+    _builder.append("\", \"");
+    _builder.append(right);
+    _builder.append("\");");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 
   public static String generateAlias(final TemplateProcessAttachVariableConfElement bind, final GenerationContext ctx, final String procName, final String indent) {
-    final String left = bind.getProgramVar().getName();
     Variable _attVar = bind.getAttVar();
-    boolean _tripleNotEquals = (_attVar != null);
-    if (_tripleNotEquals) {
-      final String right = bind.getAttVar().getName();
-      boolean _hasProcess = ctx.hasProcess(right);
-      if (_hasProcess) {
-        final String field = ctx.resolveProcess(right);
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append(indent);
-        _builder.append(procName);
-        _builder.append(".setProcess(\"");
-        _builder.append(left);
-        _builder.append("\", ");
-        _builder.append(field);
-        _builder.append(");");
-        _builder.newLineIfNotEmpty();
-        return _builder.toString();
-      }
-      StringConcatenation _builder_1 = new StringConcatenation();
-      _builder_1.append(indent);
-      _builder_1.append(procName);
-      _builder_1.append("_aliases.put(\"");
-      _builder_1.append(left);
-      _builder_1.append("\", \"");
-      _builder_1.append(right);
-      _builder_1.append("\");");
-      _builder_1.newLineIfNotEmpty();
-      return _builder_1.toString();
+    boolean _tripleEquals = (_attVar == null);
+    if (_tripleEquals) {
+      return "";
     }
-    return "";
+    final String left = bind.getProgramVar().getName();
+    final String right = bind.getAttVar().getName();
+    boolean _hasProcess = ctx.hasProcess(right);
+    if (_hasProcess) {
+      return "";
+    }
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append(procName);
+    _builder.append("_aliases.put(\"");
+    _builder.append(left);
+    _builder.append("\", \"");
+    _builder.append(right);
+    _builder.append("\");");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 
-  public static String generateAliasTemplate(final TemplateProcessAttachVariableConfElement bind, final String indent, final String aliasMapName) {
-    final String left = bind.getProgramVar().getName();
-    Variable _attVar = bind.getAttVar();
-    boolean _tripleNotEquals = (_attVar != null);
-    if (_tripleNotEquals) {
-      final String right = bind.getAttVar().getName();
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append(indent);
-      _builder.append(aliasMapName);
-      _builder.append(".put(\"");
-      _builder.append(left);
-      _builder.append("\", \"");
-      _builder.append(right);
-      _builder.append("\");");
-      _builder.newLineIfNotEmpty();
-      return _builder.toString();
+  public static String generateProcessBinding(final AttachVariableConfElement bind, final GenerationContext ctx, final String procName, final String indent) {
+    SymbolicVariable _attVar = bind.getAttVar();
+    boolean _tripleEquals = (_attVar == null);
+    if (_tripleEquals) {
+      return "";
     }
-    return "";
+    final String left = bind.getProgramVar().getName();
+    final String right = bind.getAttVar().getName();
+    boolean _hasProcess = ctx.hasProcess(right);
+    boolean _not = (!_hasProcess);
+    if (_not) {
+      return "";
+    }
+    final String field = ctx.resolveProcess(right);
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append(procName);
+    _builder.append(".setProcess(\"");
+    _builder.append(left);
+    _builder.append("\", ");
+    _builder.append(field);
+    _builder.append(");");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+
+  public static String generateProcessBinding(final TemplateProcessAttachVariableConfElement bind, final GenerationContext ctx, final String procName, final String indent) {
+    Variable _attVar = bind.getAttVar();
+    boolean _tripleEquals = (_attVar == null);
+    if (_tripleEquals) {
+      return "";
+    }
+    final String left = bind.getProgramVar().getName();
+    final String right = bind.getAttVar().getName();
+    boolean _hasProcess = ctx.hasProcess(right);
+    boolean _not = (!_hasProcess);
+    if (_not) {
+      return "";
+    }
+    final String field = ctx.resolveProcess(right);
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append(procName);
+    _builder.append(".setProcess(\"");
+    _builder.append(left);
+    _builder.append("\", ");
+    _builder.append(field);
+    _builder.append(");");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 }

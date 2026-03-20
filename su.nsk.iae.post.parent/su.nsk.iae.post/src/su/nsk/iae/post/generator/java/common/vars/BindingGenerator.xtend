@@ -128,29 +128,21 @@ class BindingGenerator {
     def static String generateAlias(
 	    AttachVariableConfElement bind,
 	    GenerationContext ctx,
-		String procName,
+	    String procName,
 	    String indent
 	) {
-		val left = bind.programVar.name
-		
-		if (bind.attVar !== null) {
-		
-		    val right = bind.attVar.name
-		
-		    if (ctx.hasProcess(right)) {
-		
-		        val field = ctx.resolveProcess(right)
-		
-		        return '''
-«indent»«procName».setProcess("«left»", «field»);
-		'''
-		    }
-		
-		    return '''
+	    if (bind.attVar === null)
+	        return ""
+	
+	    val left = bind.programVar.name
+	    val right = bind.attVar.name
+	
+	    if (ctx.hasProcess(right))
+	        return ""
+	
+	    return '''
 «indent»«procName»_aliases.put("«left»", "«right»");
-		'''
-		}
-		return ""
+	'''
 	}
 	
 	def static String generateAlias(
@@ -159,46 +151,61 @@ class BindingGenerator {
 		String procName,
 	    String indent
 	) {
+	    if (bind.attVar === null)
+	        return ""
 	
 	    val left = bind.programVar.name
-		
-		if (bind.attVar !== null) {
-		
-		    val right = bind.attVar.name
-		
-		    if (ctx.hasProcess(right)) {
-		
-		        val field = ctx.resolveProcess(right)
-		
-		        return '''
-«indent»«procName».setProcess("«left»", «field»);
-		'''
-		    }
-		
-		    return '''
+	    val right = bind.attVar.name
+	
+	    if (ctx.hasProcess(right))
+	        return ""
+	
+	    return '''
 «indent»«procName»_aliases.put("«left»", "«right»");
-		'''
-		}
-		return ""
+	'''
 	}
 	
-	def static String generateAliasTemplate(
-	    TemplateProcessAttachVariableConfElement bind,
-	    String indent,
-	    String aliasMapName
+	def static String generateProcessBinding(
+	    AttachVariableConfElement bind,
+	    GenerationContext ctx,
+	    String procName,
+	    String indent
 	) {
+	    if (bind.attVar === null)
+	        return ""
 	
 	    val left = bind.programVar.name
+	    val right = bind.attVar.name
 	
-	    if (bind.attVar !== null) {
+	    if (!ctx.hasProcess(right))
+	        return ""
 	
-	        val right = bind.attVar.name
+	    val field = ctx.resolveProcess(right)
 	
-	        return '''
-	«indent»«aliasMapName».put("«left»", "«right»");
+	    return '''
+«indent»«procName».setProcess("«left»", «field»);
 	'''
-	    }
+	}
 	
-	    return ""
+	def static String generateProcessBinding(
+	    TemplateProcessAttachVariableConfElement bind,
+	    GenerationContext ctx,
+	    String procName,
+	    String indent
+	) {
+	    if (bind.attVar === null)
+	        return ""
+	
+	    val left = bind.programVar.name
+	    val right = bind.attVar.name
+	
+	    if (!ctx.hasProcess(right))
+	        return ""
+	
+	    val field = ctx.resolveProcess(right)
+	
+	    return '''
+«indent»«procName».setProcess("«left»", «field»);
+	'''
 	}
 }

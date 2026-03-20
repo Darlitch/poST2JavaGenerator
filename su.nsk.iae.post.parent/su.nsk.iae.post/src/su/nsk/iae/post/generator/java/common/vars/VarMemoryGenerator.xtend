@@ -23,21 +23,27 @@ class VarMemoryGenerator {
 		for (v : decl.varList.vars) {
 
 			val name = v.name
+			
+			val resolved = ctx.resolveAlias(name)
 
-			val init =
-			    if (decl.spec !== null && decl.spec.value !== null)
-			        generate(decl.spec.value, ctx)
-			    else if (type !== null)
-			        defaultValue(type)
-			    else
-			        "null"
+			// ❗ ЕСЛИ ЭТО ALIAS НА МАССИВ — НЕ ГЕНЕРИМ memory.put
+			if (!ctx.hasArrayStart(resolved) && !ctx.hasProcess(resolved)) {
+			    val init =
+				    if (decl.spec !== null && decl.spec.value !== null)
+				        generate(decl.spec.value, ctx)
+				    else if (type !== null)
+				        defaultValue(type)
+				    else
+				        "null"
+	
+				builder.append(
+					'''«indent»memory.put("«name»", «init»);
+	'''
+				)
+	
+				ctx.registerVar(name, type)
+			}
 
-			builder.append(
-				'''«indent»memory.put("«name»", «init»);
-'''
-			)
-
-			ctx.registerVar(name, type)
 		}
 
 		builder.toString

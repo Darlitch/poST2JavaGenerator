@@ -37,29 +37,32 @@ public class VarMemoryGenerator {
       for (final SymbolicVariable v : _vars) {
         {
           final String name = v.getName();
-          String _xifexpression_2 = null;
-          if (((decl.getSpec() != null) && (decl.getSpec().getValue() != null))) {
-            _xifexpression_2 = ExpressionGenerator.generate(decl.getSpec().getValue(), ctx);
-          } else {
-            String _xifexpression_3 = null;
-            if ((type != null)) {
-              _xifexpression_3 = TypeUtil.defaultValue(type);
+          final String resolved = ctx.resolveAlias(name);
+          if (((!ctx.hasArrayStart(resolved)) && (!ctx.hasProcess(resolved)))) {
+            String _xifexpression_2 = null;
+            if (((decl.getSpec() != null) && (decl.getSpec().getValue() != null))) {
+              _xifexpression_2 = ExpressionGenerator.generate(decl.getSpec().getValue(), ctx);
             } else {
-              _xifexpression_3 = "null";
+              String _xifexpression_3 = null;
+              if ((type != null)) {
+                _xifexpression_3 = TypeUtil.defaultValue(type);
+              } else {
+                _xifexpression_3 = "null";
+              }
+              _xifexpression_2 = _xifexpression_3;
             }
-            _xifexpression_2 = _xifexpression_3;
+            final String init = _xifexpression_2;
+            StringConcatenation _builder = new StringConcatenation();
+            _builder.append(indent);
+            _builder.append("memory.put(\"");
+            _builder.append(name);
+            _builder.append("\", ");
+            _builder.append(init);
+            _builder.append(");");
+            _builder.newLineIfNotEmpty();
+            builder.append(_builder);
+            ctx.registerVar(name, type);
           }
-          final String init = _xifexpression_2;
-          StringConcatenation _builder = new StringConcatenation();
-          _builder.append(indent);
-          _builder.append("memory.put(\"");
-          _builder.append(name);
-          _builder.append("\", ");
-          _builder.append(init);
-          _builder.append(");");
-          _builder.newLineIfNotEmpty();
-          builder.append(_builder);
-          ctx.registerVar(name, type);
         }
       }
       _xblockexpression = builder.toString();

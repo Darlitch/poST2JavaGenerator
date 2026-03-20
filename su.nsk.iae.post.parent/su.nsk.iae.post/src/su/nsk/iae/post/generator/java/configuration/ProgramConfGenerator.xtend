@@ -36,6 +36,8 @@ class ProgramConfGenerator {
 	
 	                val procName = proc.name                 // control1
 	                val procType = proc.process.name         // Control
+	                
+	                ctx.registerProcess(procName, procName, procType)
 	
 	                // ===== alias map =====
 	                builder.append(
@@ -53,12 +55,7 @@ class ProgramConfGenerator {
     							p instanceof TemplateProcessAttachVariableConfElement) {
 	
 	                            builder.append(
-	                                BindingGenerator.generateAlias(
-	                                    p,
-	                                    ctx,
-	                                    procName,
-	                                    indent
-	                                )
+	                                BindingGenerator.generateAlias(p, ctx, procName, indent)
 	                            )
 	                        }
 	                    }
@@ -71,6 +68,19 @@ class ProgramConfGenerator {
 «indent»«instanceName».registerProcess(«procName»);
 '''
 	                )
+	                
+	                if (proc.args !== null) {
+	                    for (p : proc.args.elements) {
+	
+	                        if (p instanceof AttachVariableConfElement||
+    							p instanceof TemplateProcessAttachVariableConfElement) {
+	
+	                            builder.append(
+	                                BindingGenerator.generateProcessBinding(p, ctx, procName, indent)
+	                            )
+	                        }
+	                    }
+	                }
 	                if (proc.active) {
 					    builder.append(
 '''

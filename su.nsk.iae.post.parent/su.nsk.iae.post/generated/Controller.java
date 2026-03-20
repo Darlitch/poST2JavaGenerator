@@ -23,7 +23,6 @@ public class Controller {
         memory.put("alight", 0);
         memory.put("pressed", false);
         memory.put("control_sensor", false);
-        memory.put("rLightsArray", false);
         globalNames.add("lightsArray1");
         globalNames.add("lightsArray2");
         globalNames.add("red2");
@@ -308,7 +307,7 @@ public class Controller {
                         write("pressed", false);
                     }
                     else if (((((isInactive(processRefs.get("pRed"))) && (isActive(processRefs.get("pGreen"))))) || (((isInactive(processRefs.get("pGreen"))) && (isActive(processRefs.get("pRed"))))))) {
-                        int __start = ((Number)(0)).intValue();
+                        int __start = ((Number)(1)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
 
@@ -333,7 +332,7 @@ public class Controller {
                         setState(State.delay10);
                     }
                     else if ((((double)(((Integer)read("prev_light")))) == ((double)(0)))) {
-                        int __start = ((Number)(0)).intValue();
+                        int __start = ((Number)(1)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
 
@@ -355,7 +354,7 @@ public class Controller {
                         setState(State.delay30);
                     }
                     else if ((((double)(((Integer)read("prev_light")))) == ((double)(2)))) {
-                        int __start = ((Number)(0)).intValue();
+                        int __start = ((Number)(1)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
 
