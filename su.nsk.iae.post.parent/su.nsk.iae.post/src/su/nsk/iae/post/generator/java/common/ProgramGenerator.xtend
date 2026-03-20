@@ -464,7 +464,7 @@ public class «name» {
 
             if (decl.arrSpec !== null) {
                 ctx.registerArrayType(vname.name, type)
-                ctx.registerArrayStart(vname.name, 0)
+//                ctx.registerArrayStart(vname.name, 0)
             }
         }
     }

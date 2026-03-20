@@ -706,7 +706,6 @@ public class ProgramGenerator {
         boolean _tripleNotEquals = (_arrSpec != null);
         if (_tripleNotEquals) {
           ctx.registerArrayType(vname.getName(), type);
-          ctx.registerArrayStart(vname.getName(), 0);
         }
       }
     }

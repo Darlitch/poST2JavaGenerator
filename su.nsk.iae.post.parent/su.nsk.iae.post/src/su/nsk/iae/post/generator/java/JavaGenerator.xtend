@@ -40,18 +40,7 @@ class JavaGenerator implements IPoSTGenerator {
             IProcessGenerator.generate()
         )
         registerGlobals(model, ctx)
-
-        for (Program p : model.programs) {
-
-            val code = new ProgramGenerator().generate(p, ctx)
-
-            println("Generating program: " + p.name + ".java")
-            fsa.generateFile(
-                p.name + ".java",
-                code
-            )
-        }
-
+        
         if (model.conf !== null) {
 
             val code =
@@ -64,6 +53,19 @@ class JavaGenerator implements IPoSTGenerator {
                 code
             )
         }
+
+        for (Program p : model.programs) {
+
+            val code = new ProgramGenerator().generate(p, ctx)
+
+            println("Generating program: " + p.name + ".java")
+            fsa.generateFile(
+                p.name + ".java",
+                code
+            )
+        }
+
+      
     }
     
     def void registerGlobals(Model model, GenerationContext ctx) {

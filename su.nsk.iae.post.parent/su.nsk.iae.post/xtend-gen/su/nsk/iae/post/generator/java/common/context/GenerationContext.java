@@ -106,6 +106,7 @@ public class GenerationContext {
 
   public void registerArrayStart(final String arrayName, final int start) {
     this.arrayStarts.put(arrayName, Integer.valueOf(start));
+    System.out.println(((("REGISTER ARRAY START: " + arrayName) + " = ") + Integer.valueOf(start)));
   }
 
   public int getArrayStart(final String arrayName) {

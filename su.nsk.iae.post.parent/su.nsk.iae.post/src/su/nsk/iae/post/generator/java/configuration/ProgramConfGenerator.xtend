@@ -49,6 +49,9 @@ class ProgramConfGenerator {
 	
 	                // ===== параметры процесса =====
 	                if (proc.args !== null) {
+	                	for (p : proc.args.elements) {
+						    BindingGenerator.generate(p, ctx)
+						}
 	                    for (p : proc.args.elements) {
 	
 	                        if (p instanceof AttachVariableConfElement||

@@ -53,10 +53,14 @@ public class ProgramConfGenerator {
             if (_tripleNotEquals_1) {
               EList<TemplateProcessAttachVariableConfElement> _elements_1 = proc.getArgs().getElements();
               for (final TemplateProcessAttachVariableConfElement p : _elements_1) {
-                if (((p instanceof AttachVariableConfElement) || 
-                  (p instanceof TemplateProcessAttachVariableConfElement))) {
+                BindingGenerator.generate(p, ctx);
+              }
+              EList<TemplateProcessAttachVariableConfElement> _elements_2 = proc.getArgs().getElements();
+              for (final TemplateProcessAttachVariableConfElement p_1 : _elements_2) {
+                if (((p_1 instanceof AttachVariableConfElement) || 
+                  (p_1 instanceof TemplateProcessAttachVariableConfElement))) {
                   builder.append(
-                    BindingGenerator.generateAlias(p, ctx, procName, indent));
+                    BindingGenerator.generateAlias(p_1, ctx, procName, indent));
                 }
               }
             }
@@ -81,12 +85,12 @@ public class ProgramConfGenerator {
             TemplateProcessElements _args_2 = proc.getArgs();
             boolean _tripleNotEquals_2 = (_args_2 != null);
             if (_tripleNotEquals_2) {
-              EList<TemplateProcessAttachVariableConfElement> _elements_2 = proc.getArgs().getElements();
-              for (final TemplateProcessAttachVariableConfElement p_1 : _elements_2) {
-                if (((p_1 instanceof AttachVariableConfElement) || 
-                  (p_1 instanceof TemplateProcessAttachVariableConfElement))) {
+              EList<TemplateProcessAttachVariableConfElement> _elements_3 = proc.getArgs().getElements();
+              for (final TemplateProcessAttachVariableConfElement p_2 : _elements_3) {
+                if (((p_2 instanceof AttachVariableConfElement) || 
+                  (p_2 instanceof TemplateProcessAttachVariableConfElement))) {
                   builder.append(
-                    BindingGenerator.generateProcessBinding(p_1, ctx, procName, indent));
+                    BindingGenerator.generateProcessBinding(p_2, ctx, procName, indent));
                 }
               }
             }

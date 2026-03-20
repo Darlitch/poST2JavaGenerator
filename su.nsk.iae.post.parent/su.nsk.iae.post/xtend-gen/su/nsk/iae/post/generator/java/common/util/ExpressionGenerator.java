@@ -597,7 +597,8 @@ public class ExpressionGenerator {
         final String indexExpr = ExpressionGenerator.generate(exp.getArray().getIndex(), ctx);
         final String type = ctx.getArrayElementType(arrName);
         final String javaType = TypeUtil.javaType(type);
-        final int start = ctx.getArrayStart(arrName);
+        final String resolved_1 = ctx.resolveAlias(arrName);
+        final int start = ctx.getArrayStart(resolved_1);
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("((");
         _builder.append(javaType);

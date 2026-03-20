@@ -459,7 +459,9 @@ class ExpressionGenerator {
 		
 		    val type = ctx.getArrayElementType(arrName)
 		    val javaType = type.javaType
-			val start = ctx.getArrayStart(arrName)
+		    val resolved = ctx.resolveAlias(arrName)
+			val start = ctx.getArrayStart(resolved)
+//			val start = ctx.getArrayStart(arrName)
 	
 			return '''((«javaType») getArrayValue("«arrName»", «indexExpr», «start»))'''
 		}	

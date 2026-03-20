@@ -30,6 +30,7 @@ public class Controller {
         globalNames.add("green2");
         globalNames.add("green1");
         globalNames.add("sensor");
+        globalNames.add("NUMBER_OF_LIGHTS");
         globalNames.add("yellow1");
         globalNames.add("yellow2");
     }
@@ -317,10 +318,10 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            if (((Boolean) getArrayValue("rLightsArray", ((Integer)read("alight")), 0))) {
+                            if (((Boolean) getArrayValue("rLightsArray", ((Integer)read("alight")), 1))) {
                                 write("prev_light", ((Integer)read("alight")));
                             }
-                            setArrayValue("rLightsArray", ((Integer)read("alight")), 0, false);
+                            setArrayValue("rLightsArray", ((Integer)read("alight")), 1, false);
                             memory.put(
                                 "alight",
                                 ((Integer)read("alight")) + __step
@@ -342,7 +343,7 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            setArrayValue("rLightsArray", ((Integer)read("alight")), 0, false);
+                            setArrayValue("rLightsArray", ((Integer)read("alight")), 1, false);
                             memory.put(
                                 "alight",
                                 ((Integer)read("alight")) + __step
@@ -364,7 +365,7 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            setArrayValue("rLightsArray", ((Integer)read("alight")), 0, false);
+                            setArrayValue("rLightsArray", ((Integer)read("alight")), 1, false);
                             memory.put(
                                 "alight",
                                 ((Integer)read("alight")) + __step
