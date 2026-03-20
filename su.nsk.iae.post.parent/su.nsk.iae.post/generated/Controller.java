@@ -15,8 +15,6 @@ public class Controller {
     private final Set<String> globalNames = new HashSet<>();
     private final Set<String> varNames = new HashSet<>();
 
-    private final Light light;
-    private final Control control;
 
     public Controller(Map<String,Object> memory) {
         this.memory = memory;
@@ -35,10 +33,6 @@ public class Controller {
         globalNames.add("sensor");
         globalNames.add("yellow1");
         globalNames.add("yellow2");
-        light = new Light(memory);
-        processes.add(light);
-        control = new Control(memory);
-        processes.add(control);
     }
     public void runIter(long cycleTimeMs) {
 	
@@ -49,6 +43,10 @@ public class Controller {
 
         for (IProcess p : processes)
             p.run();
+    }
+
+    public void registerProcess(IProcess p) {
+        processes.add(p);
     }
 
     public Map<String,String> dumpProcessStates() {
@@ -121,8 +119,35 @@ public class Controller {
 
         private final Map<String,Object> memory;
 
-        public Light(Map<String,Object> memory) {
+        private final Map<String,IProcess> processRefs = new HashMap<>();
+
+        private final Map<String,String> aliases;
+
+        public Light(Map<String,Object> memory, Map<String,String> aliases) {
             this.memory = memory;
+        this.aliases = aliases;
+        }
+
+        public void setProcess(String name, IProcess p) {
+            processRefs.put(name, p);
+        }
+
+        private String resolve(String name) {
+            String current = name;
+            if (aliases != null) {
+                while (aliases.containsKey(current)) {
+                    current = aliases.get(current);
+                }
+            }
+            return current;
+        }
+
+        private Object read(String name) {
+            return memory.get(resolve(name));
+        }
+
+        private void write(String name, Object value) {
+            memory.put(resolve(name), value);
         }
 
         private State state = State.Stop;
@@ -168,7 +193,7 @@ public class Controller {
 
             switch(state) {
                 case Light -> {
-                    memory.put("b_light", true);
+                    write("b_light", true);
                 }
                 case Stop, Error -> { }
             }
@@ -202,8 +227,35 @@ public class Controller {
 
         private final Map<String,Object> memory;
 
-        public Control(Map<String,Object> memory) {
+        private final Map<String,IProcess> processRefs = new HashMap<>();
+
+        private final Map<String,String> aliases;
+
+        public Control(Map<String,Object> memory, Map<String,String> aliases) {
             this.memory = memory;
+        this.aliases = aliases;
+        }
+
+        public void setProcess(String name, IProcess p) {
+            processRefs.put(name, p);
+        }
+
+        private String resolve(String name) {
+            String current = name;
+            if (aliases != null) {
+                while (aliases.containsKey(current)) {
+                    current = aliases.get(current);
+                }
+            }
+            return current;
+        }
+
+        private Object read(String name) {
+            return memory.get(resolve(name));
+        }
+
+        private void write(String name, Object value) {
+            memory.put(resolve(name), value);
         }
 
         private State state = State.Stop;
@@ -251,11 +303,11 @@ public class Controller {
 
             switch(state) {
                 case Work -> {
-                    if (((Boolean)memory.get("pressed"))) {
-                        memory.put("prev_light", 0);
-                        memory.put("pressed", false);
+                    if (((Boolean)read("pressed"))) {
+                        write("prev_light", 0);
+                        write("pressed", false);
                     }
-                    else if (((((isInactive(pRed)) && (isActive(pGreen)))) || (((isInactive(pGreen)) && (isActive(pRed)))))) {
+                    else if (((((isInactive(processRefs.get("pRed"))) && (isActive(processRefs.get("pGreen"))))) || (((isInactive(processRefs.get("pGreen"))) && (isActive(processRefs.get("pRed"))))))) {
                         int __start = ((Number)(0)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
@@ -266,21 +318,21 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            if (((Boolean) getArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0))) {
-                                memory.put("prev_light", ((Integer)memory.get("alight")));
+                            if (((Boolean) getArrayValue("rLightsArray", ((Integer)read("alight")), 0))) {
+                                write("prev_light", ((Integer)read("alight")));
                             }
-                            setArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0, false);
+                            setArrayValue("rLightsArray", ((Integer)read("alight")), 0, false);
                             memory.put(
                                 "alight",
-                                ((Integer)memory.get("alight")) + __step
+                                ((Integer)read("alight")) + __step
                             );
                         }
-                        pRed.stop();
-                        pYellow.start();
-                        pGreen.stop();
+                        processRefs.get("pRed").stop();
+                        processRefs.get("pYellow").start();
+                        processRefs.get("pGreen").stop();
                         setState(State.delay10);
                     }
-                    else if ((((double)(((Integer)memory.get("prev_light")))) == ((double)(0)))) {
+                    else if ((((double)(((Integer)read("prev_light")))) == ((double)(0)))) {
                         int __start = ((Number)(0)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
@@ -291,18 +343,18 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            setArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0, false);
+                            setArrayValue("rLightsArray", ((Integer)read("alight")), 0, false);
                             memory.put(
                                 "alight",
-                                ((Integer)memory.get("alight")) + __step
+                                ((Integer)read("alight")) + __step
                             );
                         }
-                        pRed.stop();
-                        pYellow.stop();
-                        pGreen.start();
+                        processRefs.get("pRed").stop();
+                        processRefs.get("pYellow").stop();
+                        processRefs.get("pGreen").start();
                         setState(State.delay30);
                     }
-                    else if ((((double)(((Integer)memory.get("prev_light")))) == ((double)(2)))) {
+                    else if ((((double)(((Integer)read("prev_light")))) == ((double)(2)))) {
                         int __start = ((Number)(0)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
@@ -313,23 +365,23 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            setArrayValue("rLightsArray", ((Integer)memory.get("alight")), 0, false);
+                            setArrayValue("rLightsArray", ((Integer)read("alight")), 0, false);
                             memory.put(
                                 "alight",
-                                ((Integer)memory.get("alight")) + __step
+                                ((Integer)read("alight")) + __step
                             );
                         }
-                        pRed.start();
-                        pYellow.stop();
-                        pGreen.stop();
+                        processRefs.get("pRed").start();
+                        processRefs.get("pYellow").stop();
+                        processRefs.get("pGreen").stop();
                         setState(State.delay30);
                     }
                 }
                 case delay10 -> {
                 }
                 case delay30 -> {
-                    if ((((Boolean)memory.get("control_sensor")) && isActive(pRed))) {
-                        memory.put("pressed", true);
+                    if ((((Boolean)read("control_sensor")) && isActive(processRefs.get("pRed")))) {
+                        write("pressed", true);
                         setState(State.Work);
                     }
                 }
@@ -379,7 +431,7 @@ public class Controller {
     }
 
     private Object getArrayValue(String name, int index, int start) {
-        List<String> list = (List<String>) memory.get(name);
+        List<String> list = (List<String>) memory.get(resolve(name));
 
         int offset = index - start;
 
@@ -394,7 +446,7 @@ public class Controller {
     }
 
     private void setArrayValue(String name, int index, int start, Object value) {
-        List<String> list = (List<String>) memory.get(name);
+        List<String> list = (List<String>) memory.get(resolve(name));
 
         int offset = index - start;
 

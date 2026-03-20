@@ -124,4 +124,81 @@ class BindingGenerator {
         // fallback
         "INT"
     }
+    
+    def static String generateAlias(
+	    AttachVariableConfElement bind,
+	    GenerationContext ctx,
+		String procName,
+	    String indent
+	) {
+		val left = bind.programVar.name
+		
+		if (bind.attVar !== null) {
+		
+		    val right = bind.attVar.name
+		
+		    if (ctx.hasProcess(right)) {
+		
+		        val field = ctx.resolveProcess(right)
+		
+		        return '''
+«indent»«procName».setProcess("«left»", «field»);
+		'''
+		    }
+		
+		    return '''
+«indent»«procName»_aliases.put("«left»", "«right»");
+		'''
+		}
+		return ""
+	}
+	
+	def static String generateAlias(
+	    TemplateProcessAttachVariableConfElement bind,
+	    GenerationContext ctx,
+		String procName,
+	    String indent
+	) {
+	
+	    val left = bind.programVar.name
+		
+		if (bind.attVar !== null) {
+		
+		    val right = bind.attVar.name
+		
+		    if (ctx.hasProcess(right)) {
+		
+		        val field = ctx.resolveProcess(right)
+		
+		        return '''
+«indent»«procName».setProcess("«left»", «field»);
+		'''
+		    }
+		
+		    return '''
+«indent»«procName»_aliases.put("«left»", "«right»");
+		'''
+		}
+		return ""
+	}
+	
+	def static String generateAliasTemplate(
+	    TemplateProcessAttachVariableConfElement bind,
+	    String indent,
+	    String aliasMapName
+	) {
+	
+	    val left = bind.programVar.name
+	
+	    if (bind.attVar !== null) {
+	
+	        val right = bind.attVar.name
+	
+	        return '''
+	«indent»«aliasMapName».put("«left»", "«right»");
+	'''
+	    }
+	
+	    return ""
+	}
 }

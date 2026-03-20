@@ -2,6 +2,8 @@ package su.nsk.iae.post.generator.java.configuration
 
 import su.nsk.iae.post.poST.ProgramConfiguration
 import su.nsk.iae.post.poST.AttachVariableConfElement
+import su.nsk.iae.post.poST.TemplateProcessAttachVariableConfElement
+import su.nsk.iae.post.poST.TemplateProcessConfElement
 
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.vars.BindingGenerator
@@ -22,16 +24,63 @@ class ProgramConfGenerator {
 '''
         )
 
-        // ===== binding àðãóìåíòîâ =====
-        if (conf.args !== null) {
+	    // ===== ñîçäàíèå ïðîöåññîâ =====
+	    if (conf.args !== null) {
+	
+	        for (arg : conf.args.elements) {
+	
+	            // PROCESS ýëåìåíò (î÷åíü âàæíî!)
+	            if (arg instanceof TemplateProcessConfElement) {
+	
+	                val proc = arg
+	
+	                val procName = proc.name                 // control1
+	                val procType = proc.process.name         // Control
+	
+	                // ===== alias map =====
+	                builder.append(
+'''
 
-            for (arg : conf.args.elements) {
-
-                if (arg instanceof AttachVariableConfElement) {
-                    BindingGenerator.generate(arg, ctx)
-                }
-            }
-        }
+«indent»Map<String,String> «procName»_aliases = new HashMap<>();
+'''
+	                )
+	
+	                // ===== ïàðàìåòðû ïðîöåññà =====
+	                if (proc.args !== null) {
+	                    for (p : proc.args.elements) {
+	
+	                        if (p instanceof AttachVariableConfElement||
+    							p instanceof TemplateProcessAttachVariableConfElement) {
+	
+	                            builder.append(
+	                                BindingGenerator.generateAlias(
+	                                    p,
+	                                    ctx,
+	                                    procName,
+	                                    indent
+	                                )
+	                            )
+	                        }
+	                    }
+	                }
+	
+	                // ===== ñîçäàíèå ïðîöåññà =====
+	                builder.append(
+'''
+«indent»«procType» «procName» = new «procType»(memory, «procName»_aliases);
+«indent»«instanceName».registerProcess(«procName»);
+'''
+	                )
+	                if (proc.active) {
+					    builder.append(
+'''
+«indent»«procName».start();
+'''
+					    )
+					}
+	            }
+	        }
+	    }
 
         builder.toString
     }

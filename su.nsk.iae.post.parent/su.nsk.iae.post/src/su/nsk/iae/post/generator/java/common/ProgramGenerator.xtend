@@ -42,9 +42,11 @@ public class «name» {
 '''
         )
 
-        builder.append(generateProcessFields(program))
+//        builder.append(generateProcessFields(program))
         builder.append(generateConstructor(program, ctx))
         builder.append(generateRunIter())
+        builder.append("\n")
+        builder.append(generateRegisterProcess())
         builder.append("\n")
         builder.append(generateDumpStates())
         builder.append("\n")
@@ -101,7 +103,7 @@ public class «name» {
 '''
 
 «INDENT»private Object getArrayValue(String name, int index, int start) {
-«INDENT»    List<String> list = (List<String>) memory.get(name);
+«INDENT»    List<String> list = (List<String>) memory.get(resolve(name));
 
 «INDENT»    int offset = index - start;
 
@@ -116,7 +118,7 @@ public class «name» {
 «INDENT»}
 
 «INDENT»private void setArrayValue(String name, int index, int start, Object value) {
-«INDENT»    List<String> list = (List<String>) memory.get(name);
+«INDENT»    List<String> list = (List<String>) memory.get(resolve(name));
 
 «INDENT»    int offset = index - start;
 
@@ -139,19 +141,19 @@ public class «name» {
 
     // ================= PROCESS FIELDS =================
 
-    private def String generateProcessFields(Program program) {
-        val builder = new StringBuilder
-
-        for (p : program.processes) {
-            builder.append(
-'''
-«INDENT»private final «p.name» «p.name.toFirstLower»;
-'''
-            )
-        }
-
-        builder.toString
-    }
+//    private def String generateProcessFields(Program program) {
+//        val builder = new StringBuilder
+//
+//        for (p : program.processes) {
+//            builder.append(
+//'''
+//«INDENT»private final «p.name» «p.name.toFirstLower»;
+//'''
+//            )
+//        }
+//
+//        builder.toString
+//    }
 
     // ================= CONSTRUCTOR =================
 
@@ -245,16 +247,16 @@ public class «name» {
 
         // ===== ïðîöåññû =====
 
-        for (p : program.processes) {
-            val field = p.name.toFirstLower
-
-            builder.append(
-'''
-«INDENT»    «field» = new «p.name»(memory);
-«INDENT»    processes.add(«field»);
-'''
-            )
-        }
+//        for (p : program.processes) {
+//            val field = p.name.toFirstLower
+//
+//            builder.append(
+//'''
+//«INDENT»    «field» = new «p.name»(memory);
+//«INDENT»    processes.add(«field»);
+//'''
+//            )
+//        }
 
         builder.append(
 '''
@@ -378,6 +380,12 @@ public class «name» {
     }
 
     // ================= REGISTER =================
+    
+    private def String generateRegisterProcess() '''
+«INDENT»public void registerProcess(IProcess p) {
+«INDENT»    processes.add(p);
+«INDENT»}
+'''
 
     def void registerAll(Program program, GenerationContext ctx) {
 

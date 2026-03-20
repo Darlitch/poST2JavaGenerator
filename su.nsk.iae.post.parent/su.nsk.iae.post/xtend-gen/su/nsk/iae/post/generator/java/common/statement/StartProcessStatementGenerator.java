@@ -18,11 +18,12 @@ public class StartProcessStatementGenerator implements IStatementGenerator {
     String _xblockexpression = null;
     {
       final StartProcessStatement s = ((StartProcessStatement) stmt);
-      final String fieldName = ctx.resolveProcess(s.getProcess().getName());
+      final String name = s.getProcess().getName();
       StringConcatenation _builder = new StringConcatenation();
       _builder.append(indent);
-      _builder.append(fieldName);
-      _builder.append(".start();");
+      _builder.append("processRefs.get(\"");
+      _builder.append(name);
+      _builder.append("\").start();");
       _builder.newLineIfNotEmpty();
       _xblockexpression = _builder.toString();
     }

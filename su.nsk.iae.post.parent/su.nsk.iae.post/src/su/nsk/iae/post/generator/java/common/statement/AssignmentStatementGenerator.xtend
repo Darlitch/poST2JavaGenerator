@@ -51,7 +51,7 @@ class AssignmentStatementGenerator implements IStatementGenerator {
 		if (s.array !== null) {
 
     		val arr = s.array
-			val arrName = ctx.resolveAlias(arr.variable.name)
+			val arrName = arr.variable.name
 			
 			val elementType = ctx.getArrayElementType(arrName)
 			val exprType = getExprType(s.value, ctx)

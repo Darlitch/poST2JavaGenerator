@@ -52,8 +52,28 @@ public class ProcessGenerator {
       _builder.append("private final Map<String,Object> memory;");
       _builder.newLineIfNotEmpty();
       _builder.newLine();
+      _builder.append(nextIndent);
+      _builder.append("private final Map<String,IProcess> processRefs = new HashMap<>();");
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
+      _builder.append(nextIndent);
+      _builder.append("private final Map<String,String> aliases;");
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
       String _generateConstructor = this.generateConstructor(name, nextIndent);
       _builder.append(_generateConstructor);
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
+      String _generateSetProcess = this.generateSetProcess(nextIndent);
+      _builder.append(_generateSetProcess);
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
+      String _generateResolveMethod = this.generateResolveMethod(nextIndent);
+      _builder.append(_generateResolveMethod);
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
+      String _generateMemoryHelpers = this.generateMemoryHelpers(nextIndent);
+      _builder.append(_generateMemoryHelpers);
       _builder.newLineIfNotEmpty();
       _builder.newLine();
       _builder.append(nextIndent);
@@ -98,10 +118,83 @@ public class ProcessGenerator {
     _builder.append(indent);
     _builder.append("public ");
     _builder.append(name);
-    _builder.append("(Map<String,Object> memory) {");
+    _builder.append("(Map<String,Object> memory, Map<String,String> aliases) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("    this.memory = memory;");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("this.aliases = aliases;");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+
+  private String generateSetProcess(final String indent) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append("public void setProcess(String name, IProcess p) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    processRefs.put(name, p);");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+
+  private String generateResolveMethod(final String indent) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append("private String resolve(String name) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    String current = name;");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    if (aliases != null) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("        while (aliases.containsKey(current)) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("            current = aliases.get(current);");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("        }");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    }");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    return current;");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+
+  private String generateMemoryHelpers(final String indent) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(indent);
+    _builder.append("private Object read(String name) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    return memory.get(resolve(name));");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    _builder.newLine();
+    _builder.append(indent);
+    _builder.append("private void write(String name, Object value) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    memory.put(resolve(name), value);");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("}");

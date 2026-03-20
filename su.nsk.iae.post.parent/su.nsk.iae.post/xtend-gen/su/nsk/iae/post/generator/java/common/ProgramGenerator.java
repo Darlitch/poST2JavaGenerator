@@ -74,9 +74,10 @@ public class ProgramGenerator {
       _builder.newLineIfNotEmpty();
       _builder.newLine();
       builder.append(_builder);
-      builder.append(this.generateProcessFields(program));
       builder.append(this.generateConstructor(program, ctx));
       builder.append(this.generateRunIter());
+      builder.append("\n");
+      builder.append(this.generateRegisterProcess());
       builder.append("\n");
       builder.append(this.generateDumpStates());
       builder.append("\n");
@@ -166,7 +167,7 @@ public class ProgramGenerator {
       _builder_3.append("private Object getArrayValue(String name, int index, int start) {");
       _builder_3.newLineIfNotEmpty();
       _builder_3.append(ProgramGenerator.INDENT);
-      _builder_3.append("    List<String> list = (List<String>) memory.get(name);");
+      _builder_3.append("    List<String> list = (List<String>) memory.get(resolve(name));");
       _builder_3.newLineIfNotEmpty();
       _builder_3.newLine();
       _builder_3.append(ProgramGenerator.INDENT);
@@ -203,7 +204,7 @@ public class ProgramGenerator {
       _builder_3.append("private void setArrayValue(String name, int index, int start, Object value) {");
       _builder_3.newLineIfNotEmpty();
       _builder_3.append(ProgramGenerator.INDENT);
-      _builder_3.append("    List<String> list = (List<String>) memory.get(name);");
+      _builder_3.append("    List<String> list = (List<String>) memory.get(resolve(name));");
       _builder_3.newLineIfNotEmpty();
       _builder_3.newLine();
       _builder_3.append(ProgramGenerator.INDENT);
@@ -239,29 +240,6 @@ public class ProgramGenerator {
       _builder_3.append("}");
       _builder_3.newLine();
       builder.append(_builder_3);
-      _xblockexpression = builder.toString();
-    }
-    return _xblockexpression;
-  }
-
-  private String generateProcessFields(final Program program) {
-    String _xblockexpression = null;
-    {
-      final StringBuilder builder = new StringBuilder();
-      EList<su.nsk.iae.post.poST.Process> _processes = program.getProcesses();
-      for (final su.nsk.iae.post.poST.Process p : _processes) {
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append(ProgramGenerator.INDENT);
-        _builder.append("private final ");
-        String _name = p.getName();
-        _builder.append(_name);
-        _builder.append(" ");
-        String _firstLower = StringExtensions.toFirstLower(p.getName());
-        _builder.append(_firstLower);
-        _builder.append(";");
-        _builder.newLineIfNotEmpty();
-        builder.append(_builder);
-      }
       _xblockexpression = builder.toString();
     }
     return _xblockexpression;
@@ -383,27 +361,6 @@ public class ProgramGenerator {
         _builder_4.append("\");");
         _builder_4.newLineIfNotEmpty();
         builder.append(_builder_4);
-      }
-      EList<su.nsk.iae.post.poST.Process> _processes_1 = program.getProcesses();
-      for (final su.nsk.iae.post.poST.Process p_1 : _processes_1) {
-        {
-          final String field = StringExtensions.toFirstLower(p_1.getName());
-          StringConcatenation _builder_5 = new StringConcatenation();
-          _builder_5.append(ProgramGenerator.INDENT);
-          _builder_5.append("    ");
-          _builder_5.append(field);
-          _builder_5.append(" = new ");
-          String _name_1 = p_1.getName();
-          _builder_5.append(_name_1);
-          _builder_5.append("(memory);");
-          _builder_5.newLineIfNotEmpty();
-          _builder_5.append(ProgramGenerator.INDENT);
-          _builder_5.append("    processes.add(");
-          _builder_5.append(field);
-          _builder_5.append(");");
-          _builder_5.newLineIfNotEmpty();
-          builder.append(_builder_5);
-        }
       }
       StringConcatenation _builder_5 = new StringConcatenation();
       _builder_5.append(ProgramGenerator.INDENT);
@@ -596,6 +553,20 @@ public class ProgramGenerator {
     _builder.newLine();
     _builder.append(ProgramGenerator.INDENT);
     _builder.append("    return res;");
+    _builder.newLineIfNotEmpty();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+
+  private String generateRegisterProcess() {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("public void registerProcess(IProcess p) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("    processes.add(p);");
     _builder.newLineIfNotEmpty();
     _builder.append(ProgramGenerator.INDENT);
     _builder.append("}");

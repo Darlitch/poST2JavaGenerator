@@ -19,10 +19,10 @@ class StartProcessStatementGenerator implements IStatementGenerator {
 		val s = stmt as StartProcessStatement
 
 		// ===== èìÿ ïðîöåññà =====
-		val fieldName = ctx.resolveProcess(s.process.name)
+		val name = s.process.name
 
 		'''
-«indent»«fieldName».start();
+«indent»processRefs.get("«name»").start();
 '''
 	}
 }

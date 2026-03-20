@@ -593,7 +593,7 @@ public class ExpressionGenerator {
       ArrayVariable _array = exp.getArray();
       boolean _tripleNotEquals_2 = (_array != null);
       if (_tripleNotEquals_2) {
-        final String arrName = ctx.resolveAlias(exp.getArray().getVariable().getName());
+        final String arrName = exp.getArray().getVariable().getName();
         final String indexExpr = ExpressionGenerator.generate(exp.getArray().getIndex(), ctx);
         final String type = ctx.getArrayElementType(arrName);
         final String javaType = TypeUtil.javaType(type);
@@ -654,13 +654,12 @@ public class ExpressionGenerator {
         }
         return value.toString();
       }
-      String resolved2 = ctx.resolveVarName(name);
       final String javaType = TypeUtil.javaType(ctx.resolveVarType(name));
       StringConcatenation _builder_1 = new StringConcatenation();
       _builder_1.append("((");
       _builder_1.append(javaType);
-      _builder_1.append(")memory.get(\"");
-      _builder_1.append(resolved2);
+      _builder_1.append(")read(\"");
+      _builder_1.append(name);
       _builder_1.append("\"))");
       _xblockexpression = _builder_1.toString();
     }
@@ -668,18 +667,13 @@ public class ExpressionGenerator {
   }
 
   public static String writeVar(final String name, final String valueExpr, final GenerationContext ctx) {
-    String _xblockexpression = null;
-    {
-      final String resolved = ctx.resolveVarName(name);
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("memory.put(\"");
-      _builder.append(resolved);
-      _builder.append("\", ");
-      _builder.append(valueExpr);
-      _builder.append(");");
-      _xblockexpression = _builder.toString();
-    }
-    return _xblockexpression;
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("write(\"");
+    _builder.append(name);
+    _builder.append("\", ");
+    _builder.append(valueExpr);
+    _builder.append(");");
+    return _builder.toString();
   }
 
   private static String generateUnary(final UnaryExpression exp, final GenerationContext ctx) {
@@ -796,35 +790,35 @@ public class ExpressionGenerator {
   private static String generateProcessStatus(final ProcessStatusExpression exp, final GenerationContext ctx) {
     String _xblockexpression = null;
     {
-      final String fieldName = ctx.resolveProcess(exp.getProcess().getName());
+      final String name = exp.getProcess().getName();
       boolean _isActive = exp.isActive();
       if (_isActive) {
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("isActive(");
-        _builder.append(fieldName);
-        _builder.append(")");
+        _builder.append("isActive(processRefs.get(\"");
+        _builder.append(name);
+        _builder.append("\"))");
         return _builder.toString();
       }
       boolean _isInactive = exp.isInactive();
       if (_isInactive) {
         StringConcatenation _builder_1 = new StringConcatenation();
-        _builder_1.append("isInactive(");
-        _builder_1.append(fieldName);
-        _builder_1.append(")");
+        _builder_1.append("isInactive(processRefs.get(\"");
+        _builder_1.append(name);
+        _builder_1.append("\"))");
         return _builder_1.toString();
       }
       boolean _isStop = exp.isStop();
       if (_isStop) {
         StringConcatenation _builder_2 = new StringConcatenation();
-        _builder_2.append("isStop(");
-        _builder_2.append(fieldName);
-        _builder_2.append(")");
+        _builder_2.append("isStop(processRefs.get(\"");
+        _builder_2.append(name);
+        _builder_2.append("\"))");
         return _builder_2.toString();
       }
       StringConcatenation _builder_3 = new StringConcatenation();
-      _builder_3.append("isError(");
-      _builder_3.append(fieldName);
-      _builder_3.append(")");
+      _builder_3.append("isError(processRefs.get(\"");
+      _builder_3.append(name);
+      _builder_3.append("\"))");
       _xblockexpression = _builder_3.toString();
     }
     return _xblockexpression;

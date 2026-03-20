@@ -18,10 +18,10 @@ class StopProcessStatementGenerator implements IStatementGenerator {
 		// ===== STOP PROCESS p =====
 		if (s.process !== null) {
 
-			val fieldName = ctx.resolveProcess(s.process.name)
+			val name = s.process.name
 
 			return '''
-«indent»«fieldName».stop();
+«indent»processRefs.get("«name»").stop();
 '''
 		}
 

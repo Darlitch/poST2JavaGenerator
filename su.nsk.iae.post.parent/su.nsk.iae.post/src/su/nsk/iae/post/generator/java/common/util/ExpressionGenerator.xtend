@@ -454,7 +454,7 @@ class ExpressionGenerator {
 
 		if (exp.array !== null) {
 
-		    val arrName = ctx.resolveAlias(exp.array.variable.name)
+		    val arrName = exp.array.variable.name
 		    val indexExpr = generate(exp.array.index, ctx)
 		
 		    val type = ctx.getArrayElementType(arrName)
@@ -484,20 +484,16 @@ class ExpressionGenerator {
 	        }
 	        return value.toString
 	    }
-		var resolved2 = ctx.resolveVarName(name)
 		val javaType = ctx.resolveVarType(name).javaType
 
-		'''((«javaType»)memory.get("«resolved2»"))'''
+		'''((«javaType»)read("«name»"))'''
 	}
 	
 	// ================= VARIABLE WRITE =================
 
 	// генерирует запись в ячейку памяти
 	def static String writeVar(String name, String valueExpr, GenerationContext ctx) {
-	
-		val resolved = ctx.resolveVarName(name)
-	
-		'''memory.put("«resolved»", «valueExpr»);'''
+		'''write("«name»", «valueExpr»);'''
 	}
 
 	// ================= UNARY =================
@@ -572,18 +568,30 @@ class ExpressionGenerator {
 		GenerationContext ctx
 	) {
 	
-		val fieldName = ctx.resolveProcess(exp.process.name)
+//		val fieldName = ctx.resolveProcess(exp.process.name)
+//
+//	    if (exp.active)
+//	        return '''isActive(«fieldName»)'''
+//	
+//	    if (exp.inactive)
+//	        return '''isInactive(«fieldName»)'''
+//	
+//	    if (exp.stop)
+//	        return '''isStop(«fieldName»)'''
+//	
+//	    '''isError(«fieldName»)'''
+		val name = exp.process.name
 
-	    if (exp.active)
-	        return '''isActive(«fieldName»)'''
-	
-	    if (exp.inactive)
-	        return '''isInactive(«fieldName»)'''
-	
-	    if (exp.stop)
-	        return '''isStop(«fieldName»)'''
-	
-	    '''isError(«fieldName»)'''
+		if (exp.active)
+		    return '''isActive(processRefs.get("«name»"))'''
+		
+		if (exp.inactive)
+		    return '''isInactive(processRefs.get("«name»"))'''
+		
+		if (exp.stop)
+		    return '''isStop(processRefs.get("«name»"))'''
+		
+		'''isError(processRefs.get("«name»"))'''
 	}
 
 	// ================= OPERATORS =================

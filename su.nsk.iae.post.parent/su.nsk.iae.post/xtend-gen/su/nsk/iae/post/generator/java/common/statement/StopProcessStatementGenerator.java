@@ -21,11 +21,12 @@ public class StopProcessStatementGenerator implements IStatementGenerator {
       Variable _process = s.getProcess();
       boolean _tripleNotEquals = (_process != null);
       if (_tripleNotEquals) {
-        final String fieldName = ctx.resolveProcess(s.getProcess().getName());
+        final String name = s.getProcess().getName();
         StringConcatenation _builder = new StringConcatenation();
         _builder.append(indent);
-        _builder.append(fieldName);
-        _builder.append(".stop();");
+        _builder.append("processRefs.get(\"");
+        _builder.append(name);
+        _builder.append("\").stop();");
         _builder.newLineIfNotEmpty();
         return _builder.toString();
       }

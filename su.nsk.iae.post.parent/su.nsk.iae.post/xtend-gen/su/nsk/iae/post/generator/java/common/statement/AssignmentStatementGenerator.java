@@ -42,7 +42,7 @@ public class AssignmentStatementGenerator implements IStatementGenerator {
     boolean _tripleNotEquals = (_array != null);
     if (_tripleNotEquals) {
       final ArrayVariable arr = s.getArray();
-      final String arrName = ctx.resolveAlias(arr.getVariable().getName());
+      final String arrName = arr.getVariable().getName();
       final String elementType = ctx.getArrayElementType(arrName);
       final String exprType_1 = ExpressionGenerator.getExprType(s.getValue(), ctx);
       boolean _canAssign_1 = TypeUtil.canAssign(elementType, exprType_1);
