@@ -651,6 +651,26 @@ public class ProgramGenerator {
             }
           }
         }
+        EList<InputVarDeclaration> _procInVars_1 = p_1.getProcInVars();
+        for (final InputVarDeclaration v_10 : _procInVars_1) {
+          EList<VarInitDeclaration> _vars_11 = v_10.getVars();
+          for (final VarInitDeclaration decl_10 : _vars_11) {
+            EList<SymbolicVariable> _vars_12 = decl_10.getVarList().getVars();
+            for (final SymbolicVariable vname_1 : _vars_12) {
+              ctx.registerProcessInput(vname_1.getName());
+            }
+          }
+        }
+        EList<OutputVarDeclaration> _procOutVars_1 = p_1.getProcOutVars();
+        for (final OutputVarDeclaration v_11 : _procOutVars_1) {
+          EList<VarInitDeclaration> _vars_13 = v_11.getVars();
+          for (final VarInitDeclaration decl_11 : _vars_13) {
+            EList<SymbolicVariable> _vars_14 = decl_11.getVarList().getVars();
+            for (final SymbolicVariable vname_2 : _vars_14) {
+              ctx.registerProcessOutput(vname_2.getName());
+            }
+          }
+        }
       }
     }
   }

@@ -224,4 +224,25 @@ class GenerationContext {
 			)
 		type
 	}
+	
+	// ================= PROCESS INTERFACE =================
+
+	val Set<String> processInputs = new HashSet
+	val Set<String> processOutputs = new HashSet
+	
+	def void registerProcessInput(String name) {
+	    processInputs.add(name)
+	}
+	
+	def void registerProcessOutput(String name) {
+	    processOutputs.add(name)
+	}
+	
+	def boolean isProcessInput(String name) {
+	    processInputs.contains(name)
+	}
+	
+	def boolean isProcessOutput(String name) {
+	    processOutputs.contains(name)
+	}
 }

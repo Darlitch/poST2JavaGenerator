@@ -219,4 +219,24 @@ public class GenerationContext {
     }
     return _xblockexpression;
   }
+
+  private final Set<String> processInputs = new HashSet<String>();
+
+  private final Set<String> processOutputs = new HashSet<String>();
+
+  public void registerProcessInput(final String name) {
+    this.processInputs.add(name);
+  }
+
+  public void registerProcessOutput(final String name) {
+    this.processOutputs.add(name);
+  }
+
+  public boolean isProcessInput(final String name) {
+    return this.processInputs.contains(name);
+  }
+
+  public boolean isProcessOutput(final String name) {
+    return this.processOutputs.contains(name);
+  }
 }

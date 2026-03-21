@@ -45,6 +45,16 @@ class BindingGenerator {
 			    ctx.registerArrayType(left, ctx.getArrayElementType(target))
 			}
 			
+			// ===== REGISTER REAL INPUT/OUTPUT =====
+
+			if (ctx.isProcessInput(left)) {
+			    ctx.registerInputVar(target)
+			}
+			
+			if (ctx.isProcessOutput(left)) {
+			    ctx.registerOutputVar(target)
+			}
+			
 			return
 		}
 
@@ -78,6 +88,16 @@ class BindingGenerator {
 	            ctx.registerArrayStart(left, ctx.getArrayStart(target))
 	            ctx.registerArrayType(left, ctx.getArrayElementType(target))
 	        }
+	        
+	        // ===== REGISTER REAL INPUT/OUTPUT =====
+
+			if (ctx.isProcessInput(left)) {
+			    ctx.registerInputVar(target)
+			}
+			
+			if (ctx.isProcessOutput(left)) {
+			    ctx.registerOutputVar(target)
+			}
 	
 	        return
 	    }

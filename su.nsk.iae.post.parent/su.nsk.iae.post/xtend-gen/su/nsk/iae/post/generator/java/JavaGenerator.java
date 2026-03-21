@@ -42,6 +42,10 @@ public class JavaGenerator implements IPoSTGenerator {
       "IProcess.java", 
       IProcessGenerator.generate());
     this.registerGlobals(model, ctx);
+    EList<Program> _programs = model.getPrograms();
+    for (final Program p : _programs) {
+      new ProgramGenerator().registerAll(p, ctx);
+    }
     Configuration _conf = model.getConf();
     boolean _tripleNotEquals = (_conf != null);
     if (_tripleNotEquals) {
@@ -51,15 +55,15 @@ public class JavaGenerator implements IPoSTGenerator {
       String _plus = (_name + "Simulation.java");
       fsa.generateFile(_plus, code);
     }
-    EList<Program> _programs = model.getPrograms();
-    for (final Program p : _programs) {
+    EList<Program> _programs_1 = model.getPrograms();
+    for (final Program p_1 : _programs_1) {
       {
-        final String code_1 = new ProgramGenerator().generate(p, ctx);
-        String _name_1 = p.getName();
+        final String code_1 = new ProgramGenerator().generate(p_1, ctx);
+        String _name_1 = p_1.getName();
         String _plus_1 = ("Generating program: " + _name_1);
         String _plus_2 = (_plus_1 + ".java");
         InputOutput.<String>println(_plus_2);
-        String _name_2 = p.getName();
+        String _name_2 = p_1.getName();
         String _plus_3 = (_name_2 + ".java");
         fsa.generateFile(_plus_3, code_1);
       }

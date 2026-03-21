@@ -41,6 +41,11 @@ class JavaGenerator implements IPoSTGenerator {
         )
         registerGlobals(model, ctx)
         
+        for (Program p : model.programs) {
+	        new ProgramGenerator().registerAll(p, ctx)
+	    }
+        
+        
         if (model.conf !== null) {
 
             val code =

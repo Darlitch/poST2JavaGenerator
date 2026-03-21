@@ -57,7 +57,7 @@ public class «name»Simulation {
 		
 		        val program = pc.program
 		
-		        // ===== PROGRAM VARS =====
+		        // ===== PROGRAM VARS ===== 
 		        for (v : program.progInVars)
 		            for (decl : v.vars)
 		                builder.append(VarMemoryGenerator.generate(decl, ctx, IND))

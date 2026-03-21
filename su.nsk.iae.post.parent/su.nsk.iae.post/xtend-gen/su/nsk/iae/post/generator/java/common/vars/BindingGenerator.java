@@ -41,6 +41,14 @@ public class BindingGenerator {
         ctx.registerArrayStart(left, ctx.getArrayStart(target));
         ctx.registerArrayType(left, ctx.getArrayElementType(target));
       }
+      boolean _isProcessInput = ctx.isProcessInput(left);
+      if (_isProcessInput) {
+        ctx.registerInputVar(target);
+      }
+      boolean _isProcessOutput = ctx.isProcessOutput(left);
+      if (_isProcessOutput) {
+        ctx.registerOutputVar(target);
+      }
       return;
     }
     Constant _const = bind.getConst();
@@ -65,6 +73,14 @@ public class BindingGenerator {
       if (_hasArrayStart) {
         ctx.registerArrayStart(left, ctx.getArrayStart(target));
         ctx.registerArrayType(left, ctx.getArrayElementType(target));
+      }
+      boolean _isProcessInput = ctx.isProcessInput(left);
+      if (_isProcessInput) {
+        ctx.registerInputVar(target);
+      }
+      boolean _isProcessOutput = ctx.isProcessOutput(left);
+      if (_isProcessOutput) {
+        ctx.registerOutputVar(target);
       }
       return;
     }

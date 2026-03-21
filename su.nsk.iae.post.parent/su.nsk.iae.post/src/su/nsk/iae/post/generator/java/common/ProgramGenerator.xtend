@@ -442,6 +442,16 @@ public class «name» {
                         val field = vname.name
                         ctx.registerProcess(field, field, procType)
                     }
+                    
+             for (v : p.procInVars)
+			    for (decl : v.vars)
+			        for (vname : decl.varList.vars)
+			            ctx.registerProcessInput(vname.name)
+			
+			for (v : p.procOutVars)
+			    for (decl : v.vars)
+			        for (vname : decl.varList.vars)
+			            ctx.registerProcessOutput(vname.name)
         }
     }
 

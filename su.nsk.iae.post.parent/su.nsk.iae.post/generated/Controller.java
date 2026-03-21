@@ -21,6 +21,15 @@ public class Controller {
         memory.put("prev_light", 0);
         memory.put("alight", 0);
         memory.put("pressed", false);
+        inputNames.add("lightsArray1");
+        inputNames.add("lightsArray2");
+        inputNames.add("sensor");
+        outputNames.add("red2");
+        outputNames.add("red1");
+        outputNames.add("green2");
+        outputNames.add("green1");
+        outputNames.add("yellow1");
+        outputNames.add("yellow2");
         globalNames.add("lightsArray1");
         globalNames.add("lightsArray2");
         globalNames.add("red2");
