@@ -7,10 +7,18 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.vars.GlobalVarDeclarationGenerator;
+import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator;
 import su.nsk.iae.post.poST.Configuration;
 import su.nsk.iae.post.poST.GlobalVarDeclaration;
+import su.nsk.iae.post.poST.InputOutputVarDeclaration;
+import su.nsk.iae.post.poST.InputVarDeclaration;
+import su.nsk.iae.post.poST.OutputVarDeclaration;
+import su.nsk.iae.post.poST.Program;
 import su.nsk.iae.post.poST.ProgramConfiguration;
 import su.nsk.iae.post.poST.Resource;
+import su.nsk.iae.post.poST.TempVarDeclaration;
+import su.nsk.iae.post.poST.VarDeclaration;
+import su.nsk.iae.post.poST.VarInitDeclaration;
 
 @SuppressWarnings("all")
 public class ConfigurationGenerator {
@@ -59,12 +67,50 @@ public class ConfigurationGenerator {
       EList<Resource> _resources = conf.getResources();
       for (final Resource r : _resources) {
         {
-          builder.append(
-            this.resourceGen.generate(r, ctx, IND));
           EList<ProgramConfiguration> _programConfs = r.getResStatement().getProgramConfs();
           for (final ProgramConfiguration pc : _programConfs) {
-            programInstance = pc.getName();
+            {
+              final Program program = pc.getProgram();
+              EList<InputVarDeclaration> _progInVars = program.getProgInVars();
+              for (final InputVarDeclaration v : _progInVars) {
+                EList<VarInitDeclaration> _vars = v.getVars();
+                for (final VarInitDeclaration decl : _vars) {
+                  builder.append(VarMemoryGenerator.generate(decl, ctx, IND));
+                }
+              }
+              EList<OutputVarDeclaration> _progOutVars = program.getProgOutVars();
+              for (final OutputVarDeclaration v_1 : _progOutVars) {
+                EList<VarInitDeclaration> _vars_1 = v_1.getVars();
+                for (final VarInitDeclaration decl_1 : _vars_1) {
+                  builder.append(VarMemoryGenerator.generate(decl_1, ctx, IND));
+                }
+              }
+              EList<VarDeclaration> _progVars = program.getProgVars();
+              for (final VarDeclaration v_2 : _progVars) {
+                EList<VarInitDeclaration> _vars_2 = v_2.getVars();
+                for (final VarInitDeclaration decl_2 : _vars_2) {
+                  builder.append(VarMemoryGenerator.generate(decl_2, ctx, IND));
+                }
+              }
+              EList<InputOutputVarDeclaration> _progInOutVars = program.getProgInOutVars();
+              for (final InputOutputVarDeclaration v_3 : _progInOutVars) {
+                EList<VarInitDeclaration> _vars_3 = v_3.getVars();
+                for (final VarInitDeclaration decl_3 : _vars_3) {
+                  builder.append(VarMemoryGenerator.generate(decl_3, ctx, IND));
+                }
+              }
+              EList<TempVarDeclaration> _progTempVars = program.getProgTempVars();
+              for (final TempVarDeclaration v_4 : _progTempVars) {
+                EList<VarInitDeclaration> _vars_4 = v_4.getVars();
+                for (final VarInitDeclaration decl_4 : _vars_4) {
+                  builder.append(VarMemoryGenerator.generate(decl_4, ctx, IND));
+                }
+              }
+              programInstance = pc.getName();
+            }
           }
+          builder.append(
+            this.resourceGen.generate(r, ctx, IND));
         }
       }
       if ((programInstance == null)) {

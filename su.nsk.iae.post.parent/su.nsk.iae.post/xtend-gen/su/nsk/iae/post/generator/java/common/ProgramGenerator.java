@@ -261,63 +261,28 @@ public class ProgramGenerator {
       _builder.append("    this.memory = memory;");
       _builder.newLineIfNotEmpty();
       builder.append(_builder);
-      EList<InputVarDeclaration> _progInVars = program.getProgInVars();
-      for (final InputVarDeclaration v : _progInVars) {
-        EList<VarInitDeclaration> _vars = v.getVars();
-        for (final VarInitDeclaration decl : _vars) {
-          builder.append(VarMemoryGenerator.generate(decl, ctx, ProgramGenerator.INDENT));
-        }
-      }
-      EList<OutputVarDeclaration> _progOutVars = program.getProgOutVars();
-      for (final OutputVarDeclaration v_1 : _progOutVars) {
-        EList<VarInitDeclaration> _vars_1 = v_1.getVars();
-        for (final VarInitDeclaration decl_1 : _vars_1) {
-          builder.append(VarMemoryGenerator.generate(decl_1, ctx, ProgramGenerator.INDENT));
-        }
-      }
-      EList<VarDeclaration> _progVars = program.getProgVars();
-      for (final VarDeclaration v_2 : _progVars) {
-        EList<VarInitDeclaration> _vars_2 = v_2.getVars();
-        for (final VarInitDeclaration decl_2 : _vars_2) {
-          builder.append(VarMemoryGenerator.generate(decl_2, ctx, ProgramGenerator.INDENT));
-        }
-      }
-      EList<InputOutputVarDeclaration> _progInOutVars = program.getProgInOutVars();
-      for (final InputOutputVarDeclaration v_3 : _progInOutVars) {
-        EList<VarInitDeclaration> _vars_3 = v_3.getVars();
-        for (final VarInitDeclaration decl_3 : _vars_3) {
-          builder.append(VarMemoryGenerator.generate(decl_3, ctx, ProgramGenerator.INDENT));
-        }
-      }
-      EList<TempVarDeclaration> _progTempVars = program.getProgTempVars();
-      for (final TempVarDeclaration v_4 : _progTempVars) {
-        EList<VarInitDeclaration> _vars_4 = v_4.getVars();
-        for (final VarInitDeclaration decl_4 : _vars_4) {
-          builder.append(VarMemoryGenerator.generate(decl_4, ctx, ProgramGenerator.INDENT));
-        }
-      }
       EList<su.nsk.iae.post.poST.Process> _processes = program.getProcesses();
       for (final su.nsk.iae.post.poST.Process p : _processes) {
         {
           EList<VarDeclaration> _procVars = p.getProcVars();
-          for (final VarDeclaration v_5 : _procVars) {
-            EList<VarInitDeclaration> _vars_5 = v_5.getVars();
-            for (final VarInitDeclaration decl_5 : _vars_5) {
-              builder.append(VarMemoryGenerator.generate(decl_5, ctx, (ProgramGenerator.INDENT + "    ")));
+          for (final VarDeclaration v : _procVars) {
+            EList<VarInitDeclaration> _vars = v.getVars();
+            for (final VarInitDeclaration decl : _vars) {
+              builder.append(VarMemoryGenerator.generate(decl, ctx, (ProgramGenerator.INDENT + "    ")));
             }
           }
           EList<InputVarDeclaration> _procInVars = p.getProcInVars();
-          for (final InputVarDeclaration v_6 : _procInVars) {
-            EList<VarInitDeclaration> _vars_6 = v_6.getVars();
-            for (final VarInitDeclaration decl_6 : _vars_6) {
-              builder.append(VarMemoryGenerator.generate(decl_6, ctx, (ProgramGenerator.INDENT + "    ")));
+          for (final InputVarDeclaration v_1 : _procInVars) {
+            EList<VarInitDeclaration> _vars_1 = v_1.getVars();
+            for (final VarInitDeclaration decl_1 : _vars_1) {
+              builder.append(VarMemoryGenerator.generate(decl_1, ctx, (ProgramGenerator.INDENT + "    ")));
             }
           }
           EList<OutputVarDeclaration> _procOutVars = p.getProcOutVars();
-          for (final OutputVarDeclaration v_7 : _procOutVars) {
-            EList<VarInitDeclaration> _vars_7 = v_7.getVars();
-            for (final VarInitDeclaration decl_7 : _vars_7) {
-              builder.append(VarMemoryGenerator.generate(decl_7, ctx, (ProgramGenerator.INDENT + "    ")));
+          for (final OutputVarDeclaration v_2 : _procOutVars) {
+            EList<VarInitDeclaration> _vars_2 = v_2.getVars();
+            for (final VarInitDeclaration decl_2 : _vars_2) {
+              builder.append(VarMemoryGenerator.generate(decl_2, ctx, (ProgramGenerator.INDENT + "    ")));
             }
           }
         }
@@ -663,14 +628,23 @@ public class ProgramGenerator {
             this.registerVarDecl(decl_7, ctx, _function_7);
           }
         }
+        EList<InputOutputVarDeclaration> _procInOutVars = p_1.getProcInOutVars();
+        for (final InputOutputVarDeclaration v_8 : _procInOutVars) {
+          EList<VarInitDeclaration> _vars_8 = v_8.getVars();
+          for (final VarInitDeclaration decl_8 : _vars_8) {
+            final Procedure1<String> _function_8 = (String name) -> {
+            };
+            this.registerVarDecl(decl_8, ctx, _function_8);
+          }
+        }
         EList<ProcessVarDeclaration> _procProcessVars = p_1.getProcProcessVars();
-        for (final ProcessVarDeclaration v_8 : _procProcessVars) {
-          EList<ProcessVarInitDeclaration> _vars_8 = v_8.getVars();
-          for (final ProcessVarInitDeclaration decl_8 : _vars_8) {
-            EList<ProcessVariable> _vars_9 = decl_8.getVarList().getVars();
-            for (final ProcessVariable vname : _vars_9) {
+        for (final ProcessVarDeclaration v_9 : _procProcessVars) {
+          EList<ProcessVarInitDeclaration> _vars_9 = v_9.getVars();
+          for (final ProcessVarInitDeclaration decl_9 : _vars_9) {
+            EList<ProcessVariable> _vars_10 = decl_9.getVarList().getVars();
+            for (final ProcessVariable vname : _vars_10) {
               {
-                final String procType = decl_8.getProcess().getName();
+                final String procType = decl_9.getProcess().getName();
                 final String field = vname.getName();
                 ctx.registerProcess(field, field, procType);
               }
@@ -702,9 +676,7 @@ public class ProgramGenerator {
       {
         ctx.registerVar(vname.getName(), type);
         registry.apply(vname.getName());
-        ArraySpecificationInit _arrSpec = decl.getArrSpec();
-        boolean _tripleNotEquals = (_arrSpec != null);
-        if (_tripleNotEquals) {
+        if (((decl.getArrSpec() != null) && (!ctx.hasArrayElementType(vname.getName())))) {
           ctx.registerArrayType(vname.getName(), type);
         }
       }

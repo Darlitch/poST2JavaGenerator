@@ -174,25 +174,25 @@ public class «name» {
 
         // ===== VAR INIT =====
 
-        for (v : program.progInVars)
-            for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
-
-        for (v : program.progOutVars)
-            for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
-
-        for (v : program.progVars)
-            for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
-
-        for (v : program.progInOutVars)
-            for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
-
-        for (v : program.progTempVars)
-            for (decl : v.vars)
-                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
+//        for (v : program.progInVars)
+//            for (decl : v.vars)
+//                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
+//
+//        for (v : program.progOutVars)
+//            for (decl : v.vars)
+//                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
+//
+//        for (v : program.progVars)
+//            for (decl : v.vars)
+//                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
+//
+//        for (v : program.progInOutVars)
+//            for (decl : v.vars)
+//                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
+//
+//        for (v : program.progTempVars)
+//            for (decl : v.vars)
+//                builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT))
                 
         // ===== PROCESS VAR INIT =====
 
@@ -430,6 +430,10 @@ public class «name» {
             for (v : p.procVars)
                 for (decl : v.vars)
                     registerVarDecl(decl, ctx, [name | ])
+            
+            for (v : p.procInOutVars)
+		        for (decl : v.vars)
+		            registerVarDecl(decl, ctx, [name | ])
 
             for (v : p.procProcessVars)
                 for (decl : v.vars)
@@ -462,10 +466,9 @@ public class «name» {
             ctx.registerVar(vname.name, type)
             registry.apply(vname.name)
 
-            if (decl.arrSpec !== null) {
-                ctx.registerArrayType(vname.name, type)
-//                ctx.registerArrayStart(vname.name, 0)
-            }
+            if (decl.arrSpec !== null && !ctx.hasArrayElementType(vname.name)) {
+			    ctx.registerArrayType(vname.name, type)
+			}
         }
     }
 }

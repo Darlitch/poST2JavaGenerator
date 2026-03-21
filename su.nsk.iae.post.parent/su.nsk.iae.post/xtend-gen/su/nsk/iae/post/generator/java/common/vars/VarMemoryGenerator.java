@@ -38,7 +38,7 @@ public class VarMemoryGenerator {
         {
           final String name = v.getName();
           final String resolved = ctx.resolveAlias(name);
-          if (((!ctx.hasArrayStart(resolved)) && (!ctx.hasProcess(resolved)))) {
+          if ((((!ctx.hasArrayStart(resolved)) && (!ctx.hasProcess(resolved))) && (!ctx.hasAlias(name)))) {
             String _xifexpression_2 = null;
             if (((decl.getSpec() != null) && (decl.getSpec().getValue() != null))) {
               _xifexpression_2 = ExpressionGenerator.generate(decl.getSpec().getValue(), ctx);

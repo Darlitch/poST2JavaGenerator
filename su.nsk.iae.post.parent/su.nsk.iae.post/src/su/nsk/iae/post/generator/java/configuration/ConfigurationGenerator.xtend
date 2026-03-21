@@ -5,6 +5,7 @@ import su.nsk.iae.post.poST.Resource
 import su.nsk.iae.post.poST.ProgramConfiguration
 
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
+import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator
 import su.nsk.iae.post.generator.java.common.vars.GlobalVarDeclarationGenerator
 import su.nsk.iae.post.poST.GlobalVarDeclaration
 
@@ -49,17 +50,42 @@ public class «name»Simulation {
 		        )
 		    }
 		}
+		
         for (Resource r : conf.resources) {
-
-            builder.append(
-                resourceGen.generate(r, ctx, IND)
-            )
-
-            // определяем имя program instance
-            for (ProgramConfiguration pc : r.resStatement.programConfs) {
-                programInstance = pc.name
-            }
-        }
+		
+		    for (ProgramConfiguration pc : r.resStatement.programConfs) {
+		
+		        val program = pc.program
+		
+		        // ===== PROGRAM VARS =====
+		        for (v : program.progInVars)
+		            for (decl : v.vars)
+		                builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+		
+		        for (v : program.progOutVars)
+		            for (decl : v.vars)
+		                builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+		
+		        for (v : program.progVars)
+		            for (decl : v.vars)
+		                builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+		
+		        for (v : program.progInOutVars)
+		            for (decl : v.vars)
+		                builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+		
+		        for (v : program.progTempVars)
+		            for (decl : v.vars)
+		                builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+		
+		        // имя инстанса
+		        programInstance = pc.name
+		    }
+		    // ===== GLOBAL VARS ресурса =====
+		    builder.append(
+		        resourceGen.generate(r, ctx, IND)
+		    )
+		}
 
         if (programInstance === null)
             throw new IllegalStateException("No PROGRAM instance defined in CONFIGURATION")

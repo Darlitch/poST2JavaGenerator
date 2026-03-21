@@ -26,8 +26,8 @@ class VarMemoryGenerator {
 			
 			val resolved = ctx.resolveAlias(name)
 
-			// ❗ ЕСЛИ ЭТО ALIAS НА МАССИВ — НЕ ГЕНЕРИМ memory.put
-			if (!ctx.hasArrayStart(resolved) && !ctx.hasProcess(resolved)) {
+			// ❗ ЕСЛИ ЭТО ALIAS НЕ ГЕНЕРИМ memory.put
+			if (!ctx.hasArrayStart(resolved) && !ctx.hasProcess(resolved) && !ctx.hasAlias(name)) {
 			    val init =
 				    if (decl.spec !== null && decl.spec.value !== null)
 				        generate(decl.spec.value, ctx)

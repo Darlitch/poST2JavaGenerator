@@ -122,7 +122,6 @@ class GenerationContext {
 	// зарегистрировать старт индекса массива
 	def void registerArrayStart(String arrayName, int start) {
 		arrayStarts.put(arrayName, start)
-		System.out.println("REGISTER ARRAY START: " + arrayName + " = " + start);
 	}
 	
 	// получить старт индекса
