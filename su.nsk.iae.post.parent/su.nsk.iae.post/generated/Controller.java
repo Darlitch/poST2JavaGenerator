@@ -134,6 +134,8 @@ public class Controller {
     }
 
     class Light implements IProcess {
+	
+        private final String instanceName;
 
         enum State {
             Light,
@@ -147,7 +149,8 @@ public class Controller {
 
         private final Map<String,String> aliases;
 
-        public Light(Map<String,Object> memory, Map<String,String> aliases) {
+        public Light(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
+            this.instanceName = instanceName;
             this.memory = memory;
         this.aliases = aliases;
         }
@@ -225,12 +228,12 @@ public class Controller {
 
         @Override
         public void dumpStates(Map<String,String> out) {
-            out.put("Light_state", state.name());
+            out.put(instanceName + "_state", state.name());
         }
 
         @Override
         public void dumpTimers(Map<String,Long> out) {
-            out.put("Light_time", timerBaseTime);
+            out.put(instanceName + "_time", timerBaseTime);
         }
 
         @Override
@@ -240,6 +243,8 @@ public class Controller {
 
     }
     class Control implements IProcess {
+	
+        private final String instanceName;
 
         enum State {
             Work,
@@ -255,7 +260,8 @@ public class Controller {
 
         private final Map<String,String> aliases;
 
-        public Control(Map<String,Object> memory, Map<String,String> aliases) {
+        public Control(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
+            this.instanceName = instanceName;
             this.memory = memory;
         this.aliases = aliases;
         }
@@ -415,12 +421,12 @@ public class Controller {
 
         @Override
         public void dumpStates(Map<String,String> out) {
-            out.put("Control_state", state.name());
+            out.put(instanceName + "_state", state.name());
         }
 
         @Override
         public void dumpTimers(Map<String,Long> out) {
-            out.put("Control_time", timerBaseTime);
+            out.put(instanceName + "_time", timerBaseTime);
         }
 
         @Override

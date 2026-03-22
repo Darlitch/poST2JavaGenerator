@@ -31,6 +31,8 @@ class ProcessGenerator {
         builder.append(
 '''
 «indent»class «name» implements IProcess {
+	
+«nextIndent»private final String instanceName;
 
 «generateStateEnum(p, nextIndent)»
 
@@ -74,7 +76,8 @@ class ProcessGenerator {
 	private def String generateConstructor(String name, String indent) {
 
     '''
-«indent»public «name»(Map<String,Object> memory, Map<String,String> aliases) {
+«indent»public «name»(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
+«indent»    this.instanceName = instanceName;
 «indent»    this.memory = memory;
 «indent»this.aliases = aliases;
 «indent»}
@@ -255,7 +258,7 @@ class ProcessGenerator {
         '''
 «indent»@Override
 «indent»public void dumpStates(Map<String,String> out) {
-«indent»    out.put("«name»_state", state.name());
+«indent»    out.put(instanceName + "_state", state.name());
 «indent»}
 '''
     }
@@ -265,7 +268,7 @@ class ProcessGenerator {
         '''
 «indent»@Override
 «indent»public void dumpTimers(Map<String,Long> out) {
-«indent»    out.put("«name»_time", timerBaseTime);
+«indent»    out.put(instanceName + "_time", timerBaseTime);
 «indent»}
 '''
     }

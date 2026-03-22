@@ -1,7 +1,8 @@
 import java.util.Map;
 import java.util.HashMap;
 
-public class Traffic_lightsSimulation {
+
+public class Simulation {
 
     public static void main(String[] args) throws Exception {
 
@@ -42,40 +43,40 @@ public class Traffic_lightsSimulation {
 
         Map<String,String> red_light1_aliases = new HashMap<>();
         red_light1_aliases.put("b_light", "red1");
-        Light red_light1 = new Light(memory, red_light1_aliases);
+        Light red_light1 = new Light("red_light1", memory, red_light1_aliases);
         traffic_lights_controller.registerProcess(red_light1);
         red_light1.start();
 
         Map<String,String> yellow_light1_aliases = new HashMap<>();
         yellow_light1_aliases.put("b_light", "yellow1");
-        Light yellow_light1 = new Light(memory, yellow_light1_aliases);
+        Light yellow_light1 = new Light("yellow_light1", memory, yellow_light1_aliases);
         traffic_lights_controller.registerProcess(yellow_light1);
 
         Map<String,String> green_light1_aliases = new HashMap<>();
         green_light1_aliases.put("b_light", "green1");
-        Light green_light1 = new Light(memory, green_light1_aliases);
+        Light green_light1 = new Light("green_light1", memory, green_light1_aliases);
         traffic_lights_controller.registerProcess(green_light1);
 
         Map<String,String> red_light2_aliases = new HashMap<>();
         red_light2_aliases.put("b_light", "red2");
-        Light red_light2 = new Light(memory, red_light2_aliases);
+        Light red_light2 = new Light("red_light2", memory, red_light2_aliases);
         traffic_lights_controller.registerProcess(red_light2);
 
         Map<String,String> yellow_light2_aliases = new HashMap<>();
         yellow_light2_aliases.put("b_light", "yellow2");
-        Light yellow_light2 = new Light(memory, yellow_light2_aliases);
+        Light yellow_light2 = new Light("yellow_light2", memory, yellow_light2_aliases);
         traffic_lights_controller.registerProcess(yellow_light2);
 
         Map<String,String> green_light2_aliases = new HashMap<>();
         green_light2_aliases.put("b_light", "green2");
-        Light green_light2 = new Light(memory, green_light2_aliases);
+        Light green_light2 = new Light("green_light2", memory, green_light2_aliases);
         traffic_lights_controller.registerProcess(green_light2);
         green_light2.start();
 
         Map<String,String> control1_aliases = new HashMap<>();
         control1_aliases.put("control_sensor", "sensor");
         control1_aliases.put("rLightsArray", "lightsArray1");
-        Control control1 = new Control(memory, control1_aliases);
+        Control control1 = new Control("control1", memory, control1_aliases);
         traffic_lights_controller.registerProcess(control1);
         control1.setProcess("pRed", red_light1);
         control1.setProcess("pYellow", yellow_light1);
@@ -85,7 +86,7 @@ public class Traffic_lightsSimulation {
         Map<String,String> control2_aliases = new HashMap<>();
         control2_aliases.put("control_sensor", "sensor");
         control2_aliases.put("rLightsArray", "lightsArray2");
-        Control control2 = new Control(memory, control2_aliases);
+        Control control2 = new Control("control2", memory, control2_aliases);
         traffic_lights_controller.registerProcess(control2);
         control2.setProcess("pRed", green_light2);
         control2.setProcess("pYellow", yellow_light2);

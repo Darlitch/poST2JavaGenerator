@@ -43,6 +43,11 @@ public class ProcessGenerator {
       _builder.append(name);
       _builder.append(" implements IProcess {");
       _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.newLine();
+      _builder.append(nextIndent);
+      _builder.append("private final String instanceName;");
+      _builder.newLineIfNotEmpty();
       _builder.newLine();
       String _generateStateEnum = this.generateStateEnum(p, nextIndent);
       _builder.append(_generateStateEnum);
@@ -118,7 +123,10 @@ public class ProcessGenerator {
     _builder.append(indent);
     _builder.append("public ");
     _builder.append(name);
-    _builder.append("(Map<String,Object> memory, Map<String,String> aliases) {");
+    _builder.append("(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(indent);
+    _builder.append("    this.instanceName = instanceName;");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("    this.memory = memory;");
@@ -421,9 +429,7 @@ public class ProcessGenerator {
     _builder.append("public void dumpStates(Map<String,String> out) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
-    _builder.append("    out.put(\"");
-    _builder.append(name);
-    _builder.append("_state\", state.name());");
+    _builder.append("    out.put(instanceName + \"_state\", state.name());");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("}");
@@ -440,9 +446,7 @@ public class ProcessGenerator {
     _builder.append("public void dumpTimers(Map<String,Long> out) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
-    _builder.append("    out.put(\"");
-    _builder.append(name);
-    _builder.append("_time\", timerBaseTime);");
+    _builder.append("    out.put(instanceName + \"_time\", timerBaseTime);");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("}");

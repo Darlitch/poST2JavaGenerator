@@ -71,7 +71,9 @@ public class ProgramConfGenerator {
             _builder_2.append(procName);
             _builder_2.append(" = new ");
             _builder_2.append(procType);
-            _builder_2.append("(memory, ");
+            _builder_2.append("(\"");
+            _builder_2.append(procName);
+            _builder_2.append("\", memory, ");
             _builder_2.append(procName);
             _builder_2.append("_aliases);");
             _builder_2.newLineIfNotEmpty();

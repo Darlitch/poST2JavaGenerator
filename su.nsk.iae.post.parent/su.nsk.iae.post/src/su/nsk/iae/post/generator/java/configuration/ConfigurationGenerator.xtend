@@ -27,7 +27,7 @@ class ConfigurationGenerator {
 import java.util.Map;
 import java.util.HashMap;
 
-public class «name»Simulation {
+public class Simulation {
 
     public static void main(String[] args) throws Exception {
 

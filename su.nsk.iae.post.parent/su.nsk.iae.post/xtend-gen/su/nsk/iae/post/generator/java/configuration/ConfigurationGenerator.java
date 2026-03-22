@@ -37,10 +37,8 @@ public class ConfigurationGenerator {
       _builder.append("import java.util.HashMap;");
       _builder.newLine();
       _builder.newLine();
-      _builder.append("public class ");
-      _builder.append(name);
-      _builder.append("Simulation {");
-      _builder.newLineIfNotEmpty();
+      _builder.append("public class Simulation {");
+      _builder.newLine();
       _builder.newLine();
       _builder.append("    ");
       _builder.append("public static void main(String[] args) throws Exception {");

@@ -67,7 +67,7 @@ class ProgramConfGenerator {
 	                // ===== ñîçäàíèå ïðîöåññà =====
 	                builder.append(
 '''
-«indent»«procType» «procName» = new «procType»(memory, «procName»_aliases);
+«indent»«procType» «procName» = new «procType»("«procName»", memory, «procName»_aliases);
 «indent»«instanceName».registerProcess(«procName»);
 '''
 	                )

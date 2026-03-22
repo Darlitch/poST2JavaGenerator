@@ -51,21 +51,20 @@ public class JavaGenerator implements IPoSTGenerator {
     if (_tripleNotEquals) {
       final String code = new ConfigurationGenerator().generate(model.getConf(), ctx);
       InputOutput.<String>println("Generating Simulation.java");
-      String _name = model.getConf().getName();
-      String _plus = (_name + "Simulation.java");
-      fsa.generateFile(_plus, code);
+      fsa.generateFile(
+        "Simulation.java", code);
     }
     EList<Program> _programs_1 = model.getPrograms();
     for (final Program p_1 : _programs_1) {
       {
         final String code_1 = new ProgramGenerator().generate(p_1, ctx);
+        String _name = p_1.getName();
+        String _plus = ("Generating program: " + _name);
+        String _plus_1 = (_plus + ".java");
+        InputOutput.<String>println(_plus_1);
         String _name_1 = p_1.getName();
-        String _plus_1 = ("Generating program: " + _name_1);
-        String _plus_2 = (_plus_1 + ".java");
-        InputOutput.<String>println(_plus_2);
-        String _name_2 = p_1.getName();
-        String _plus_3 = (_name_2 + ".java");
-        fsa.generateFile(_plus_3, code_1);
+        String _plus_2 = (_name_1 + ".java");
+        fsa.generateFile(_plus_2, code_1);
       }
     }
   }
