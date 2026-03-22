@@ -28,7 +28,6 @@ public class Controller {
         }
     }
 
-
     public Controller(Map<String,Object> memory) {
         this.memory = memory;
         memory.put("prev_light", 0);
@@ -133,48 +132,16 @@ public class Controller {
         return res;
     }
 
-    class Light implements IProcess {
+    class Light extends BaseProcess {
 	
-        private final String instanceName;
-
         enum State {
             Light,
             Stop,
             Error
         }
 
-        private final Map<String,Object> memory;
-
-        private final Map<String,IProcess> processRefs = new HashMap<>();
-
-        private final Map<String,String> aliases;
-
         public Light(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
-            this.instanceName = instanceName;
-            this.memory = memory;
-        this.aliases = aliases;
-        }
-
-        public void setProcess(String name, IProcess p) {
-            processRefs.put(name, p);
-        }
-
-        private String resolve(String name) {
-            String current = name;
-            if (aliases != null) {
-                while (aliases.containsKey(current)) {
-                    current = aliases.get(current);
-                }
-            }
-            return current;
-        }
-
-        private Object read(String name) {
-            return memory.get(resolve(name));
-        }
-
-        private void write(String name, Object value) {
-            memory.put(resolve(name), value);
+            super(instanceName, memory, aliases);
         }
 
         private State state = State.Stop;
@@ -220,7 +187,7 @@ public class Controller {
 
             switch(state) {
                 case Light -> {
-                    write("b_light", true);
+                    writeVar("b_light", true);
                 }
                 case Stop, Error -> { }
             }
@@ -242,10 +209,9 @@ public class Controller {
         }
 
     }
-    class Control implements IProcess {
-	
-        private final String instanceName;
 
+    class Control extends BaseProcess {
+	
         enum State {
             Work,
             delay10,
@@ -254,38 +220,8 @@ public class Controller {
             Error
         }
 
-        private final Map<String,Object> memory;
-
-        private final Map<String,IProcess> processRefs = new HashMap<>();
-
-        private final Map<String,String> aliases;
-
         public Control(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
-            this.instanceName = instanceName;
-            this.memory = memory;
-        this.aliases = aliases;
-        }
-
-        public void setProcess(String name, IProcess p) {
-            processRefs.put(name, p);
-        }
-
-        private String resolve(String name) {
-            String current = name;
-            if (aliases != null) {
-                while (aliases.containsKey(current)) {
-                    current = aliases.get(current);
-                }
-            }
-            return current;
-        }
-
-        private Object read(String name) {
-            return memory.get(resolve(name));
-        }
-
-        private void write(String name, Object value) {
-            memory.put(resolve(name), value);
+            super(instanceName, memory, aliases);
         }
 
         private State state = State.Stop;
@@ -333,9 +269,9 @@ public class Controller {
 
             switch(state) {
                 case Work -> {
-                    if (((Boolean)read("pressed"))) {
-                        write("prev_light", 0);
-                        write("pressed", false);
+                    if (readBool("pressed")) {
+                        writeVar("prev_light", 0);
+                        writeVar("pressed", false);
                     }
                     else if (((((isInactive(processRefs.get("pRed"))) && (isActive(processRefs.get("pGreen"))))) || (((isInactive(processRefs.get("pGreen"))) && (isActive(processRefs.get("pRed"))))))) {
                         int __start = ((Number)(1)).intValue();
@@ -348,13 +284,13 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            if (((Boolean) getArrayValue(resolve("rLightsArray"), ((Integer)read("alight")), 1))) {
-                                write("prev_light", ((Integer)read("alight")));
+                            if (getArrayBool("rLightsArray", readInt("alight"), 1)) {
+                                writeVar("prev_light", readInt("alight"));
                             }
-                            setArrayValue(resolve("rLightsArray"), ((Integer)read("alight")), 1, false);
+                            setArrayValue("rLightsArray", readInt("alight"), 1, false);
                             memory.put(
                                 "alight",
-                                ((Integer)read("alight")) + __step
+                                readInt("alight") + __step
                             );
                         }
                         processRefs.get("pRed").stop();
@@ -362,7 +298,7 @@ public class Controller {
                         processRefs.get("pGreen").stop();
                         setState(State.delay10);
                     }
-                    else if ((((double)(((Integer)read("prev_light")))) == ((double)(0)))) {
+                    else if ((readInt("prev_light") == 0)) {
                         int __start = ((Number)(1)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
@@ -373,10 +309,10 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            setArrayValue(resolve("rLightsArray"), ((Integer)read("alight")), 1, false);
+                            setArrayValue("rLightsArray", readInt("alight"), 1, false);
                             memory.put(
                                 "alight",
-                                ((Integer)read("alight")) + __step
+                                readInt("alight") + __step
                             );
                         }
                         processRefs.get("pRed").stop();
@@ -384,7 +320,7 @@ public class Controller {
                         processRefs.get("pGreen").start();
                         setState(State.delay30);
                     }
-                    else if ((((double)(((Integer)read("prev_light")))) == ((double)(2)))) {
+                    else if ((readInt("prev_light") == 2)) {
                         int __start = ((Number)(1)).intValue();
                         int __end   = ((Number)(3)).intValue();
                         int __step  = ((Number)(1)).intValue();
@@ -395,10 +331,10 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            setArrayValue(resolve("rLightsArray"), ((Integer)read("alight")), 1, false);
+                            setArrayValue("rLightsArray", readInt("alight"), 1, false);
                             memory.put(
                                 "alight",
-                                ((Integer)read("alight")) + __step
+                                readInt("alight") + __step
                             );
                         }
                         processRefs.get("pRed").start();
@@ -410,8 +346,8 @@ public class Controller {
                 case delay10 -> {
                 }
                 case delay30 -> {
-                    if ((((Boolean)read("control_sensor")) && isActive(processRefs.get("pRed")))) {
-                        write("pressed", true);
+                    if ((readBool("control_sensor") && isActive(processRefs.get("pRed")))) {
+                        writeVar("pressed", true);
                         setState(State.Work);
                     }
                 }
@@ -434,60 +370,6 @@ public class Controller {
             return state.name();
         }
 
-    }
-
-    private boolean isActive(IProcess p) {
-        String s = p.getStateName();
-        return !s.equals("Stop") && !s.equals("Error");
-    }
-
-    private boolean isInactive(IProcess p) {
-        String s = p.getStateName();
-        return s.equals("Stop") || s.equals("Error");
-    }
-
-    private boolean isStop(IProcess p) {
-        return p.getStateName().equals("Stop");
-    }
-
-    private boolean isError(IProcess p) {
-        return p.getStateName().equals("Error");
-    }
-
-    private boolean loopCond(String var, int end, int step) {
-        int value = ((Number)memory.get(var)).intValue();
-        return (step >= 0 && value <= end)
-            || (step < 0 && value >= end);
-    }
-
-    private Object getArrayValue(String name, int index, int start) {
-        List<String> list = (List<String>) memory.get(name);
-
-        int offset = index - start;
-
-        if (offset < 0 || offset >= list.size()) {
-            throw new RuntimeException(
-                "Array index out of bounds: " + name + "[" + index + "]"
-            );
-        }
-
-        String cell = list.get(offset);
-        return memory.get(cell);
-    }
-
-    private void setArrayValue(String name, int index, int start, Object value) {
-        List<String> list = (List<String>) memory.get(name);
-
-        int offset = index - start;
-
-        if (offset < 0 || offset >= list.size()) {
-            throw new RuntimeException(
-                "Array index out of bounds: " + name + "[" + index + "]"
-            );
-        }
-
-        String cell = list.get(offset);
-        memory.put(cell, value);
     }
 
 }

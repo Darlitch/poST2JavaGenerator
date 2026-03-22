@@ -392,8 +392,11 @@ class ExpressionGenerator {
 	
 	    if (leftType.isNumeric && rightType.isNumeric) {
 	
-	        val leftVal  = '''((double)(«left»))'''
-	        val rightVal = '''((double)(«right»))'''
+//	        val leftVal  = '''((double)(«left»))'''
+//	        val rightVal = '''((double)(«right»))'''
+	        val resultType = promoteNumeric(leftType, rightType)
+	        val l = castTo(left, resultType)
+			val r = castTo(right, resultType)
 	
 	        val operator =
 	            if (op instanceof CompOperator) {
@@ -401,8 +404,8 @@ class ExpressionGenerator {
 	            } else {
 	                equOp(op as EquOperator)
 	            }
-	
-	        return '''(«leftVal» «operator» «rightVal»)'''
+			return '''(«l» «operator» «r»)'''
+//	        return '''(«leftVal» «operator» «rightVal»)'''
 	    }
 	
 	    // ===== BOOLEAN =====
@@ -424,6 +427,15 @@ class ExpressionGenerator {
 	    throw new IllegalStateException(
 	        "Unsupported comparison: " + leftType + " " + op + " " + rightType
 	    )
+	}
+	
+	private def static castTo(String expr, String type) {
+	    switch type {
+	        case "LREAL": '''((double)(«expr»))'''
+	        case "REAL":  '''((float)(«expr»))'''
+	        case #["LINT","ULINT","LWORD"]: '''((long)(«expr»))'''
+	        default: expr // INT → без каста
+	    }
 	}
 
 	// ================= PRIMARY =================
@@ -462,8 +474,21 @@ class ExpressionGenerator {
 		    val resolved = ctx.resolveAlias(arrName)
 			val start = ctx.getArrayStart(resolved)
 //			val start = ctx.getArrayStart(arrName)
+
+			val method = switch javaType {
+			    case "Boolean": "getArrayBool"
+			    case "Integer": "getArrayInt"
+			    case "Long": "getArrayLong"
+			    case "Float": "getArrayFloat"
+			    case "Double": "getArrayDouble"
+			    default:
+			        throw new IllegalStateException(
+			            "Unsupported array type: " + type + " (" + javaType + ")"
+			        )
+			}
+			return '''«method»("«arrName»", «indexExpr», «start»)'''
 	
-			return '''((«javaType») getArrayValue(resolve("«arrName»"), «indexExpr», «start»))'''
+//			return '''((«javaType») getArrayValue("«arrName»", «indexExpr», «start»))'''
 		}	
 
 		if (exp.procStatus !== null)
@@ -488,14 +513,25 @@ class ExpressionGenerator {
 	    }
 		val javaType = ctx.resolveVarType(name).javaType
 
-		'''((«javaType»)read("«name»"))'''
+//		'''((«javaType»)read("«name»"))'''
+
+//		val type = ctx.resolveVarType(resolved)
+		
+		switch (javaType) {
+        case "Boolean":  '''readBool("«name»")'''
+        case "Integer":  '''readInt("«name»")'''
+        case "Long":  '''readLong("«name»")'''
+        case "Float":  '''readFloat("«name»")'''
+        case "Double": '''readDouble("«name»")'''
+        default:      '''read("«name»")''' // fallback
+    }
 	}
 	
 	// ================= VARIABLE WRITE =================
 
 	// генерирует запись в ячейку памяти
 	def static String writeVar(String name, String valueExpr, GenerationContext ctx) {
-		'''write("«name»", «valueExpr»);'''
+		'''writeVar("«name»", «valueExpr»);'''
 	}
 
 	// ================= UNARY =================

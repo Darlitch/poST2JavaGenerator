@@ -500,16 +500,9 @@ public class ExpressionGenerator {
         "Ordering comparison not supported for STRING type");
     }
     if ((TypeUtil.isNumeric(leftType) && TypeUtil.isNumeric(rightType))) {
-      StringConcatenation _builder_2 = new StringConcatenation();
-      _builder_2.append("((double)(");
-      _builder_2.append(left);
-      _builder_2.append("))");
-      final String leftVal = _builder_2.toString();
-      StringConcatenation _builder_3 = new StringConcatenation();
-      _builder_3.append("((double)(");
-      _builder_3.append(right);
-      _builder_3.append("))");
-      final String rightVal = _builder_3.toString();
+      final String resultType = TypeUtil.promoteNumeric(leftType, rightType);
+      final CharSequence l = ExpressionGenerator.castTo(left, resultType);
+      final CharSequence r = ExpressionGenerator.castTo(right, resultType);
       String _xifexpression = null;
       if ((op instanceof CompOperator)) {
         String _xifexpression_1 = null;
@@ -524,15 +517,15 @@ public class ExpressionGenerator {
         _xifexpression = ExpressionGenerator.equOp(((EquOperator) op));
       }
       final String operator = _xifexpression;
-      StringConcatenation _builder_4 = new StringConcatenation();
-      _builder_4.append("(");
-      _builder_4.append(leftVal);
-      _builder_4.append(" ");
-      _builder_4.append(operator);
-      _builder_4.append(" ");
-      _builder_4.append(rightVal);
-      _builder_4.append(")");
-      return _builder_4.toString();
+      StringConcatenation _builder_2 = new StringConcatenation();
+      _builder_2.append("(");
+      _builder_2.append(l);
+      _builder_2.append(" ");
+      _builder_2.append(operator);
+      _builder_2.append(" ");
+      _builder_2.append(r);
+      _builder_2.append(")");
+      return _builder_2.toString();
     }
     boolean _equals_3 = Objects.equals(leftType, "BOOL");
     if (_equals_3) {
@@ -551,18 +544,55 @@ public class ExpressionGenerator {
           "Ordering comparison not allowed for BOOL");
       }
       final String operator_1 = _xifexpression_2;
-      StringConcatenation _builder_5 = new StringConcatenation();
-      _builder_5.append("(");
-      _builder_5.append(left);
-      _builder_5.append(" ");
-      _builder_5.append(operator_1);
-      _builder_5.append(" ");
-      _builder_5.append(right);
-      _builder_5.append(")");
-      return _builder_5.toString();
+      StringConcatenation _builder_3 = new StringConcatenation();
+      _builder_3.append("(");
+      _builder_3.append(left);
+      _builder_3.append(" ");
+      _builder_3.append(operator_1);
+      _builder_3.append(" ");
+      _builder_3.append(right);
+      _builder_3.append(")");
+      return _builder_3.toString();
     }
     throw new IllegalStateException(
       ((((("Unsupported comparison: " + leftType) + " ") + op) + " ") + rightType));
+  }
+
+  private static CharSequence castTo(final String expr, final String type) {
+    CharSequence _switchResult = null;
+    boolean _matched = false;
+    if (Objects.equals(type, "LREAL")) {
+      _matched=true;
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("((double)(");
+      _builder.append(expr);
+      _builder.append("))");
+      _switchResult = _builder;
+    }
+    if (!_matched) {
+      if (Objects.equals(type, "REAL")) {
+        _matched=true;
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append("((float)(");
+        _builder_1.append(expr);
+        _builder_1.append("))");
+        _switchResult = _builder_1;
+      }
+    }
+    if (!_matched) {
+      if (Objects.equals(type, Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("LINT", "ULINT", "LWORD")))) {
+        _matched=true;
+        StringConcatenation _builder_2 = new StringConcatenation();
+        _builder_2.append("((long)(");
+        _builder_2.append(expr);
+        _builder_2.append("))");
+        _switchResult = _builder_2;
+      }
+    }
+    if (!_matched) {
+      _switchResult = expr;
+    }
+    return _switchResult;
   }
 
   private static String generatePrimary(final PrimaryExpression exp, final GenerationContext ctx) {
@@ -599,16 +629,42 @@ public class ExpressionGenerator {
         final String javaType = TypeUtil.javaType(type);
         final String resolved_1 = ctx.resolveAlias(arrName);
         final int start = ctx.getArrayStart(resolved_1);
+        String _switchResult = null;
+        if (javaType != null) {
+          switch (javaType) {
+            case "Boolean":
+              _switchResult = "getArrayBool";
+              break;
+            case "Integer":
+              _switchResult = "getArrayInt";
+              break;
+            case "Long":
+              _switchResult = "getArrayLong";
+              break;
+            case "Float":
+              _switchResult = "getArrayFloat";
+              break;
+            case "Double":
+              _switchResult = "getArrayDouble";
+              break;
+            default:
+              throw new IllegalStateException(
+                (((("Unsupported array type: " + type) + " (") + javaType) + ")"));
+          }
+        } else {
+          throw new IllegalStateException(
+            (((("Unsupported array type: " + type) + " (") + javaType) + ")"));
+        }
+        final String method = _switchResult;
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("((");
-        _builder.append(javaType);
-        _builder.append(") getArrayValue(resolve(\"");
+        _builder.append(method);
+        _builder.append("(\"");
         _builder.append(arrName);
-        _builder.append("\"), ");
+        _builder.append("\", ");
         _builder.append(indexExpr);
         _builder.append(", ");
         _builder.append(start);
-        _builder.append("))");
+        _builder.append(")");
         return _builder.toString();
       }
       ProcessStatusExpression _procStatus = exp.getProcStatus();
@@ -656,20 +712,67 @@ public class ExpressionGenerator {
         return value.toString();
       }
       final String javaType = TypeUtil.javaType(ctx.resolveVarType(name));
-      StringConcatenation _builder_1 = new StringConcatenation();
-      _builder_1.append("((");
-      _builder_1.append(javaType);
-      _builder_1.append(")read(\"");
-      _builder_1.append(name);
-      _builder_1.append("\"))");
-      _xblockexpression = _builder_1.toString();
+      String _switchResult = null;
+      if (javaType != null) {
+        switch (javaType) {
+          case "Boolean":
+            StringConcatenation _builder_1 = new StringConcatenation();
+            _builder_1.append("readBool(\"");
+            _builder_1.append(name);
+            _builder_1.append("\")");
+            _switchResult = _builder_1.toString();
+            break;
+          case "Integer":
+            StringConcatenation _builder_2 = new StringConcatenation();
+            _builder_2.append("readInt(\"");
+            _builder_2.append(name);
+            _builder_2.append("\")");
+            _switchResult = _builder_2.toString();
+            break;
+          case "Long":
+            StringConcatenation _builder_3 = new StringConcatenation();
+            _builder_3.append("readLong(\"");
+            _builder_3.append(name);
+            _builder_3.append("\")");
+            _switchResult = _builder_3.toString();
+            break;
+          case "Float":
+            StringConcatenation _builder_4 = new StringConcatenation();
+            _builder_4.append("readFloat(\"");
+            _builder_4.append(name);
+            _builder_4.append("\")");
+            _switchResult = _builder_4.toString();
+            break;
+          case "Double":
+            StringConcatenation _builder_5 = new StringConcatenation();
+            _builder_5.append("readDouble(\"");
+            _builder_5.append(name);
+            _builder_5.append("\")");
+            _switchResult = _builder_5.toString();
+            break;
+          default:
+            StringConcatenation _builder_6 = new StringConcatenation();
+            _builder_6.append("read(\"");
+            _builder_6.append(name);
+            _builder_6.append("\")");
+            _switchResult = _builder_6.toString();
+            break;
+        }
+      } else {
+        StringConcatenation _builder_6 = new StringConcatenation();
+        _builder_6.append("read(\"");
+        _builder_6.append(name);
+        _builder_6.append("\")");
+        _switchResult = _builder_6.toString();
+      }
+      _xblockexpression = _switchResult;
     }
     return _xblockexpression;
   }
 
   public static String writeVar(final String name, final String valueExpr, final GenerationContext ctx) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("write(\"");
+    _builder.append("writeVar(\"");
     _builder.append(name);
     _builder.append("\", ");
     _builder.append(valueExpr);

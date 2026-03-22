@@ -30,26 +30,26 @@ class ProcessGenerator {
 
         builder.append(
 '''
-«indent»class «name» implements IProcess {
+«indent»class «name» extends BaseProcess {
 	
-«nextIndent»private final String instanceName;
-
+««««nextIndent»private final String instanceName;
+«««
 «generateStateEnum(p, nextIndent)»
 
-«nextIndent»private final Map<String,Object> memory;
-
-«nextIndent»private final Map<String,IProcess> processRefs = new HashMap<>();
-
-«nextIndent»private final Map<String,String> aliases;
-
+««««nextIndent»private final Map<String,Object> memory;
+«««
+««««nextIndent»private final Map<String,IProcess> processRefs = new HashMap<>();
+«««
+««««nextIndent»private final Map<String,String> aliases;
+«««
 «generateConstructor(name, nextIndent)»
 
-«generateSetProcess(nextIndent)»
-
-«generateResolveMethod(nextIndent)»
-
-«generateMemoryHelpers(nextIndent)»
-
+««««generateSetProcess(nextIndent)»
+«««
+««««generateResolveMethod(nextIndent)»
+«««
+««««generateMemoryHelpers(nextIndent)»
+«««
 «nextIndent»private State state = State.Stop;
 
 «nextIndent»private long timerBaseTime;
@@ -77,9 +77,7 @@ class ProcessGenerator {
 
     '''
 «indent»public «name»(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
-«indent»    this.instanceName = instanceName;
-«indent»    this.memory = memory;
-«indent»this.aliases = aliases;
+«indent»    super(instanceName, memory, aliases);
 «indent»}
 '''
 	}
@@ -93,29 +91,29 @@ class ProcessGenerator {
 '''
 	}
 	
-	private def String generateResolveMethod(String indent) {
-'''
-«indent»private String resolve(String name) {
-«indent»    String current = name;
-«indent»    if (aliases != null) {
-«indent»        while (aliases.containsKey(current)) {
-«indent»            current = aliases.get(current);
-«indent»        }
-«indent»    }
-«indent»    return current;
-«indent»}
-'''
-	}
+//	private def String generateResolveMethod(String indent) {
+//'''
+//«indent»private String resolve(String name) {
+//«indent»    String current = name;
+//«indent»    if (aliases != null) {
+//«indent»        while (aliases.containsKey(current)) {
+//«indent»            current = aliases.get(current);
+//«indent»        }
+//«indent»    }
+//«indent»    return current;
+//«indent»}
+//'''
+//	}
 	
-	private def String generateMemoryHelpers(String indent) '''
-«indent»private Object read(String name) {
-«indent»    return memory.get(resolve(name));
-«indent»}
-
-«indent»private void write(String name, Object value) {
-«indent»    memory.put(resolve(name), value);
-«indent»}
-'''
+//	private def String generateMemoryHelpers(String indent) '''
+//«indent»private Object read(String name) {
+//«indent»    return memory.get(resolve(name));
+//«indent»}
+//
+//«indent»private void write(String name, Object value) {
+//«indent»    memory.put(resolve(name), value);
+//«indent»}
+//'''
 
     // ================= ENUM STATE =================
 

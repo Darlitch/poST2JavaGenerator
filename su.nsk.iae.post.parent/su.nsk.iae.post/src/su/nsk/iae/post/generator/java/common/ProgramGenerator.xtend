@@ -51,7 +51,6 @@ public class «name» {
 «INDENT»        target.add(name);
 «INDENT»    }
 «INDENT»}
-
 '''
         )
 
@@ -77,75 +76,80 @@ public class «name» {
 
         for (Process p : program.processes) {
             builder.append(processGen.generate(p, ctx, INDENT))
+            builder.append("\n")
         }
         
-        builder.append(
-'''
+//        builder.append(
+//'''
+//
+//«INDENT»private boolean isActive(IProcess p) {
+//«INDENT»    String s = p.getStateName();
+//«INDENT»    return !s.equals("Stop") && !s.equals("Error");
+//«INDENT»}
+//
+//«INDENT»private boolean isInactive(IProcess p) {
+//«INDENT»    String s = p.getStateName();
+//«INDENT»    return s.equals("Stop") || s.equals("Error");
+//«INDENT»}
+//
+//«INDENT»private boolean isStop(IProcess p) {
+//«INDENT»    return p.getStateName().equals("Stop");
+//«INDENT»}
+//
+//«INDENT»private boolean isError(IProcess p) {
+//«INDENT»    return p.getStateName().equals("Error");
+//«INDENT»}
+//'''
+//		)
+		
+//		builder.append(
+//'''
+//
+//«INDENT»private boolean loopCond(String var, int end, int step) {
+//«INDENT»    int value = ((Number)memory.get(var)).intValue();
+//«INDENT»    return (step >= 0 && value <= end)
+//«INDENT»        || (step < 0 && value >= end);
+//«INDENT»}
+//'''
+//		)
 
-«INDENT»private boolean isActive(IProcess p) {
-«INDENT»    String s = p.getStateName();
-«INDENT»    return !s.equals("Stop") && !s.equals("Error");
-«INDENT»}
-
-«INDENT»private boolean isInactive(IProcess p) {
-«INDENT»    String s = p.getStateName();
-«INDENT»    return s.equals("Stop") || s.equals("Error");
-«INDENT»}
-
-«INDENT»private boolean isStop(IProcess p) {
-«INDENT»    return p.getStateName().equals("Stop");
-«INDENT»}
-
-«INDENT»private boolean isError(IProcess p) {
-«INDENT»    return p.getStateName().equals("Error");
-«INDENT»}
-'''
-		)
+//		builder.append(
+//'''
+//
+//«INDENT»private Object getArrayValue(String name, int index, int start) {
+//«INDENT»    List<String> list = (List<String>) memory.get(name);
+//
+//«INDENT»    int offset = index - start;
+//
+//«INDENT»    if (offset < 0 || offset >= list.size()) {
+//«INDENT»        throw new RuntimeException(
+//«INDENT»            "Array index out of bounds: " + name + "[" + index + "]"
+//«INDENT»        );
+//«INDENT»    }
+//
+//«INDENT»    String cell = list.get(offset);
+//«INDENT»    return memory.get(cell);
+//«INDENT»}
+//
+//«INDENT»private void setArrayValue(String name, int index, int start, Object value) {
+//«INDENT»    List<String> list = (List<String>) memory.get(name);
+//
+//«INDENT»    int offset = index - start;
+//
+//«INDENT»    if (offset < 0 || offset >= list.size()) {
+//«INDENT»        throw new RuntimeException(
+//«INDENT»            "Array index out of bounds: " + name + "[" + index + "]"
+//«INDENT»        );
+//«INDENT»    }
+//
+//«INDENT»    String cell = list.get(offset);
+//«INDENT»    memory.put(cell, value);
+//«INDENT»}
+//'''
+//		)
 		
 		builder.append(
 '''
-
-«INDENT»private boolean loopCond(String var, int end, int step) {
-«INDENT»    int value = ((Number)memory.get(var)).intValue();
-«INDENT»    return (step >= 0 && value <= end)
-«INDENT»        || (step < 0 && value >= end);
-«INDENT»}
-'''
-		)
-
-		builder.append(
-'''
-
-«INDENT»private Object getArrayValue(String name, int index, int start) {
-«INDENT»    List<String> list = (List<String>) memory.get(name);
-
-«INDENT»    int offset = index - start;
-
-«INDENT»    if (offset < 0 || offset >= list.size()) {
-«INDENT»        throw new RuntimeException(
-«INDENT»            "Array index out of bounds: " + name + "[" + index + "]"
-«INDENT»        );
-«INDENT»    }
-
-«INDENT»    String cell = list.get(offset);
-«INDENT»    return memory.get(cell);
-«INDENT»}
-
-«INDENT»private void setArrayValue(String name, int index, int start, Object value) {
-«INDENT»    List<String> list = (List<String>) memory.get(name);
-
-«INDENT»    int offset = index - start;
-
-«INDENT»    if (offset < 0 || offset >= list.size()) {
-«INDENT»        throw new RuntimeException(
-«INDENT»            "Array index out of bounds: " + name + "[" + index + "]"
-«INDENT»        );
-«INDENT»    }
-
-«INDENT»    String cell = list.get(offset);
-«INDENT»    memory.put(cell, value);
-«INDENT»}
-
 }
 '''
 		)

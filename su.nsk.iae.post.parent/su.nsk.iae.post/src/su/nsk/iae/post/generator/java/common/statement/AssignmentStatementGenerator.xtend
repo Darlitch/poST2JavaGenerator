@@ -67,7 +67,7 @@ class AssignmentStatementGenerator implements IStatementGenerator {
 			val indexExpr = generate(arr.index, ctx)
 			
 			builder.append(
-			    indent + '''setArrayValue(resolve("«arrName»"), «indexExpr», «start», «valueExpr»);'''
+			    indent + '''setArrayValue("«arrName»", «indexExpr», «start», «valueExpr»);'''
 			)
 
 			return builder.toString

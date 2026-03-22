@@ -118,34 +118,23 @@ public class TypeUtil {
   }
 
   public static int numericRank(final String type) {
-    int _switchResult = (int) 0;
-    boolean _matched = false;
-    if (Objects.equals(type, "LREAL")) {
-      _matched=true;
-      _switchResult = 4;
+    boolean _equals = Objects.equals(type, "LREAL");
+    if (_equals) {
+      return 4;
     }
-    if (!_matched) {
-      if (Objects.equals(type, "REAL")) {
-        _matched=true;
-        _switchResult = 3;
-      }
+    boolean _equals_1 = Objects.equals(type, "REAL");
+    if (_equals_1) {
+      return 3;
     }
-    if (!_matched) {
-      if (Objects.equals(type, Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("LINT", "ULINT", "TIME", "LWORD")))) {
-        _matched=true;
-        _switchResult = 2;
-      }
+    boolean _contains = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("LINT", "ULINT", "TIME", "LWORD")).contains(type);
+    if (_contains) {
+      return 2;
     }
-    if (!_matched) {
-      if (Objects.equals(type, Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("SINT", "INT", "DINT", "USINT", "UINT", "UDINT", "BYTE", "WORD", "DWORD")))) {
-        _matched=true;
-        _switchResult = 1;
-      }
+    boolean _contains_1 = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("SINT", "INT", "DINT", "USINT", "UINT", "UDINT", "BYTE", "WORD", "DWORD")).contains(type);
+    if (_contains_1) {
+      return 1;
     }
-    if (!_matched) {
-      _switchResult = 0;
-    }
-    return _switchResult;
+    return 0;
   }
 
   public static String promoteNumeric(final String t1, final String t2) {

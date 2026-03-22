@@ -7,11 +7,11 @@ import su.nsk.iae.post.poST.GlobalVarDeclaration
 
 import su.nsk.iae.post.poST.Model
 import su.nsk.iae.post.poST.Program
-import su.nsk.iae.post.poST.Constant
 
 import su.nsk.iae.post.generator.IPoSTGenerator
 import su.nsk.iae.post.generator.java.common.ProgramGenerator
 import su.nsk.iae.post.generator.java.common.IProcessGenerator
+import su.nsk.iae.post.generator.java.common.BaseProcessGenerator
 import su.nsk.iae.post.generator.java.configuration.ConfigurationGenerator
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator
@@ -39,6 +39,13 @@ class JavaGenerator implements IPoSTGenerator {
             "IProcess.java",
             IProcessGenerator.generate()
         )
+        
+        println("Generating BaseProcess.java")
+		fsa.generateFile(
+		    "BaseProcess.java",
+		    BaseProcessGenerator.generate()
+		)
+		        
         registerGlobals(model, ctx)
         
         for (Program p : model.programs) {

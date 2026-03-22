@@ -72,13 +72,15 @@ class TypeUtil {
 	}
 	
 	def static int numericRank(String type) {
-		switch(type) {
-			case "LREAL": 4
-			case "REAL": 3
-			case #["LINT","ULINT","TIME","LWORD"]: 2
-			case #["SINT","INT","DINT","USINT","UINT","UDINT","BYTE","WORD","DWORD"]: 1
-			default: 0
-		}
+		if (type == "LREAL") return 4
+	    if (type == "REAL") return 3
+	
+	    if (#["LINT","ULINT","TIME","LWORD"].contains(type)) return 2
+	
+	    if (#["SINT","INT","DINT","USINT","UINT","UDINT","BYTE","WORD","DWORD"].contains(type))
+	        return 1
+	
+	    return 0
 	}
 	
 	def static String promoteNumeric(String t1, String t2) {
