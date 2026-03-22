@@ -39,11 +39,25 @@ public class «name» {
 «INDENT»private final Set<String> globalNames = new HashSet<>();
 «INDENT»private final Set<String> varNames = new HashSet<>();
 
+«INDENT»private void registerTo(Set<String> target, String name) {
+«INDENT»    Object value = memory.get(name);
+
+«INDENT»    if (value instanceof List) {
+«INDENT»        List<String> list = (List<String>) value;
+«INDENT»        for (String cell : list) {
+«INDENT»            target.add(cell);
+«INDENT»        }
+«INDENT»    } else {
+«INDENT»        target.add(name);
+«INDENT»    }
+«INDENT»}
+
 '''
         )
 
 //        builder.append(generateProcessFields(program))
         builder.append(generateConstructor(program, ctx))
+        builder.append("\n")
         builder.append(generateRunIter())
         builder.append("\n")
         builder.append(generateRegisterProcess())
@@ -103,7 +117,7 @@ public class «name» {
 '''
 
 «INDENT»private Object getArrayValue(String name, int index, int start) {
-«INDENT»    List<String> list = (List<String>) memory.get(resolve(name));
+«INDENT»    List<String> list = (List<String>) memory.get(name);
 
 «INDENT»    int offset = index - start;
 
@@ -118,7 +132,7 @@ public class «name» {
 «INDENT»}
 
 «INDENT»private void setArrayValue(String name, int index, int start, Object value) {
-«INDENT»    List<String> list = (List<String>) memory.get(resolve(name));
+«INDENT»    List<String> list = (List<String>) memory.get(name);
 
 «INDENT»    int offset = index - start;
 
@@ -212,27 +226,29 @@ public class «name» {
 		}
 
         // ===== registry =====
-
+		builder.append("\n")
         for (n : ctx.inputVars) {
             builder.append(
 '''
-«INDENT»    inputNames.add("«n»");
+«INDENT»    registerTo(inputNames, "«n»");
 '''
             )
         }
 
+		builder.append("\n")
         for (n : ctx.outputVars) {
             builder.append(
 '''
-«INDENT»    outputNames.add("«n»");
+«INDENT»    registerTo(outputNames, "«n»");
 '''
             )
         }
 
+		builder.append("\n")
         for (n : ctx.globalVars) {
             builder.append(
 '''
-«INDENT»    globalNames.add("«n»");
+«INDENT»    registerTo(globalNames, "«n»");
 '''
             )
         }

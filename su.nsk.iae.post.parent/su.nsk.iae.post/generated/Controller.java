@@ -15,32 +15,49 @@ public class Controller {
     private final Set<String> globalNames = new HashSet<>();
     private final Set<String> varNames = new HashSet<>();
 
+    private void registerTo(Set<String> target, String name) {
+        Object value = memory.get(name);
+
+        if (value instanceof List) {
+            List<String> list = (List<String>) value;
+            for (String cell : list) {
+                target.add(cell);
+            }
+        } else {
+            target.add(name);
+        }
+    }
+
 
     public Controller(Map<String,Object> memory) {
         this.memory = memory;
         memory.put("prev_light", 0);
         memory.put("alight", 0);
         memory.put("pressed", false);
-        inputNames.add("lightsArray1");
-        inputNames.add("lightsArray2");
-        inputNames.add("sensor");
-        outputNames.add("red2");
-        outputNames.add("red1");
-        outputNames.add("green2");
-        outputNames.add("green1");
-        outputNames.add("yellow1");
-        outputNames.add("yellow2");
-        globalNames.add("lightsArray1");
-        globalNames.add("lightsArray2");
-        globalNames.add("red2");
-        globalNames.add("red1");
-        globalNames.add("green2");
-        globalNames.add("green1");
-        globalNames.add("sensor");
-        globalNames.add("NUMBER_OF_LIGHTS");
-        globalNames.add("yellow1");
-        globalNames.add("yellow2");
+
+        registerTo(inputNames, "lightsArray1");
+        registerTo(inputNames, "lightsArray2");
+        registerTo(inputNames, "sensor");
+
+        registerTo(outputNames, "red2");
+        registerTo(outputNames, "red1");
+        registerTo(outputNames, "green2");
+        registerTo(outputNames, "green1");
+        registerTo(outputNames, "yellow1");
+        registerTo(outputNames, "yellow2");
+
+        registerTo(globalNames, "lightsArray1");
+        registerTo(globalNames, "lightsArray2");
+        registerTo(globalNames, "red2");
+        registerTo(globalNames, "red1");
+        registerTo(globalNames, "green2");
+        registerTo(globalNames, "green1");
+        registerTo(globalNames, "sensor");
+        registerTo(globalNames, "NUMBER_OF_LIGHTS");
+        registerTo(globalNames, "yellow1");
+        registerTo(globalNames, "yellow2");
     }
+
     public void runIter(long cycleTimeMs) {
 	
         memory.put(
@@ -325,10 +342,10 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            if (((Boolean) getArrayValue("rLightsArray", ((Integer)read("alight")), 1))) {
+                            if (((Boolean) getArrayValue(resolve("rLightsArray"), ((Integer)read("alight")), 1))) {
                                 write("prev_light", ((Integer)read("alight")));
                             }
-                            setArrayValue("rLightsArray", ((Integer)read("alight")), 1, false);
+                            setArrayValue(resolve("rLightsArray"), ((Integer)read("alight")), 1, false);
                             memory.put(
                                 "alight",
                                 ((Integer)read("alight")) + __step
@@ -350,7 +367,7 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            setArrayValue("rLightsArray", ((Integer)read("alight")), 1, false);
+                            setArrayValue(resolve("rLightsArray"), ((Integer)read("alight")), 1, false);
                             memory.put(
                                 "alight",
                                 ((Integer)read("alight")) + __step
@@ -372,7 +389,7 @@ public class Controller {
                         memory.put("alight", __start);
 
                         while (loopCond("alight", __end, __step)) {
-                            setArrayValue("rLightsArray", ((Integer)read("alight")), 1, false);
+                            setArrayValue(resolve("rLightsArray"), ((Integer)read("alight")), 1, false);
                             memory.put(
                                 "alight",
                                 ((Integer)read("alight")) + __step
@@ -438,7 +455,7 @@ public class Controller {
     }
 
     private Object getArrayValue(String name, int index, int start) {
-        List<String> list = (List<String>) memory.get(resolve(name));
+        List<String> list = (List<String>) memory.get(name);
 
         int offset = index - start;
 
@@ -453,7 +470,7 @@ public class Controller {
     }
 
     private void setArrayValue(String name, int index, int start, Object value) {
-        List<String> list = (List<String>) memory.get(resolve(name));
+        List<String> list = (List<String>) memory.get(name);
 
         int offset = index - start;
 

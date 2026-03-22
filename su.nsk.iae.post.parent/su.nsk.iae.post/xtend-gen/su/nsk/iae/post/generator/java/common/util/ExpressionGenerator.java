@@ -602,9 +602,9 @@ public class ExpressionGenerator {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("((");
         _builder.append(javaType);
-        _builder.append(") getArrayValue(\"");
+        _builder.append(") getArrayValue(resolve(\"");
         _builder.append(arrName);
-        _builder.append("\", ");
+        _builder.append("\"), ");
         _builder.append(indexExpr);
         _builder.append(", ");
         _builder.append(start);

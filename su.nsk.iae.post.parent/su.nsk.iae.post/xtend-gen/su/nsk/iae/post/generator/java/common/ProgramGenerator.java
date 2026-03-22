@@ -73,8 +73,44 @@ public class ProgramGenerator {
       _builder.append("private final Set<String> varNames = new HashSet<>();");
       _builder.newLineIfNotEmpty();
       _builder.newLine();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("private void registerTo(Set<String> target, String name) {");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("    Object value = memory.get(name);");
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("    if (value instanceof List) {");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("        List<String> list = (List<String>) value;");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("        for (String cell : list) {");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("            target.add(cell);");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("        }");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("    } else {");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("        target.add(name);");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("    }");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("}");
+      _builder.newLineIfNotEmpty();
+      _builder.newLine();
       builder.append(_builder);
       builder.append(this.generateConstructor(program, ctx));
+      builder.append("\n");
       builder.append(this.generateRunIter());
       builder.append("\n");
       builder.append(this.generateRegisterProcess());
@@ -167,7 +203,7 @@ public class ProgramGenerator {
       _builder_3.append("private Object getArrayValue(String name, int index, int start) {");
       _builder_3.newLineIfNotEmpty();
       _builder_3.append(ProgramGenerator.INDENT);
-      _builder_3.append("    List<String> list = (List<String>) memory.get(resolve(name));");
+      _builder_3.append("    List<String> list = (List<String>) memory.get(name);");
       _builder_3.newLineIfNotEmpty();
       _builder_3.newLine();
       _builder_3.append(ProgramGenerator.INDENT);
@@ -204,7 +240,7 @@ public class ProgramGenerator {
       _builder_3.append("private void setArrayValue(String name, int index, int start, Object value) {");
       _builder_3.newLineIfNotEmpty();
       _builder_3.append(ProgramGenerator.INDENT);
-      _builder_3.append("    List<String> list = (List<String>) memory.get(resolve(name));");
+      _builder_3.append("    List<String> list = (List<String>) memory.get(name);");
       _builder_3.newLineIfNotEmpty();
       _builder_3.newLine();
       _builder_3.append(ProgramGenerator.INDENT);
@@ -287,31 +323,34 @@ public class ProgramGenerator {
           }
         }
       }
+      builder.append("\n");
       Set<String> _inputVars = ctx.getInputVars();
       for (final String n : _inputVars) {
         StringConcatenation _builder_1 = new StringConcatenation();
         _builder_1.append(ProgramGenerator.INDENT);
-        _builder_1.append("    inputNames.add(\"");
+        _builder_1.append("    registerTo(inputNames, \"");
         _builder_1.append(n);
         _builder_1.append("\");");
         _builder_1.newLineIfNotEmpty();
         builder.append(_builder_1);
       }
+      builder.append("\n");
       Set<String> _outputVars = ctx.getOutputVars();
       for (final String n_1 : _outputVars) {
         StringConcatenation _builder_2 = new StringConcatenation();
         _builder_2.append(ProgramGenerator.INDENT);
-        _builder_2.append("    outputNames.add(\"");
+        _builder_2.append("    registerTo(outputNames, \"");
         _builder_2.append(n_1);
         _builder_2.append("\");");
         _builder_2.newLineIfNotEmpty();
         builder.append(_builder_2);
       }
+      builder.append("\n");
       Set<String> _globalVars = ctx.getGlobalVars();
       for (final String n_2 : _globalVars) {
         StringConcatenation _builder_3 = new StringConcatenation();
         _builder_3.append(ProgramGenerator.INDENT);
-        _builder_3.append("    globalNames.add(\"");
+        _builder_3.append("    registerTo(globalNames, \"");
         _builder_3.append(n_2);
         _builder_3.append("\");");
         _builder_3.newLineIfNotEmpty();

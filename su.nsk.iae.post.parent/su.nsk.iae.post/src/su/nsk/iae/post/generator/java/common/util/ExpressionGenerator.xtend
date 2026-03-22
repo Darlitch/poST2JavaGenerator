@@ -463,7 +463,7 @@ class ExpressionGenerator {
 			val start = ctx.getArrayStart(resolved)
 //			val start = ctx.getArrayStart(arrName)
 	
-			return '''((«javaType») getArrayValue("«arrName»", «indexExpr», «start»))'''
+			return '''((«javaType») getArrayValue(resolve("«arrName»"), «indexExpr», «start»))'''
 		}	
 
 		if (exp.procStatus !== null)

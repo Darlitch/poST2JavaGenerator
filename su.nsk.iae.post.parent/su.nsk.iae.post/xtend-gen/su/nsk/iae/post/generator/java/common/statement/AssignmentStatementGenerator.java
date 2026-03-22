@@ -54,9 +54,9 @@ public class AssignmentStatementGenerator implements IStatementGenerator {
       final int start = ctx.getArrayStart(arrName);
       final String indexExpr = ExpressionGenerator.generate(arr.getIndex(), ctx);
       StringConcatenation _builder = new StringConcatenation();
-      _builder.append("setArrayValue(\"");
+      _builder.append("setArrayValue(resolve(\"");
       _builder.append(arrName);
-      _builder.append("\", ");
+      _builder.append("\"), ");
       _builder.append(indexExpr);
       _builder.append(", ");
       _builder.append(start);
