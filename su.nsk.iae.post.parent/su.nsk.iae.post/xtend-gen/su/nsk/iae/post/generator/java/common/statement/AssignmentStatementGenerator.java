@@ -1,5 +1,6 @@
 package su.nsk.iae.post.generator.java.common.statement;
 
+import java.util.Objects;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.util.ExpressionGenerator;
@@ -20,11 +21,25 @@ public class AssignmentStatementGenerator implements IStatementGenerator {
   public String generate(final Statement stmt, final GenerationContext ctx, final String indent) {
     final AssignmentStatement s = ((AssignmentStatement) stmt);
     final StringBuilder builder = new StringBuilder();
-    final String valueExpr = ExpressionGenerator.generate(s.getValue(), ctx);
+    String _xifexpression = null;
     SymbolicVariable _variable = s.getVariable();
-    if ((_variable instanceof SymbolicVariable)) {
-      SymbolicVariable _variable_1 = s.getVariable();
-      final String name = ((SymbolicVariable) _variable_1).getName();
+    boolean _tripleNotEquals = (_variable != null);
+    if (_tripleNotEquals) {
+      _xifexpression = ctx.resolveVarType(s.getVariable().getName());
+    } else {
+      _xifexpression = ctx.getArrayElementType(
+        ctx.resolveAlias(s.getArray().getVariable().getName()));
+    }
+    final String leftType = _xifexpression;
+    final String rightType = ExpressionGenerator.getExprType(s.getValue(), ctx);
+    String valueExpr = ExpressionGenerator.generate(s.getValue(), ctx);
+    if ((((!Objects.equals(leftType, rightType)) && TypeUtil.isNumeric(leftType)) && TypeUtil.isNumeric(rightType))) {
+      valueExpr = TypeUtil.castTo(valueExpr, leftType);
+    }
+    SymbolicVariable _variable_1 = s.getVariable();
+    if ((_variable_1 instanceof SymbolicVariable)) {
+      SymbolicVariable _variable_2 = s.getVariable();
+      final String name = ((SymbolicVariable) _variable_2).getName();
       final String varType = ctx.resolveVarType(name);
       final String exprType = ExpressionGenerator.getExprType(s.getValue(), ctx);
       boolean _canAssign = TypeUtil.canAssign(varType, exprType);
@@ -39,8 +54,8 @@ public class AssignmentStatementGenerator implements IStatementGenerator {
       return builder.toString();
     }
     ArrayVariable _array = s.getArray();
-    boolean _tripleNotEquals = (_array != null);
-    if (_tripleNotEquals) {
+    boolean _tripleNotEquals_1 = (_array != null);
+    if (_tripleNotEquals_1) {
       final ArrayVariable arr = s.getArray();
       final String arrName = arr.getVariable().getName();
       final String elementType = ctx.getArrayElementType(arrName);
@@ -67,8 +82,8 @@ public class AssignmentStatementGenerator implements IStatementGenerator {
       builder.append(_plus_1);
       return builder.toString();
     }
-    SymbolicVariable _variable_2 = s.getVariable();
-    String _plus_2 = ("Unsupported assignment target: " + _variable_2);
+    SymbolicVariable _variable_3 = s.getVariable();
+    String _plus_2 = ("Unsupported assignment target: " + _variable_3);
     throw new IllegalStateException(_plus_2);
   }
 }

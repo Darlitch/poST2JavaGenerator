@@ -89,7 +89,7 @@ public class JavaGenerator implements IPoSTGenerator {
           EList<SymbolicVariable> _vars = decl.getVarList().getVars();
           for (final SymbolicVariable vname : _vars) {
             {
-              final Object value = CompileTimeEvaluator.evalExpression(decl.getSpec().getValue());
+              final Object value = CompileTimeEvaluator.evalExpression(decl.getSpec().getValue(), ctx);
               ctx.registerConst(vname.getName(), value);
               ctx.registerVar(vname.getName(), decl.getSpec().getType());
             }
@@ -125,7 +125,7 @@ public class JavaGenerator implements IPoSTGenerator {
             EList<SymbolicVariable> _vars_2 = decl_1.getVarList().getVars();
             for (final SymbolicVariable vname_2 : _vars_2) {
               {
-                final Object value = CompileTimeEvaluator.evalExpression(decl_1.getSpec().getValue());
+                final Object value = CompileTimeEvaluator.evalExpression(decl_1.getSpec().getValue(), ctx);
                 ctx.registerConst(vname_2.getName(), value);
                 ctx.registerVar(vname_2.getName(), decl_1.getSpec().getType());
                 String _name = vname_2.getName();

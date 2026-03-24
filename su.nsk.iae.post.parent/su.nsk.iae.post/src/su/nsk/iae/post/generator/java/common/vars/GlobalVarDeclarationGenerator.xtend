@@ -18,7 +18,7 @@ class GlobalVarDeclarationGenerator {
 		        for (vname : v.varList.vars) {
 		
 		            val value =
-		                CompileTimeEvaluator.evalExpression(v.spec.value)
+		                CompileTimeEvaluator.evalExpression(v.spec.value, ctx)
 		
 		            builder.append(
 		'''

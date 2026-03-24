@@ -24,7 +24,7 @@ public class GlobalVarDeclarationGenerator {
           EList<SymbolicVariable> _vars = v.getVarList().getVars();
           for (final SymbolicVariable vname : _vars) {
             {
-              final Object value = CompileTimeEvaluator.evalExpression(v.getSpec().getValue());
+              final Object value = CompileTimeEvaluator.evalExpression(v.getSpec().getValue(), ctx);
               StringConcatenation _builder = new StringConcatenation();
               _builder.append(indent);
               _builder.append("memory.put(\"");

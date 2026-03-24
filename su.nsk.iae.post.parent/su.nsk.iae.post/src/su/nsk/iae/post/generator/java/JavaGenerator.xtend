@@ -96,7 +96,7 @@ class JavaGenerator implements IPoSTGenerator {
 		
 		            for (vname : decl.varList.vars) {
 		
-		                val value = CompileTimeEvaluator.evalExpression(decl.spec.value)
+		                val value = CompileTimeEvaluator.evalExpression(decl.spec.value, ctx)
 		
 		                ctx.registerConst(vname.name, value)
 		                ctx.registerVar(vname.name, decl.spec.type)
@@ -127,7 +127,7 @@ class JavaGenerator implements IPoSTGenerator {
 	
 	                    for (vname : decl.varList.vars) {
 	
-	                        val value = CompileTimeEvaluator.evalExpression(decl.spec.value)
+	                        val value = CompileTimeEvaluator.evalExpression(decl.spec.value, ctx)
 	
 	                        ctx.registerConst(vname.name, value)
 	                        ctx.registerVar(vname.name, decl.spec.type)

@@ -138,9 +138,20 @@ class TypeUtil {
 	
 	    // числовые типы
 	    if (target.isNumeric && source.isNumeric)
-	        return numericRank(target) >= numericRank(source)
+//	        return numericRank(target) >= numericRank(source)
+			return true
 	
 	    return false
+	}
+	
+	def static String castTo(String expr, String type) {
+	    switch type {
+	        case "REAL":  '''((float)(«expr»))'''
+	        case "LREAL": '''((double)(«expr»))'''
+	        case "INT":   '''((int)(«expr»))'''
+	        case "LINT":  '''((long)(«expr»))'''
+	        default: expr
+	    }
 	}
 
 }

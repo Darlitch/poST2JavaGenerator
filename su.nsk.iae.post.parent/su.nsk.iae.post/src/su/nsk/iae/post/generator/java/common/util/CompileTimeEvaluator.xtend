@@ -6,6 +6,10 @@ import su.nsk.iae.post.poST.SymbolicVariable
 import su.nsk.iae.post.poST.IntegerLiteral
 import su.nsk.iae.post.poST.Constant
 import su.nsk.iae.post.poST.RealLiteral
+import su.nsk.iae.post.poST.AddExpression
+import su.nsk.iae.post.poST.MulExpression
+import su.nsk.iae.post.poST.AddOperator
+import su.nsk.iae.post.poST.MulOperator
 import static extension su.nsk.iae.post.generator.java.common.util.MemoryUtil.*
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 
@@ -95,19 +99,83 @@ class CompileTimeEvaluator {
 		)
 	}
 	
-	def static Object evalExpression(Expression expr) {
+//	def static Object evalExpression(Expression expr) {
+//
+//	    // ===== PrimaryExpression =====
+//	    if (expr instanceof PrimaryExpression) {
+//	        val pe = expr as PrimaryExpression
+//	
+//	        if (pe.const !== null)
+//	            return eval(pe.const)
+//	    }
+//	
+//	    throw new IllegalStateException(
+//	        "Unsupported constant expression: " + expr
+//	    )
+//	}
 
-	    // ===== PrimaryExpression =====
+	def static Object evalExpression(Expression expr, GenerationContext ctx) {
+
+		    // ===== Primary =====
 	    if (expr instanceof PrimaryExpression) {
 	        val pe = expr as PrimaryExpression
 	
 	        if (pe.const !== null)
 	            return eval(pe.const)
+	
+	        if (pe.variable instanceof SymbolicVariable) {
+	            val name = ctx.resolveAlias(pe.variable.name)
+	
+	            if (ctx.hasConst(name))
+	                return ctx.getConst(name)
+	        }
+	
+	        return null
 	    }
 	
-	    throw new IllegalStateException(
-	        "Unsupported constant expression: " + expr
-	    )
+	    // ===== MulExpression =====
+	    if (expr instanceof MulExpression) {
+	        val m = expr as MulExpression
+	
+	        val left = evalExpression(m.left, ctx)
+	        val right = evalExpression(m.right, ctx)
+	
+	        if (left === null || right === null)
+	            return null
+	
+	        switch (m.mulOp) {
+	            case MulOperator.MUL:
+	                return (left as Number).doubleValue * (right as Number).doubleValue
+	
+	            case MulOperator.DIV:
+	                return (left as Number).doubleValue / (right as Number).doubleValue
+	
+	            case MulOperator.MOD:
+	                return (left as Number).longValue % (right as Number).longValue
+	        }
+	    }
+	
+	    // ===== AddExpression =====
+	    if (expr instanceof AddExpression) {
+	        val a = expr as AddExpression
+	
+	        val left = evalExpression(a.left, ctx)
+	        val right = evalExpression(a.right, ctx)
+	
+	        if (left === null || right === null)
+	            return null
+	
+	        switch (a.addOp) {
+	            case AddOperator.PLUS:
+	                return (left as Number).doubleValue + (right as Number).doubleValue
+	
+	            case AddOperator.MINUS:
+	                return (left as Number).doubleValue - (right as Number).doubleValue
+	        }
+	    }
+	
+	    // если не смогли вычислить — НЕ падаем
+	    return null
 	}
 		
 }

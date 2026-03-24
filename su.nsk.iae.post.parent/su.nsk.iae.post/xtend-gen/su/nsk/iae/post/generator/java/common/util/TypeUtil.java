@@ -220,10 +220,50 @@ public class TypeUtil {
       return false;
     }
     if ((TypeUtil.isNumeric(target) && TypeUtil.isNumeric(source))) {
-      int _numericRank = TypeUtil.numericRank(target);
-      int _numericRank_1 = TypeUtil.numericRank(source);
-      return (_numericRank >= _numericRank_1);
+      return true;
     }
     return false;
+  }
+
+  public static String castTo(final String expr, final String type) {
+    String _switchResult = null;
+    if (type != null) {
+      switch (type) {
+        case "REAL":
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("((float)(");
+          _builder.append(expr);
+          _builder.append("))");
+          _switchResult = _builder.toString();
+          break;
+        case "LREAL":
+          StringConcatenation _builder_1 = new StringConcatenation();
+          _builder_1.append("((double)(");
+          _builder_1.append(expr);
+          _builder_1.append("))");
+          _switchResult = _builder_1.toString();
+          break;
+        case "INT":
+          StringConcatenation _builder_2 = new StringConcatenation();
+          _builder_2.append("((int)(");
+          _builder_2.append(expr);
+          _builder_2.append("))");
+          _switchResult = _builder_2.toString();
+          break;
+        case "LINT":
+          StringConcatenation _builder_3 = new StringConcatenation();
+          _builder_3.append("((long)(");
+          _builder_3.append(expr);
+          _builder_3.append("))");
+          _switchResult = _builder_3.toString();
+          break;
+        default:
+          _switchResult = expr;
+          break;
+      }
+    } else {
+      _switchResult = expr;
+    }
+    return _switchResult;
   }
 }

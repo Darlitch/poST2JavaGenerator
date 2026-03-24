@@ -2,9 +2,13 @@ package su.nsk.iae.post.generator.java.common.util;
 
 import java.util.Objects;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
+import su.nsk.iae.post.poST.AddExpression;
+import su.nsk.iae.post.poST.AddOperator;
 import su.nsk.iae.post.poST.Constant;
 import su.nsk.iae.post.poST.Expression;
 import su.nsk.iae.post.poST.IntegerLiteral;
+import su.nsk.iae.post.poST.MulExpression;
+import su.nsk.iae.post.poST.MulOperator;
 import su.nsk.iae.post.poST.NumericLiteral;
 import su.nsk.iae.post.poST.PrimaryExpression;
 import su.nsk.iae.post.poST.RealLiteral;
@@ -115,7 +119,7 @@ public class CompileTimeEvaluator {
       ("Unsupported compile-time integer expression: " + expr));
   }
 
-  public static Object evalExpression(final Expression expr) {
+  public static Object evalExpression(final Expression expr, final GenerationContext ctx) {
     if ((expr instanceof PrimaryExpression)) {
       final PrimaryExpression pe = ((PrimaryExpression) expr);
       Constant _const = pe.getConst();
@@ -123,8 +127,66 @@ public class CompileTimeEvaluator {
       if (_tripleNotEquals) {
         return CompileTimeEvaluator.eval(pe.getConst());
       }
+      SymbolicVariable _variable = pe.getVariable();
+      if ((_variable instanceof SymbolicVariable)) {
+        final String name = ctx.resolveAlias(pe.getVariable().getName());
+        boolean _hasConst = ctx.hasConst(name);
+        if (_hasConst) {
+          return ctx.getConst(name);
+        }
+      }
+      return null;
     }
-    throw new IllegalStateException(
-      ("Unsupported constant expression: " + expr));
+    if ((expr instanceof MulExpression)) {
+      final MulExpression m = ((MulExpression) expr);
+      final Object left = CompileTimeEvaluator.evalExpression(m.getLeft(), ctx);
+      final Object right = CompileTimeEvaluator.evalExpression(m.getRight(), ctx);
+      if (((left == null) || (right == null))) {
+        return null;
+      }
+      MulOperator _mulOp = m.getMulOp();
+      if (_mulOp != null) {
+        switch (_mulOp) {
+          case MUL:
+            double _doubleValue = ((Number) left).doubleValue();
+            double _doubleValue_1 = ((Number) right).doubleValue();
+            return Double.valueOf((_doubleValue * _doubleValue_1));
+          case DIV:
+            double _doubleValue_2 = ((Number) left).doubleValue();
+            double _doubleValue_3 = ((Number) right).doubleValue();
+            return Double.valueOf((_doubleValue_2 / _doubleValue_3));
+          case MOD:
+            long _longValue = ((Number) left).longValue();
+            long _longValue_1 = ((Number) right).longValue();
+            return Long.valueOf((_longValue % _longValue_1));
+          default:
+            break;
+        }
+      }
+    }
+    if ((expr instanceof AddExpression)) {
+      final AddExpression a = ((AddExpression) expr);
+      final Object left_1 = CompileTimeEvaluator.evalExpression(a.getLeft(), ctx);
+      final Object right_1 = CompileTimeEvaluator.evalExpression(a.getRight(), ctx);
+      if (((left_1 == null) || (right_1 == null))) {
+        return null;
+      }
+      AddOperator _addOp = a.getAddOp();
+      if (_addOp != null) {
+        switch (_addOp) {
+          case PLUS:
+            double _doubleValue_4 = ((Number) left_1).doubleValue();
+            double _doubleValue_5 = ((Number) right_1).doubleValue();
+            return Double.valueOf((_doubleValue_4 + _doubleValue_5));
+          case MINUS:
+            double _doubleValue_6 = ((Number) left_1).doubleValue();
+            double _doubleValue_7 = ((Number) right_1).doubleValue();
+            return Double.valueOf((_doubleValue_6 - _doubleValue_7));
+          default:
+            break;
+        }
+      }
+    }
+    return null;
   }
 }

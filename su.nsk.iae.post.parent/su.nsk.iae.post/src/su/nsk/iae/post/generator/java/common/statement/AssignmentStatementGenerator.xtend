@@ -3,7 +3,6 @@ package su.nsk.iae.post.generator.java.common.statement
 import su.nsk.iae.post.poST.Statement
 import su.nsk.iae.post.poST.AssignmentStatement
 import su.nsk.iae.post.poST.SymbolicVariable
-import su.nsk.iae.post.poST.ArrayVariable
 
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 
@@ -24,7 +23,20 @@ class AssignmentStatementGenerator implements IStatementGenerator {
 		val builder = new StringBuilder
 
 		// ===== значение правой части =====
-		val valueExpr = generate(s.value, ctx)
+		val leftType =
+		    if (s.variable !== null)
+		        ctx.resolveVarType(s.variable.name)
+		    else
+		        ctx.getArrayElementType(
+		            ctx.resolveAlias(s.array.variable.name)
+		        )
+		val rightType = getExprType(s.value, ctx)
+		
+		var valueExpr = generate(s.value, ctx)
+		
+		if (leftType != rightType && leftType.isNumeric && rightType.isNumeric) {
+		    valueExpr = castTo(valueExpr, leftType)
+		}
 
 		// ===== обычная переменная =====
 		if (s.variable instanceof SymbolicVariable) {
