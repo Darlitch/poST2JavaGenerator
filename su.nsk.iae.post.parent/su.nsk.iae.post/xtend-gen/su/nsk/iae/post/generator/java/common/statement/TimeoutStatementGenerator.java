@@ -58,4 +58,40 @@ public class TimeoutStatementGenerator implements IStatementGenerator {
     }
     return _xblockexpression;
   }
+
+  public String generateTimeout(final TimeoutStatement s, final GenerationContext ctx, final String indent) {
+    String _xblockexpression = null;
+    {
+      final String nextIndent = (indent + "    ");
+      String _xifexpression = null;
+      Constant _const = s.getConst();
+      boolean _tripleNotEquals = (_const != null);
+      if (_tripleNotEquals) {
+        _xifexpression = MemoryUtil.parseTime(s.getConst().getTime());
+      } else {
+        _xifexpression = ExpressionGenerator.readVar(s.getVariable().getName(), ctx);
+      }
+      final String timeoutExpr = _xifexpression;
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append(indent);
+      _builder.append("if (((Long)memory.get(\"");
+      String _globalTime = MemoryUtil.globalTime();
+      _builder.append(_globalTime);
+      _builder.append("\")) - this.");
+      String _timerField = MemoryUtil.timerField();
+      _builder.append(_timerField);
+      _builder.append(" >= ");
+      _builder.append(timeoutExpr);
+      _builder.append(") {");
+      _builder.newLineIfNotEmpty();
+      String _generate = this.stmtGen.generate(s.getStatement(), ctx, nextIndent);
+      _builder.append(_generate);
+      _builder.newLineIfNotEmpty();
+      _builder.append(indent);
+      _builder.append("}");
+      _builder.newLineIfNotEmpty();
+      _xblockexpression = _builder.toString();
+    }
+    return _xblockexpression;
+  }
 }

@@ -1,8 +1,10 @@
 package su.nsk.iae.post.generator.java.common
 
 import su.nsk.iae.post.poST.State
+import su.nsk.iae.post.poST.Statement
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.statement.StatementListGenerator
+import su.nsk.iae.post.generator.java.common.statement.TimeoutStatementGenerator
 
 class StateGenerator {
 
@@ -18,13 +20,25 @@ class StateGenerator {
         val builder = new StringBuilder
         val nextIndent = indent + "    "
 
-        builder.append(
+	builder.append(
 '''
 «indent»case «state.name» -> {
 «stmtGen.generate(state.statement, ctx, nextIndent)»
+'''
+	)
+
+	if (state.timeout !== null) {
+	    builder.append(
+	        new TimeoutStatementGenerator(stmtGen)
+	            .generateTimeout(state.timeout, ctx, nextIndent)
+	    )
+	}
+
+	builder.append(
+'''
 «indent»}
 '''
-        )
+	)
 
         builder.toString
     }

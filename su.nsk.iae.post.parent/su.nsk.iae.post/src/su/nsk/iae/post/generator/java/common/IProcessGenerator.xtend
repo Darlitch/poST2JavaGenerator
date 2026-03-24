@@ -14,6 +14,14 @@ public interface IProcess {
     void dumpTimers(java.util.Map<String,Long> out);
     
     String getStateName();
+    
+    void start();
+    
+    void stop();
+    
+    void error();
+    
+    void setNext();
 
 }
 '''

@@ -344,10 +344,20 @@ public class Controller {
                     }
                 }
                 case delay10 -> {
+                    if (((Long)memory.get("_global_time")) - this.timerBaseTime >= 10000L) {
+                        setState(State.Work);
+                        if (readBool("control_sensor")) {
+                            writeVar("pressed", true);
+                        }
+                    }
                 }
                 case delay30 -> {
                     if ((readBool("control_sensor") && isActive(processRefs.get("pRed")))) {
                         writeVar("pressed", true);
+                        setState(State.Work);
+                    }
+                    if (((Long)memory.get("_global_time")) - this.timerBaseTime >= 30000L) {
+                        writeVar("pressed", false);
                         setState(State.Work);
                     }
                 }

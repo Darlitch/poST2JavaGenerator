@@ -39,4 +39,21 @@ class TimeoutStatementGenerator implements IStatementGenerator {
 «indent»}
 '''
 	}
+	
+	def String generateTimeout(TimeoutStatement s, GenerationContext ctx, String indent) {
+
+	    val nextIndent = indent + "    "
+	
+	    val timeoutExpr =
+	        if (s.const !== null)
+	            parseTime(s.const.time)
+	        else
+	            readVar(s.variable.name, ctx)
+	
+	    '''
+	«indent»if (((Long)memory.get("«globalTime()»")) - this.«timerField()» >= «timeoutExpr») {
+	«stmtGen.generate(s.statement, ctx, nextIndent)»
+	«indent»}
+	'''
+	}
 }
