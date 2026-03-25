@@ -10,7 +10,10 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.statement.StatementListGenerator;
 import su.nsk.iae.post.generator.java.common.util.MemoryUtil;
+import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator;
 import su.nsk.iae.post.poST.State;
+import su.nsk.iae.post.poST.VarDeclaration;
+import su.nsk.iae.post.poST.VarInitDeclaration;
 
 @SuppressWarnings("all")
 public class ProcessGenerator {
@@ -49,7 +52,7 @@ public class ProcessGenerator {
       _builder.append(_generateStateEnum);
       _builder.newLineIfNotEmpty();
       _builder.newLine();
-      String _generateConstructor = this.generateConstructor(name, nextIndent);
+      String _generateConstructor = this.generateConstructor(name, nextIndent, p, ctx);
       _builder.append(_generateConstructor);
       _builder.newLineIfNotEmpty();
       _builder.newLine();
@@ -90,7 +93,7 @@ public class ProcessGenerator {
     return _xblockexpression;
   }
 
-  private String generateConstructor(final String name, final String indent) {
+  private String generateConstructor(final String name, final String indent, final su.nsk.iae.post.poST.Process p, final GenerationContext ctx) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append(indent);
     _builder.append("public ");
@@ -100,10 +103,27 @@ public class ProcessGenerator {
     _builder.append(indent);
     _builder.append("    super(instanceName, memory, aliases, globalProcesses);");
     _builder.newLineIfNotEmpty();
+    _builder.newLine();
+    String _generateLocalVarInit = this.generateLocalVarInit(p, (indent + "    "), ctx);
+    _builder.append(_generateLocalVarInit);
+    _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("}");
     _builder.newLineIfNotEmpty();
     return _builder.toString();
+  }
+
+  private String generateLocalVarInit(final su.nsk.iae.post.poST.Process p, final String indent, final GenerationContext ctx) {
+    final StringBuilder builder = new StringBuilder();
+    EList<VarDeclaration> _procVars = p.getProcVars();
+    for (final VarDeclaration v : _procVars) {
+      EList<VarInitDeclaration> _vars = v.getVars();
+      for (final VarInitDeclaration decl : _vars) {
+        builder.append(
+          VarMemoryGenerator.generateLocal(decl, ctx, indent));
+      }
+    }
+    return builder.toString();
   }
 
   private String generateStateEnum(final su.nsk.iae.post.poST.Process p, final String indent) {

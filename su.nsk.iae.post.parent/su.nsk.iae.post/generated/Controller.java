@@ -32,18 +32,6 @@ public class Controller {
     public Controller(Map<String,Object> memory, Map<String, IProcess> processMap) {
         this.memory = memory;
         this.processMap = processMap;
-        memory.put("prev_in", false);
-        memory.put("prev_out", false);
-        memory.put("prev_in", false);
-        memory.put("prev_out", false);
-        memory.put("prev_in", false);
-        memory.put("prev_out", false);
-        memory.put("prev_in", false);
-        memory.put("prev_out", false);
-        memory.put("prev_in", false);
-        memory.put("prev_out", false);
-        memory.put("prev_in", false);
-        memory.put("prev_out", false);
 
         registerTo(inputNames, "onfloor1");
         registerTo(inputNames, "onfloor2");
@@ -163,6 +151,7 @@ public class Controller {
 
         public Init(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
         }
 
         private State state = State.Stop;
@@ -250,6 +239,9 @@ public class Controller {
 
         public Call0Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
+            localMemory.put("prev_in", false);
+            localMemory.put("prev_out", false);
         }
 
         private State state = State.Stop;
@@ -342,6 +334,9 @@ public class Controller {
 
         public Call1Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
+            localMemory.put("prev_in", false);
+            localMemory.put("prev_out", false);
         }
 
         private State state = State.Stop;
@@ -434,6 +429,9 @@ public class Controller {
 
         public Call2Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
+            localMemory.put("prev_in", false);
+            localMemory.put("prev_out", false);
         }
 
         private State state = State.Stop;
@@ -526,6 +524,9 @@ public class Controller {
 
         public Button0Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
+            localMemory.put("prev_in", false);
+            localMemory.put("prev_out", false);
         }
 
         private State state = State.Stop;
@@ -618,6 +619,9 @@ public class Controller {
 
         public Button1Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
+            localMemory.put("prev_in", false);
+            localMemory.put("prev_out", false);
         }
 
         private State state = State.Stop;
@@ -710,6 +714,9 @@ public class Controller {
 
         public Button2Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
+            localMemory.put("prev_in", false);
+            localMemory.put("prev_out", false);
         }
 
         private State state = State.Stop;
@@ -801,6 +808,7 @@ public class Controller {
 
         public CheckCurFloor(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
         }
 
         private State state = State.Stop;
@@ -898,6 +906,7 @@ public class Controller {
 
         public UpControl(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
         }
 
         private State state = State.Stop;
@@ -1016,6 +1025,7 @@ public class Controller {
 
         public UpMotion(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
         }
 
         private State state = State.Stop;
@@ -1120,6 +1130,7 @@ public class Controller {
 
         public DownControl(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
         }
 
         private State state = State.Stop;
@@ -1238,6 +1249,7 @@ public class Controller {
 
         public DownMotion(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
         }
 
         private State state = State.Stop;
@@ -1342,6 +1354,7 @@ public class Controller {
 
         public DoorCycle(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
+
         }
 
         private State state = State.Stop;

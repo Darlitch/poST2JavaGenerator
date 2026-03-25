@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/su/nsk/iae/post/generator/java/JavaGenerator.xtend=UTF-8
+encoding//src/su/nsk/iae/post/generator/java/common/ProcessGenerator.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/context/GenerationContext.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/util/CompileTimeEvaluator.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/util/ExpressionGenerator.xtend=UTF-8
@@ -8,4 +9,5 @@ encoding//src/su/nsk/iae/post/generator/java/common/util/TypeUtil.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/vars/ArrayMemoryGenerator.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/vars/BindingGenerator.xtend=UTF-8
 encoding//src/su/nsk/iae/post/generator/java/common/vars/VarMemoryGenerator.xtend=UTF-8
+encoding//src/su/nsk/iae/post/generator/java/configuration/DefaultSimulationGenerator.xtend=UTF-8
 encoding/<project>=windows-1251

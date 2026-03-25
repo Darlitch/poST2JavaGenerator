@@ -14,6 +14,7 @@ public abstract class BaseProcess implements IProcess {
     protected final String instanceName;
     protected final Map<String,IProcess> processRefs = new HashMap<>();
     protected final Map<String,Object> memory;
+    protected final Map<String,Object> localMemory = new HashMap<>();
     protected final Map<String,String> aliases;
     protected final Map<String, IProcess> globalProcesses;
 
@@ -54,11 +55,22 @@ public abstract class BaseProcess implements IProcess {
     }
 
     protected Object read(String name) {
-        return memory.get(resolve(name));
+        if (localMemory.containsKey(name))
+            return localMemory.get(name);
+            
+        String resolved = resolve(name);
+    
+        return memory.get(resolved);
     }
 
     protected void writeVar(String name, Object value) {
-        memory.put(resolve(name), value);
+        if (localMemory.containsKey(name)) {
+                localMemory.put(name, value);
+                return;
+            }
+        
+        String resolved = resolve(name);
+        memory.put(resolved, value);
     }
     
     protected boolean isActive(IProcess p) {

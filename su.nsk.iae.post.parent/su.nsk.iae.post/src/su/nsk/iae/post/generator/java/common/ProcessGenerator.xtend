@@ -5,6 +5,7 @@ import su.nsk.iae.post.poST.State
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.statement.StatementListGenerator
 import su.nsk.iae.post.generator.java.common.util.MemoryUtil
+import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator
 
 class ProcessGenerator {
 
@@ -30,41 +31,41 @@ class ProcessGenerator {
 
         builder.append(
 '''
-«indent»class «name» extends BaseProcess {
+Â«indentÂ»class Â«nameÂ» extends BaseProcess {
 	
-««««nextIndent»private final String instanceName;
-«««
-«generateStateEnum(p, nextIndent)»
+Â«Â«Â«Â«nextIndentÂ»private final String instanceName;
+Â«Â«Â«
+Â«generateStateEnum(p, nextIndent)Â»
 
-««««nextIndent»private final Map<String,Object> memory;
-«««
-««««nextIndent»private final Map<String,IProcess> processRefs = new HashMap<>();
-«««
-««««nextIndent»private final Map<String,String> aliases;
-«««
-«generateConstructor(name, nextIndent)»
+Â«Â«Â«Â«nextIndentÂ»private final Map<String,Object> memory;
+Â«Â«Â«
+Â«Â«Â«Â«nextIndentÂ»private final Map<String,IProcess> processRefs = new HashMap<>();
+Â«Â«Â«
+Â«Â«Â«Â«nextIndentÂ»private final Map<String,String> aliases;
+Â«Â«Â«
+Â«generateConstructor(name, nextIndent, p, ctx)Â»
 
-««««generateSetProcess(nextIndent)»
-«««
-««««generateResolveMethod(nextIndent)»
-«««
-««««generateMemoryHelpers(nextIndent)»
-«««
-«nextIndent»private State state = State.Stop;
+Â«Â«Â«Â«generateSetProcess(nextIndent)Â»
+Â«Â«Â«
+Â«Â«Â«Â«generateResolveMethod(nextIndent)Â»
+Â«Â«Â«
+Â«Â«Â«Â«generateMemoryHelpers(nextIndent)Â»
+Â«Â«Â«
+Â«nextIndentÂ»private State state = State.Stop;
 
-«nextIndent»private long timerBaseTime;
+Â«nextIndentÂ»private long timerBaseTime;
 
-«generateControlMethods(p, nextIndent)»
+Â«generateControlMethods(p, nextIndent)Â»
 
-«generateRunMethod(p, ctx, nextIndent)»
+Â«generateRunMethod(p, ctx, nextIndent)Â»
 
-«generateDumpStates(name, nextIndent)»
+Â«generateDumpStates(name, nextIndent)Â»
 
-«generateDumpTimers(name, nextIndent)»
+Â«generateDumpTimers(name, nextIndent)Â»
 
-«generateGetStateName(nextIndent)»
+Â«generateGetStateName(nextIndent)Â»
 
-«indent»}
+Â«indentÂ»}
 '''
         )
 
@@ -73,46 +74,62 @@ class ProcessGenerator {
     
     // ================= CONSTRUCTOR =================
 
-	private def String generateConstructor(String name, String indent) {
+	private def String generateConstructor(String name, String indent, Process p, GenerationContext ctx) {
 
     '''
-«indent»public «name»(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
-«indent»    super(instanceName, memory, aliases, globalProcesses);
-«indent»}
+Â«indentÂ»public Â«nameÂ»(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+Â«indentÂ»    super(instanceName, memory, aliases, globalProcesses);
+
+Â«generateLocalVarInit(p, indent + "    ", ctx)Â»
+Â«indentÂ»}
 '''
+	}
+	
+	private def String generateLocalVarInit(Process p, String indent, GenerationContext ctx) {
+
+	    val builder = new StringBuilder
+
+	    // ===== procVars (Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ñ‹Ðµ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ñ‹Ðµ) =====
+	    for (v : p.procVars)
+	        for (decl : v.vars)
+	            builder.append(
+	                VarMemoryGenerator.generateLocal(decl, ctx, indent)
+	            )
+	
+	    return builder.toString
 	}
 	
 //	private def String generateSetProcess(String indent) {
 //
 //    '''
-//«indent»public void setProcess(String name, IProcess p) {
-//«indent»    processRefs.put(name, p);
-//«indent»}
+//Â«indentÂ»public void setProcess(String name, IProcess p) {
+//Â«indentÂ»    processRefs.put(name, p);
+//Â«indentÂ»}
 //'''
 //	}
 	
 //	private def String generateResolveMethod(String indent) {
 //'''
-//«indent»private String resolve(String name) {
-//«indent»    String current = name;
-//«indent»    if (aliases != null) {
-//«indent»        while (aliases.containsKey(current)) {
-//«indent»            current = aliases.get(current);
-//«indent»        }
-//«indent»    }
-//«indent»    return current;
-//«indent»}
+//Â«indentÂ»private String resolve(String name) {
+//Â«indentÂ»    String current = name;
+//Â«indentÂ»    if (aliases != null) {
+//Â«indentÂ»        while (aliases.containsKey(current)) {
+//Â«indentÂ»            current = aliases.get(current);
+//Â«indentÂ»        }
+//Â«indentÂ»    }
+//Â«indentÂ»    return current;
+//Â«indentÂ»}
 //'''
 //	}
 	
 //	private def String generateMemoryHelpers(String indent) '''
-//«indent»private Object read(String name) {
-//«indent»    return memory.get(resolve(name));
-//«indent»}
+//Â«indentÂ»private Object read(String name) {
+//Â«indentÂ»    return memory.get(resolve(name));
+//Â«indentÂ»}
 //
-//«indent»private void write(String name, Object value) {
-//«indent»    memory.put(resolve(name), value);
-//«indent»}
+//Â«indentÂ»private void write(String name, Object value) {
+//Â«indentÂ»    memory.put(resolve(name), value);
+//Â«indentÂ»}
 //'''
 
     // ================= ENUM STATE =================
@@ -144,31 +161,31 @@ class ProcessGenerator {
         val globalTime = MemoryUtil.globalTime()
 
         '''
-«indent»public void start() {
-«indent»    state = State.«firstState»;
-«indent»    timerBaseTime = ((Long)memory.get("«globalTime»"));
-«indent»}
+Â«indentÂ»public void start() {
+Â«indentÂ»    state = State.Â«firstStateÂ»;
+Â«indentÂ»    timerBaseTime = ((Long)memory.get("Â«globalTimeÂ»"));
+Â«indentÂ»}
 
-«indent»public void stop() {
-«indent»    state = State.Stop;
-«indent»    timerBaseTime = ((Long)memory.get("«globalTime»"));
-«indent»}
+Â«indentÂ»public void stop() {
+Â«indentÂ»    state = State.Stop;
+Â«indentÂ»    timerBaseTime = ((Long)memory.get("Â«globalTimeÂ»"));
+Â«indentÂ»}
 
-«indent»public void error() {
-«indent»    state = State.Error;
-«indent»    timerBaseTime = ((Long)memory.get("«globalTime»"));
-«indent»}
+Â«indentÂ»public void error() {
+Â«indentÂ»    state = State.Error;
+Â«indentÂ»    timerBaseTime = ((Long)memory.get("Â«globalTimeÂ»"));
+Â«indentÂ»}
 
-«indent»public void setState(State s) {
-«indent»    state = s;
-«indent»    timerBaseTime = ((Long)memory.get("«globalTime»"));
-«indent»}
+Â«indentÂ»public void setState(State s) {
+Â«indentÂ»    state = s;
+Â«indentÂ»    timerBaseTime = ((Long)memory.get("Â«globalTimeÂ»"));
+Â«indentÂ»}
 
-«generateSetNext(p, indent)»
+Â«generateSetNext(p, indent)Â»
 
-«indent»public State getState() {
-«indent»    return state;
-«indent»}
+Â«indentÂ»public State getState() {
+Â«indentÂ»    return state;
+Â«indentÂ»}
 '''
     }
 
@@ -182,9 +199,9 @@ class ProcessGenerator {
 
         builder.append(
 '''
-«indent»public void setNext() {
+Â«indentÂ»public void setNext() {
 
-«indent»    switch(state) {
+Â«indentÂ»    switch(state) {
 '''
         )
 
@@ -199,18 +216,18 @@ class ProcessGenerator {
 
             builder.append(
 '''
-«indent»        case «current» -> state = State.«next»;
+Â«indentÂ»        case Â«currentÂ» -> state = State.Â«nextÂ»;
 '''
             )
         }
 
         builder.append(
 '''
-«indent»        default -> { }
-«indent»    }
+Â«indentÂ»        default -> { }
+Â«indentÂ»    }
 
-«indent»    timerBaseTime = ((Long)memory.get("«MemoryUtil.globalTime()»"));
-«indent»}
+Â«indentÂ»    timerBaseTime = ((Long)memory.get("Â«MemoryUtil.globalTime()Â»"));
+Â«indentÂ»}
 '''
         )
 
@@ -225,10 +242,10 @@ class ProcessGenerator {
 
         builder.append(
 '''
-«indent»@Override
-«indent»public void run() {
+Â«indentÂ»@Override
+Â«indentÂ»public void run() {
 
-«indent»    switch(state) {
+Â«indentÂ»    switch(state) {
 '''
         )
 
@@ -240,9 +257,9 @@ class ProcessGenerator {
 
         builder.append(
 '''
-«indent»        case Stop, Error -> { }
-«indent»    }
-«indent»}
+Â«indentÂ»        case Stop, Error -> { }
+Â«indentÂ»    }
+Â«indentÂ»}
 '''
         )
 
@@ -254,30 +271,30 @@ class ProcessGenerator {
     private def String generateDumpStates(String name, String indent) {
 
         '''
-«indent»@Override
-«indent»public void dumpStates(Map<String,String> out) {
-«indent»    out.put(instanceName + "_state", state.name());
-«indent»}
+Â«indentÂ»@Override
+Â«indentÂ»public void dumpStates(Map<String,String> out) {
+Â«indentÂ»    out.put(instanceName + "_state", state.name());
+Â«indentÂ»}
 '''
     }
 
     private def String generateDumpTimers(String name, String indent) {
 
         '''
-«indent»@Override
-«indent»public void dumpTimers(Map<String,Long> out) {
-«indent»    out.put(instanceName + "_time", timerBaseTime);
-«indent»}
+Â«indentÂ»@Override
+Â«indentÂ»public void dumpTimers(Map<String,Long> out) {
+Â«indentÂ»    out.put(instanceName + "_time", timerBaseTime);
+Â«indentÂ»}
 '''
     }
     
     private def String generateGetStateName(String indent) {
 
 	'''
-	«indent»@Override
-	«indent»public String getStateName() {
-	«indent»    return state.name();
-	«indent»}
+	Â«indentÂ»@Override
+	Â«indentÂ»public String getStateName() {
+	Â«indentÂ»    return state.name();
+	Â«indentÂ»}
 	'''
 	}
 

@@ -12,7 +12,7 @@ import su.nsk.iae.post.poST.VarInitDeclaration;
 
 @SuppressWarnings("all")
 public class VarMemoryGenerator {
-  public static String generate(final VarInitDeclaration decl, final GenerationContext ctx, final String indent) {
+  private static String generateInternal(final VarInitDeclaration decl, final GenerationContext ctx, final String indent, final String target) {
     String _xblockexpression = null;
     {
       final StringBuilder builder = new StringBuilder();
@@ -54,7 +54,8 @@ public class VarMemoryGenerator {
             final String init = _xifexpression_2;
             StringConcatenation _builder = new StringConcatenation();
             _builder.append(indent);
-            _builder.append("memory.put(\"");
+            _builder.append(target);
+            _builder.append(".put(\"");
             _builder.append(name);
             _builder.append("\", ");
             _builder.append(init);
@@ -68,5 +69,13 @@ public class VarMemoryGenerator {
       _xblockexpression = builder.toString();
     }
     return _xblockexpression;
+  }
+
+  public static String generate(final VarInitDeclaration decl, final GenerationContext ctx, final String indent) {
+    return VarMemoryGenerator.generateInternal(decl, ctx, indent, "memory");
+  }
+
+  public static String generateLocal(final VarInitDeclaration decl, final GenerationContext ctx, final String indent) {
+    return VarMemoryGenerator.generateInternal(decl, ctx, indent, "localMemory");
   }
 }

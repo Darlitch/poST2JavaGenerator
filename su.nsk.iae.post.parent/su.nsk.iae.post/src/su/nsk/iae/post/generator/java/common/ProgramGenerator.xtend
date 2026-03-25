@@ -216,20 +216,20 @@ public class «name» {
                 
         // ===== PROCESS VAR INIT =====
 
-		for (p : program.processes) {
-		
-		    for (v : p.procVars)
-		        for (decl : v.vars)
-		            builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT+'    '))
-		
-		    for (v : p.procInVars)
-		        for (decl : v.vars)
-		            builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT+'    '))
-		
-		    for (v : p.procOutVars)
-		        for (decl : v.vars)
-		            builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT+'    '))
-		}
+//		for (p : program.processes) {
+//		
+//		    for (v : p.procVars)
+//		        for (decl : v.vars)
+//		            builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT+'    '))
+//		
+//		    for (v : p.procInVars)
+//		        for (decl : v.vars)
+//		            builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT+'    '))
+//		
+//		    for (v : p.procOutVars)
+//		        for (decl : v.vars)
+//		            builder.append(VarMemoryGenerator.generate(decl, ctx, INDENT+'    '))
+//		}
 
         // ===== registry =====
 		builder.append("\n")

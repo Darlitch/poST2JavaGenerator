@@ -152,14 +152,31 @@ public class DefaultSimulationGenerator {
             _builder_1.append(");");
             _builder_1.newLineIfNotEmpty();
             builder.append(_builder_1);
-            boolean _equals = proc_1.getName().equals("Init");
-            if (_equals) {
+            boolean hasInit = false;
+            EList<su.nsk.iae.post.poST.Process> _processes_2 = p_3.getProcesses();
+            for (final su.nsk.iae.post.poST.Process proc2 : _processes_2) {
+              boolean _equals = proc2.getName().equals("Init");
+              if (_equals) {
+                hasInit = true;
+              }
+            }
+            boolean _equals_1 = proc_1.getName().equals("Init");
+            if (_equals_1) {
               StringConcatenation _builder_2 = new StringConcatenation();
               _builder_2.append(IND);
               _builder_2.append(procName);
               _builder_2.append(".start();");
               _builder_2.newLineIfNotEmpty();
               builder.append(_builder_2);
+            } else {
+              if (((!hasInit) && (proc_1 == p_3.getProcesses().get(0)))) {
+                StringConcatenation _builder_3 = new StringConcatenation();
+                _builder_3.append(IND);
+                _builder_3.append(procName);
+                _builder_3.append(".start();");
+                _builder_3.newLineIfNotEmpty();
+                builder.append(_builder_3);
+              }
             }
           }
         }

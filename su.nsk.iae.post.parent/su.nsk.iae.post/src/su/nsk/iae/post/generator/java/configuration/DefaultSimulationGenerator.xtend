@@ -64,7 +64,7 @@ public class Simulation {
 			builder.append("\n")
             builder.append(
 '''
-�IND��name� �instance� = new �name�(memory, processMap);
+«IND»«name» «instance» = new «name»(memory, processMap);
 '''
             )
         }
@@ -97,20 +97,39 @@ public class Simulation {
 		
 		        builder.append(
 '''
-�IND�Map<String,String> �procName�_aliases = new HashMap<>();
-�IND��procType� �procName� = new �procType�("�procName�", memory, �procName�_aliases, processMap);
-�IND��programInstance�.registerProcess(�procName�);
+«IND»Map<String,String> «procName»_aliases = new HashMap<>();
+«IND»«procType» «procName» = new «procType»("«procName»", memory, «procName»_aliases, processMap);
+«IND»«programInstance».registerProcess(«procName»);
 '''
 		        )
 		
-		        // AUTOSTART INIT
-		        if (proc.name.equals("Init")) {
-		            builder.append(
-'''
-�IND��procName�.start();
-'''
-		            )
-		        }
+		        // ===== AUTOSTART =====
+				var boolean hasInit = false
+				
+				// сначала проверяем есть ли Init
+				for (proc2 : p.processes) {
+				    if (proc2.name.equals("Init")) {
+				        hasInit = true
+				    }
+				}
+				
+				// если текущий процесс Init → стартуем
+				if (proc.name.equals("Init")) {
+				    builder.append(
+				'''
+				«IND»«procName».start();
+				'''
+				    )
+				}
+				
+				// если Init нет → стартуем ПЕРВЫЙ процесс
+				else if (!hasInit && proc === p.processes.get(0)) {
+				    builder.append(
+				'''
+				«IND»«procName».start();
+				'''
+				    )
+				}
 		    }
 		
 		    // ===== PHASE 2: BINDING =====
@@ -127,7 +146,7 @@ public class Simulation {
 							
 	                    	builder.append(
 '''
-�IND��procName�.setProcess("�target�", �resolved�);
+«IND»«procName».setProcess("«target»", «resolved»);
 '''
 		                    )
 		                }
@@ -141,9 +160,9 @@ public class Simulation {
         builder.append(
 '''
         
-�IND�long taskTimeMs = 100L;
+«IND»long taskTimeMs = 100L;
 
-�IND�while (true) {
+«IND»while (true) {
 '''
         )
 
@@ -152,14 +171,14 @@ public class Simulation {
 
             builder.append(
 '''
-�IND�    �instance�.runIter(taskTimeMs);
+«IND»    «instance».runIter(taskTimeMs);
 '''
             )
         }
 
         builder.append(
 '''
-�IND�    Thread.sleep(taskTimeMs);
+«IND»    Thread.sleep(taskTimeMs);
         }
     }
 }

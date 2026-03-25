@@ -6,7 +6,6 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
-import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator;
 import su.nsk.iae.post.poST.ArraySpecificationInit;
 import su.nsk.iae.post.poST.InputOutputVarDeclaration;
 import su.nsk.iae.post.poST.InputVarDeclaration;
@@ -164,32 +163,6 @@ public class ProgramGenerator {
       _builder.append("    this.processMap = processMap;");
       _builder.newLineIfNotEmpty();
       builder.append(_builder);
-      EList<su.nsk.iae.post.poST.Process> _processes = program.getProcesses();
-      for (final su.nsk.iae.post.poST.Process p : _processes) {
-        {
-          EList<VarDeclaration> _procVars = p.getProcVars();
-          for (final VarDeclaration v : _procVars) {
-            EList<VarInitDeclaration> _vars = v.getVars();
-            for (final VarInitDeclaration decl : _vars) {
-              builder.append(VarMemoryGenerator.generate(decl, ctx, (ProgramGenerator.INDENT + "    ")));
-            }
-          }
-          EList<InputVarDeclaration> _procInVars = p.getProcInVars();
-          for (final InputVarDeclaration v_1 : _procInVars) {
-            EList<VarInitDeclaration> _vars_1 = v_1.getVars();
-            for (final VarInitDeclaration decl_1 : _vars_1) {
-              builder.append(VarMemoryGenerator.generate(decl_1, ctx, (ProgramGenerator.INDENT + "    ")));
-            }
-          }
-          EList<OutputVarDeclaration> _procOutVars = p.getProcOutVars();
-          for (final OutputVarDeclaration v_2 : _procOutVars) {
-            EList<VarInitDeclaration> _vars_2 = v_2.getVars();
-            for (final VarInitDeclaration decl_2 : _vars_2) {
-              builder.append(VarMemoryGenerator.generate(decl_2, ctx, (ProgramGenerator.INDENT + "    ")));
-            }
-          }
-        }
-      }
       builder.append("\n");
       Set<String> _inputVars = ctx.getInputVars();
       for (final String n : _inputVars) {
