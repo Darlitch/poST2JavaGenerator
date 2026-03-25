@@ -15,15 +15,32 @@ public abstract class BaseProcess implements IProcess {
     protected final Map<String,IProcess> processRefs = new HashMap<>();
     protected final Map<String,Object> memory;
     protected final Map<String,String> aliases;
+    protected final Map<String, IProcess> globalProcesses;
 
-    protected BaseProcess(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
+    protected BaseProcess(String instanceName, Map<String,Object> memory, 
+    	Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
         this.instanceName = instanceName;
         this.memory = memory;
         this.aliases = aliases;
+        this.globalProcesses = globalProcesses;
     }
     
     public void setProcess(String name, IProcess p) {
         processRefs.put(name, p);
+    }
+    
+    protected IProcess getProcess(String name) {
+        IProcess p = processRefs.get(name);
+    
+        if (p != null)
+            return p;
+    
+        p = globalProcesses.get(name);
+    
+        if (p != null)
+            return p;
+    
+        throw new RuntimeException("Process not found: " + name);
     }
 
     protected String resolve(String name) {

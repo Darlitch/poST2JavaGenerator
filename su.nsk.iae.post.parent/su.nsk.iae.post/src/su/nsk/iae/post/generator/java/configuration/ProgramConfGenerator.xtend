@@ -20,7 +20,7 @@ class ProgramConfGenerator {
         // ===== ñîçäàíèå ïğîãğàììû =====
         builder.append(
 '''
-«indent»«programType» «instanceName» = new «programType»(memory);
+«indent»«programType» «instanceName» = new «programType»(memory, processMap);
 '''
         )
 

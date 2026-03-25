@@ -898,7 +898,7 @@ public class ExpressionGenerator {
       boolean _isActive = exp.isActive();
       if (_isActive) {
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("isActive(processRefs.get(\"");
+        _builder.append("isActive(getProcess(\"");
         _builder.append(name);
         _builder.append("\"))");
         return _builder.toString();
@@ -906,7 +906,7 @@ public class ExpressionGenerator {
       boolean _isInactive = exp.isInactive();
       if (_isInactive) {
         StringConcatenation _builder_1 = new StringConcatenation();
-        _builder_1.append("isInactive(processRefs.get(\"");
+        _builder_1.append("isInactive(getProcess(\"");
         _builder_1.append(name);
         _builder_1.append("\"))");
         return _builder_1.toString();
@@ -914,13 +914,13 @@ public class ExpressionGenerator {
       boolean _isStop = exp.isStop();
       if (_isStop) {
         StringConcatenation _builder_2 = new StringConcatenation();
-        _builder_2.append("isStop(processRefs.get(\"");
+        _builder_2.append("isStop(getProcess(\"");
         _builder_2.append(name);
         _builder_2.append("\"))");
         return _builder_2.toString();
       }
       StringConcatenation _builder_3 = new StringConcatenation();
-      _builder_3.append("isError(processRefs.get(\"");
+      _builder_3.append("isError(getProcess(\"");
       _builder_3.append(name);
       _builder_3.append("\"))");
       _xblockexpression = _builder_3.toString();

@@ -16,6 +16,7 @@ import su.nsk.iae.post.generator.java.common.ProgramGenerator;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator;
 import su.nsk.iae.post.generator.java.configuration.ConfigurationGenerator;
+import su.nsk.iae.post.generator.java.configuration.DefaultSimulationGenerator;
 import su.nsk.iae.post.poST.Configuration;
 import su.nsk.iae.post.poST.GlobalVarDeclaration;
 import su.nsk.iae.post.poST.Model;
@@ -58,18 +59,23 @@ public class JavaGenerator implements IPoSTGenerator {
       InputOutput.<String>println("Generating Simulation.java");
       fsa.generateFile(
         "Simulation.java", code);
+    } else {
+      final String code_1 = new DefaultSimulationGenerator().generate(model, ctx);
+      InputOutput.<String>println("Generating Simulation.java");
+      fsa.generateFile(
+        "Simulation.java", code_1);
     }
     EList<Program> _programs_1 = model.getPrograms();
     for (final Program p_1 : _programs_1) {
       {
-        final String code_1 = new ProgramGenerator().generate(p_1, ctx);
+        final String code_2 = new ProgramGenerator().generate(p_1, ctx);
         String _name = p_1.getName();
         String _plus = ("Generating program: " + _name);
         String _plus_1 = (_plus + ".java");
         InputOutput.<String>println(_plus_1);
         String _name_1 = p_1.getName();
         String _plus_2 = (_name_1 + ".java");
-        fsa.generateFile(_plus_2, code_1);
+        fsa.generateFile(_plus_2, code_2);
       }
     }
   }

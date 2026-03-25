@@ -95,24 +95,10 @@ public class ProcessGenerator {
     _builder.append(indent);
     _builder.append("public ");
     _builder.append(name);
-    _builder.append("(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {");
+    _builder.append("(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
-    _builder.append("    super(instanceName, memory, aliases);");
-    _builder.newLineIfNotEmpty();
-    _builder.append(indent);
-    _builder.append("}");
-    _builder.newLineIfNotEmpty();
-    return _builder.toString();
-  }
-
-  private String generateSetProcess(final String indent) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append(indent);
-    _builder.append("public void setProcess(String name, IProcess p) {");
-    _builder.newLineIfNotEmpty();
-    _builder.append(indent);
-    _builder.append("    processRefs.put(name, p);");
+    _builder.append("    super(instanceName, memory, aliases, globalProcesses);");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("}");

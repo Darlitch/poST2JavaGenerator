@@ -34,6 +34,7 @@ public class «name» {
 
 «INDENT»private final Map<String,Object> memory;
 «INDENT»private final List<IProcess> processes = new ArrayList<>();
+«INDENT»private final Map<String, IProcess> processMap;
 «INDENT»private final Set<String> inputNames = new HashSet<>();
 «INDENT»private final Set<String> outputNames = new HashSet<>();
 «INDENT»private final Set<String> globalNames = new HashSet<>();
@@ -185,8 +186,9 @@ public class «name» {
         builder.append(
 '''
 
-«INDENT»public «program.name»(Map<String,Object> memory) {
+«INDENT»public «program.name»(Map<String,Object> memory, Map<String, IProcess> processMap) {
 «INDENT»    this.memory = memory;
+«INDENT»    this.processMap = processMap;
 '''
         )
 
@@ -404,6 +406,7 @@ public class «name» {
     private def String generateRegisterProcess() '''
 «INDENT»public void registerProcess(IProcess p) {
 «INDENT»    processes.add(p);
+«INDENT»    processMap.put(((BaseProcess)p).instanceName, p);
 «INDENT»}
 '''
 

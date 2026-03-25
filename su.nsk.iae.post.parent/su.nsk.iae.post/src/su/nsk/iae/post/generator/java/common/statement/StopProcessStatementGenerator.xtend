@@ -21,7 +21,7 @@ class StopProcessStatementGenerator implements IStatementGenerator {
 			val name = s.process.name
 
 			return '''
-«indent»processRefs.get("«name»").stop();
+«indent»getProcess("«name»").stop();
 '''
 		}
 

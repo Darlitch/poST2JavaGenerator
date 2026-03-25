@@ -27,7 +27,7 @@ public class ProgramConfGenerator {
       _builder.append(instanceName);
       _builder.append(" = new ");
       _builder.append(programType);
-      _builder.append("(memory);");
+      _builder.append("(memory, processMap);");
       _builder.newLineIfNotEmpty();
       builder.append(_builder);
       ProgramConfElements _args = conf.getArgs();

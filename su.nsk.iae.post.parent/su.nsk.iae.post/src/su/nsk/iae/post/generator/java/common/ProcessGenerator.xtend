@@ -76,20 +76,20 @@ class ProcessGenerator {
 	private def String generateConstructor(String name, String indent) {
 
     '''
-«indent»public «name»(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
-«indent»    super(instanceName, memory, aliases);
+«indent»public «name»(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+«indent»    super(instanceName, memory, aliases, globalProcesses);
 «indent»}
 '''
 	}
 	
-	private def String generateSetProcess(String indent) {
-
-    '''
-«indent»public void setProcess(String name, IProcess p) {
-«indent»    processRefs.put(name, p);
-«indent»}
-'''
-	}
+//	private def String generateSetProcess(String indent) {
+//
+//    '''
+//«indent»public void setProcess(String name, IProcess p) {
+//«indent»    processRefs.put(name, p);
+//«indent»}
+//'''
+//	}
 	
 //	private def String generateResolveMethod(String indent) {
 //'''

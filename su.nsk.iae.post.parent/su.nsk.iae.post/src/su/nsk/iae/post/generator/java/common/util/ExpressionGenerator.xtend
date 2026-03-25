@@ -621,15 +621,15 @@ class ExpressionGenerator {
 		val name = exp.process.name
 
 		if (exp.active)
-		    return '''isActive(processRefs.get("«name»"))'''
+		    return '''isActive(getProcess("«name»"))'''
 		
 		if (exp.inactive)
-		    return '''isInactive(processRefs.get("«name»"))'''
+		    return '''isInactive(getProcess("«name»"))'''
 		
 		if (exp.stop)
-		    return '''isStop(processRefs.get("«name»"))'''
+		    return '''isStop(getProcess("«name»"))'''
 		
-		'''isError(processRefs.get("«name»"))'''
+		'''isError(getProcess("«name»"))'''
 	}
 
 	// ================= OPERATORS =================

@@ -61,6 +61,9 @@ public class ProgramGenerator {
       _builder.append("private final List<IProcess> processes = new ArrayList<>();");
       _builder.newLineIfNotEmpty();
       _builder.append(ProgramGenerator.INDENT);
+      _builder.append("private final Map<String, IProcess> processMap;");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
       _builder.append("private final Set<String> inputNames = new HashSet<>();");
       _builder.newLineIfNotEmpty();
       _builder.append(ProgramGenerator.INDENT);
@@ -152,10 +155,13 @@ public class ProgramGenerator {
       _builder.append("public ");
       String _name = program.getName();
       _builder.append(_name);
-      _builder.append("(Map<String,Object> memory) {");
+      _builder.append("(Map<String,Object> memory, Map<String, IProcess> processMap) {");
       _builder.newLineIfNotEmpty();
       _builder.append(ProgramGenerator.INDENT);
       _builder.append("    this.memory = memory;");
+      _builder.newLineIfNotEmpty();
+      _builder.append(ProgramGenerator.INDENT);
+      _builder.append("    this.processMap = processMap;");
       _builder.newLineIfNotEmpty();
       builder.append(_builder);
       EList<su.nsk.iae.post.poST.Process> _processes = program.getProcesses();
@@ -432,6 +438,9 @@ public class ProgramGenerator {
     _builder.newLineIfNotEmpty();
     _builder.append(ProgramGenerator.INDENT);
     _builder.append("    processes.add(p);");
+    _builder.newLineIfNotEmpty();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("    processMap.put(((BaseProcess)p).instanceName, p);");
     _builder.newLineIfNotEmpty();
     _builder.append(ProgramGenerator.INDENT);
     _builder.append("}");

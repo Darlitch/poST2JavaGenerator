@@ -8,6 +8,7 @@ import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator
 import su.nsk.iae.post.generator.java.common.vars.GlobalVarDeclarationGenerator
 import su.nsk.iae.post.poST.GlobalVarDeclaration
+import su.nsk.iae.post.poST.Model
 
 class ConfigurationGenerator {
 
@@ -37,6 +38,8 @@ public class Simulation {
         builder.append(
 '''
 «IND»Map<String,Object> memory = new HashMap<>();
+
+«IND»Map<String, IProcess> processMap = new HashMap<>();
 
 «IND»memory.put("_global_time", 0L);
 '''
@@ -107,5 +110,4 @@ public class Simulation {
 
         builder.toString
     }
-
 }

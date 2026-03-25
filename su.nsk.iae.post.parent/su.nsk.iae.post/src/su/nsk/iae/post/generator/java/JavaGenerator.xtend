@@ -13,6 +13,7 @@ import su.nsk.iae.post.generator.java.common.ProgramGenerator
 import su.nsk.iae.post.generator.java.common.IProcessGenerator
 import su.nsk.iae.post.generator.java.common.BaseProcessGenerator
 import su.nsk.iae.post.generator.java.configuration.ConfigurationGenerator
+import su.nsk.iae.post.generator.java.configuration.DefaultSimulationGenerator
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator
 
@@ -58,6 +59,17 @@ class JavaGenerator implements IPoSTGenerator {
             val code =
                 new ConfigurationGenerator()
                     .generate(model.conf, ctx)
+
+            println("Generating Simulation.java")
+            fsa.generateFile(
+//                model.conf.name + "Simulation.java",
+				"Simulation.java",
+                code
+            )
+        } else {
+        	val code =
+                new DefaultSimulationGenerator()
+                    .generate(model, ctx)
 
             println("Generating Simulation.java")
             fsa.generateFile(

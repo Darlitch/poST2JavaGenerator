@@ -51,6 +51,10 @@ public class ConfigurationGenerator {
       _builder_1.newLineIfNotEmpty();
       _builder_1.newLine();
       _builder_1.append(IND);
+      _builder_1.append("Map<String, IProcess> processMap = new HashMap<>();");
+      _builder_1.newLineIfNotEmpty();
+      _builder_1.newLine();
+      _builder_1.append(IND);
       _builder_1.append("memory.put(\"_global_time\", 0L);");
       _builder_1.newLineIfNotEmpty();
       builder.append(_builder_1);

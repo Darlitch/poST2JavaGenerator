@@ -22,7 +22,7 @@ class StartProcessStatementGenerator implements IStatementGenerator {
 		val name = s.process.name
 
 		'''
-«indent»processRefs.get("«name»").start();
+«indent»getProcess("«name»").start();
 '''
 	}
 }

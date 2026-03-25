@@ -10,6 +10,7 @@ public class Controller {
 
     private final Map<String,Object> memory;
     private final List<IProcess> processes = new ArrayList<>();
+    private final Map<String, IProcess> processMap;
     private final Set<String> inputNames = new HashSet<>();
     private final Set<String> outputNames = new HashSet<>();
     private final Set<String> globalNames = new HashSet<>();
@@ -28,33 +29,52 @@ public class Controller {
         }
     }
 
-    public Controller(Map<String,Object> memory) {
+    public Controller(Map<String,Object> memory, Map<String, IProcess> processMap) {
         this.memory = memory;
-        memory.put("prev_light", 0);
-        memory.put("alight", 0);
-        memory.put("pressed", false);
+        this.processMap = processMap;
+        memory.put("prev_in", false);
+        memory.put("prev_out", false);
+        memory.put("prev_in", false);
+        memory.put("prev_out", false);
+        memory.put("prev_in", false);
+        memory.put("prev_out", false);
+        memory.put("prev_in", false);
+        memory.put("prev_out", false);
+        memory.put("prev_in", false);
+        memory.put("prev_out", false);
+        memory.put("prev_in", false);
+        memory.put("prev_out", false);
 
-        registerTo(inputNames, "lightsArray1");
-        registerTo(inputNames, "lightsArray2");
-        registerTo(inputNames, "sensor");
+        registerTo(inputNames, "onfloor1");
+        registerTo(inputNames, "onfloor2");
+        registerTo(inputNames, "call0");
+        registerTo(inputNames, "button2");
+        registerTo(inputNames, "call1");
+        registerTo(inputNames, "call2");
+        registerTo(inputNames, "onfloor0");
+        registerTo(inputNames, "door1closed");
+        registerTo(inputNames, "button0");
+        registerTo(inputNames, "button1");
+        registerTo(inputNames, "door2closed");
+        registerTo(inputNames, "door0closed");
 
-        registerTo(outputNames, "red2");
-        registerTo(outputNames, "red1");
-        registerTo(outputNames, "green2");
-        registerTo(outputNames, "green1");
-        registerTo(outputNames, "yellow1");
-        registerTo(outputNames, "yellow2");
+        registerTo(outputNames, "floor0_LED");
+        registerTo(outputNames, "cur");
+        registerTo(outputNames, "call2_LED");
+        registerTo(outputNames, "button1_LED");
+        registerTo(outputNames, "call1_LED");
+        registerTo(outputNames, "button0_LED");
+        registerTo(outputNames, "down");
+        registerTo(outputNames, "floor1_LED");
+        registerTo(outputNames, "button2_LED");
+        registerTo(outputNames, "open0");
+        registerTo(outputNames, "open1");
+        registerTo(outputNames, "open2");
+        registerTo(outputNames, "call0_LED");
+        registerTo(outputNames, "up");
+        registerTo(outputNames, "floor2_LED");
 
-        registerTo(globalNames, "lightsArray1");
-        registerTo(globalNames, "lightsArray2");
-        registerTo(globalNames, "red2");
-        registerTo(globalNames, "red1");
-        registerTo(globalNames, "green2");
-        registerTo(globalNames, "green1");
-        registerTo(globalNames, "sensor");
-        registerTo(globalNames, "NUMBER_OF_LIGHTS");
-        registerTo(globalNames, "yellow1");
-        registerTo(globalNames, "yellow2");
+        varNames.add("target");
     }
 
     public void runIter(long cycleTimeMs) {
@@ -70,6 +90,7 @@ public class Controller {
 
     public void registerProcess(IProcess p) {
         processes.add(p);
+        processMap.put(((BaseProcess)p).instanceName, p);
     }
 
     public Map<String,String> dumpProcessStates() {
@@ -132,16 +153,16 @@ public class Controller {
         return res;
     }
 
-    class Light extends BaseProcess {
+    class Init extends BaseProcess {
 	
         enum State {
-            Light,
+            begin,
             Stop,
             Error
         }
 
-        public Light(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
-            super(instanceName, memory, aliases);
+        public Init(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
         }
 
         private State state = State.Stop;
@@ -149,7 +170,7 @@ public class Controller {
         private long timerBaseTime;
 
         public void start() {
-            state = State.Light;
+            state = State.begin;
             timerBaseTime = ((Long)memory.get("_global_time"));
         }
 
@@ -171,7 +192,7 @@ public class Controller {
         public void setNext() {
 
             switch(state) {
-                case Light -> state = State.Light;
+                case begin -> state = State.begin;
                 default -> { }
             }
 
@@ -186,8 +207,16 @@ public class Controller {
         public void run() {
 
             switch(state) {
-                case Light -> {
-                    writeVar("b_light", true);
+                case begin -> {
+                    getProcess("Call0Latch").start();
+                    getProcess("Call1Latch").start();
+                    getProcess("Call2Latch").start();
+                    getProcess("Button0Latch").start();
+                    getProcess("Button1Latch").start();
+                    getProcess("Button2Latch").start();
+                    getProcess("CheckCurFloor").start();
+                    getProcess("UpControl").start();
+                    this.stop();
                 }
                 case Stop, Error -> { }
             }
@@ -210,18 +239,17 @@ public class Controller {
 
     }
 
-    class Control extends BaseProcess {
+    class Call0Latch extends BaseProcess {
 	
         enum State {
-            Work,
-            delay10,
-            delay30,
+            init,
+            check_ON_OFF,
             Stop,
             Error
         }
 
-        public Control(String instanceName, Map<String,Object> memory, Map<String,String> aliases) {
-            super(instanceName, memory, aliases);
+        public Call0Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
         }
 
         private State state = State.Stop;
@@ -229,7 +257,7 @@ public class Controller {
         private long timerBaseTime;
 
         public void start() {
-            state = State.Work;
+            state = State.init;
             timerBaseTime = ((Long)memory.get("_global_time"));
         }
 
@@ -251,9 +279,8 @@ public class Controller {
         public void setNext() {
 
             switch(state) {
-                case Work -> state = State.delay10;
-                case delay10 -> state = State.delay30;
-                case delay30 -> state = State.Work;
+                case init -> state = State.check_ON_OFF;
+                case check_ON_OFF -> state = State.init;
                 default -> { }
             }
 
@@ -268,97 +295,1123 @@ public class Controller {
         public void run() {
 
             switch(state) {
-                case Work -> {
-                    if (readBool("pressed")) {
-                        writeVar("prev_light", 0);
-                        writeVar("pressed", false);
+                case init -> {
+                    writeVar("prev_in", !(readBool("call0")));
+                    writeVar("prev_out", !(readBool("open0")));
+                    setNext();
+                }
+                case check_ON_OFF -> {
+                    if ((readBool("call0") && !(readBool("prev_in")))) {
+                        writeVar("call0_LED", true);
                     }
-                    else if (((((isInactive(processRefs.get("pRed"))) && (isActive(processRefs.get("pGreen"))))) || (((isInactive(processRefs.get("pGreen"))) && (isActive(processRefs.get("pRed"))))))) {
-                        int __start = ((Number)(1)).intValue();
-                        int __end   = ((Number)(3)).intValue();
-                        int __step  = ((Number)(1)).intValue();
+                    if ((readBool("open0") && !(readBool("prev_out")))) {
+                        writeVar("call0_LED", false);
+                    }
+                    writeVar("prev_in", readBool("call0"));
+                    writeVar("prev_out", readBool("open0"));
+                }
+                case Stop, Error -> { }
+            }
+        }
 
-                        if (__step == 0)
-                            throw new RuntimeException("FOR step cannot be zero");
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
 
-                        memory.put("alight", __start);
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
 
-                        while (loopCond("alight", __end, __step)) {
-                            if (getArrayBool("rLightsArray", readInt("alight"), 1)) {
-                                writeVar("prev_light", readInt("alight"));
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class Call1Latch extends BaseProcess {
+	
+        enum State {
+            init,
+            check_ON_OFF,
+            Stop,
+            Error
+        }
+
+        public Call1Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.init;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case init -> state = State.check_ON_OFF;
+                case check_ON_OFF -> state = State.init;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case init -> {
+                    writeVar("prev_in", !(readBool("call1")));
+                    writeVar("prev_out", !(readBool("open1")));
+                    setNext();
+                }
+                case check_ON_OFF -> {
+                    if ((readBool("call1") && !(readBool("prev_in")))) {
+                        writeVar("call1_LED", true);
+                    }
+                    if ((readBool("open1") && !(readBool("prev_out")))) {
+                        writeVar("call1_LED", false);
+                    }
+                    writeVar("prev_in", readBool("call1"));
+                    writeVar("prev_out", readBool("open1"));
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class Call2Latch extends BaseProcess {
+	
+        enum State {
+            init,
+            check_ON_OFF,
+            Stop,
+            Error
+        }
+
+        public Call2Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.init;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case init -> state = State.check_ON_OFF;
+                case check_ON_OFF -> state = State.init;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case init -> {
+                    writeVar("prev_in", !(readBool("call2")));
+                    writeVar("prev_out", !(readBool("open2")));
+                    setNext();
+                }
+                case check_ON_OFF -> {
+                    if ((readBool("call2") && !(readBool("prev_in")))) {
+                        writeVar("call2_LED", true);
+                    }
+                    if ((readBool("open2") && !(readBool("prev_out")))) {
+                        writeVar("call2_LED", false);
+                    }
+                    writeVar("prev_in", readBool("call2"));
+                    writeVar("prev_out", readBool("open2"));
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class Button0Latch extends BaseProcess {
+	
+        enum State {
+            init,
+            check_ON_OFF,
+            Stop,
+            Error
+        }
+
+        public Button0Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.init;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case init -> state = State.check_ON_OFF;
+                case check_ON_OFF -> state = State.init;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case init -> {
+                    writeVar("prev_in", !(readBool("button0")));
+                    writeVar("prev_out", !(readBool("open0")));
+                    setNext();
+                }
+                case check_ON_OFF -> {
+                    if ((readBool("button0") && !(readBool("prev_in")))) {
+                        writeVar("button0_LED", true);
+                    }
+                    if ((readBool("open0") && !(readBool("prev_out")))) {
+                        writeVar("button0_LED", false);
+                    }
+                    writeVar("prev_in", readBool("button0"));
+                    writeVar("prev_out", readBool("open0"));
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class Button1Latch extends BaseProcess {
+	
+        enum State {
+            init,
+            check_ON_OFF,
+            Stop,
+            Error
+        }
+
+        public Button1Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.init;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case init -> state = State.check_ON_OFF;
+                case check_ON_OFF -> state = State.init;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case init -> {
+                    writeVar("prev_in", !(readBool("button1")));
+                    writeVar("prev_out", !(readBool("open1")));
+                    setNext();
+                }
+                case check_ON_OFF -> {
+                    if ((readBool("button1") && !(readBool("prev_in")))) {
+                        writeVar("button1_LED", true);
+                    }
+                    if ((readBool("open1") && !(readBool("prev_out")))) {
+                        writeVar("button1_LED", false);
+                    }
+                    writeVar("prev_in", readBool("button1"));
+                    writeVar("prev_out", readBool("open1"));
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class Button2Latch extends BaseProcess {
+	
+        enum State {
+            init,
+            check_ON_OFF,
+            Stop,
+            Error
+        }
+
+        public Button2Latch(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.init;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case init -> state = State.check_ON_OFF;
+                case check_ON_OFF -> state = State.init;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case init -> {
+                    writeVar("prev_in", !(readBool("button2")));
+                    writeVar("prev_out", !(readBool("open2")));
+                    setNext();
+                }
+                case check_ON_OFF -> {
+                    if ((readBool("button2") && !(readBool("prev_in")))) {
+                        writeVar("button2_LED", true);
+                    }
+                    if ((readBool("open2") && !(readBool("prev_out")))) {
+                        writeVar("button2_LED", false);
+                    }
+                    writeVar("prev_in", readBool("button2"));
+                    writeVar("prev_out", readBool("open2"));
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class CheckCurFloor extends BaseProcess {
+	
+        enum State {
+            check_floor,
+            Stop,
+            Error
+        }
+
+        public CheckCurFloor(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.check_floor;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case check_floor -> state = State.check_floor;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case check_floor -> {
+                    if (readBool("onfloor0")) {
+                        writeVar("cur", 0);
+                        writeVar("floor0_LED", true);
+                        writeVar("floor1_LED", false);
+                        writeVar("floor2_LED", false);
+                    }
+                    else if (readBool("onfloor1")) {
+                        writeVar("cur", 1);
+                        writeVar("floor0_LED", false);
+                        writeVar("floor1_LED", true);
+                        writeVar("floor2_LED", false);
+                    }
+                    else if (readBool("onfloor2")) {
+                        writeVar("cur", 2);
+                        writeVar("floor0_LED", false);
+                        writeVar("floor1_LED", false);
+                        writeVar("floor2_LED", true);
+                    }
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class UpControl extends BaseProcess {
+	
+        enum State {
+            check_calls,
+            check_stop,
+            door_cycle,
+            Stop,
+            Error
+        }
+
+        public UpControl(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.check_calls;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case check_calls -> state = State.check_stop;
+                case check_stop -> state = State.door_cycle;
+                case door_cycle -> state = State.check_calls;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case check_calls -> {
+                    if ((((((readInt("cur") == 0) && ((readBool("call0_LED") || readBool("button0_LED"))))) || (((readInt("cur") == 1) && ((readBool("call1_LED") || readBool("button1_LED")))))) || (((readInt("cur") == 2) && ((readBool("call2_LED") || readBool("button2_LED"))))))) {
+                        getProcess("DoorCycle").start();
+                        setState(State.door_cycle);
+                    }
+                    else {
+                        final Object __caseVal = (readInt("cur"));
+                        if (((Number)(__caseVal)).longValue() == ((Number)(0)).longValue()) {
+                            if (((((readBool("call1_LED") || readBool("button1_LED"))) || ((readBool("call2_LED") || readBool("button2_LED")))))) {
+                                getProcess("UpMotion").start();
+                                setNext();
                             }
-                            setArrayValue("rLightsArray", readInt("alight"), 1, false);
-                            memory.put(
-                                "alight",
-                                readInt("alight") + __step
-                            );
                         }
-                        processRefs.get("pRed").stop();
-                        processRefs.get("pYellow").start();
-                        processRefs.get("pGreen").stop();
-                        setState(State.delay10);
-                    }
-                    else if ((readInt("prev_light") == 0)) {
-                        int __start = ((Number)(1)).intValue();
-                        int __end   = ((Number)(3)).intValue();
-                        int __step  = ((Number)(1)).intValue();
-
-                        if (__step == 0)
-                            throw new RuntimeException("FOR step cannot be zero");
-
-                        memory.put("alight", __start);
-
-                        while (loopCond("alight", __end, __step)) {
-                            setArrayValue("rLightsArray", readInt("alight"), 1, false);
-                            memory.put(
-                                "alight",
-                                readInt("alight") + __step
-                            );
+                        else if (((Number)(__caseVal)).longValue() == ((Number)(1)).longValue()) {
+                            if (((readBool("call2_LED") || readBool("button2_LED")))) {
+                                getProcess("UpMotion").start();
+                                setNext();
+                            }
+                            else if (((readBool("call0_LED") || readBool("button0_LED")))) {
+                                getProcess("DownControl").start();
+                                this.stop();
+                            }
                         }
-                        processRefs.get("pRed").stop();
-                        processRefs.get("pYellow").stop();
-                        processRefs.get("pGreen").start();
-                        setState(State.delay30);
-                    }
-                    else if ((readInt("prev_light") == 2)) {
-                        int __start = ((Number)(1)).intValue();
-                        int __end   = ((Number)(3)).intValue();
-                        int __step  = ((Number)(1)).intValue();
-
-                        if (__step == 0)
-                            throw new RuntimeException("FOR step cannot be zero");
-
-                        memory.put("alight", __start);
-
-                        while (loopCond("alight", __end, __step)) {
-                            setArrayValue("rLightsArray", readInt("alight"), 1, false);
-                            memory.put(
-                                "alight",
-                                readInt("alight") + __step
-                            );
-                        }
-                        processRefs.get("pRed").start();
-                        processRefs.get("pYellow").stop();
-                        processRefs.get("pGreen").stop();
-                        setState(State.delay30);
-                    }
-                }
-                case delay10 -> {
-                    if (((Long)memory.get("_global_time")) - this.timerBaseTime >= 10000L) {
-                        setState(State.Work);
-                        if (readBool("control_sensor")) {
-                            writeVar("pressed", true);
+                        else if (((Number)(__caseVal)).longValue() == ((Number)(2)).longValue()) {
+                            getProcess("DownControl").start();
+                            this.stop();
                         }
                     }
                 }
-                case delay30 -> {
-                    if ((readBool("control_sensor") && isActive(processRefs.get("pRed")))) {
-                        writeVar("pressed", true);
-                        setState(State.Work);
+                case check_stop -> {
+                    if ((isInactive(getProcess("UpMotion")))) {
+                        getProcess("DoorCycle").start();
+                        setNext();
                     }
-                    if (((Long)memory.get("_global_time")) - this.timerBaseTime >= 30000L) {
-                        writeVar("pressed", false);
-                        setState(State.Work);
+                }
+                case door_cycle -> {
+                    if ((isInactive(getProcess("DoorCycle")))) {
+                        this.start();
+                    }
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class UpMotion extends BaseProcess {
+	
+        enum State {
+            start,
+            check_target,
+            Stop,
+            Error
+        }
+
+        public UpMotion(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.start;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case start -> state = State.check_target;
+                case check_target -> state = State.start;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case start -> {
+                    writeVar("up", true);
+                    final Object __caseVal = (readInt("cur"));
+                    if (((Number)(__caseVal)).longValue() == ((Number)(0)).longValue()) {
+                        if (((readBool("call1_LED") || readBool("button1_LED")))) {
+                            writeVar("target", 1);
+                            setNext();
+                        }
+                    }
+                    else if (((Number)(__caseVal)).longValue() == ((Number)(1)).longValue()) {
+                        if (((readBool("call2_LED") || readBool("button2_LED")))) {
+                            writeVar("target", 2);
+                            setNext();
+                        }
+                    }
+                    else if (((Number)(__caseVal)).longValue() == ((Number)(2)).longValue()) {
+                        writeVar("target", 2);
+                        setNext();
+                    }
+                }
+                case check_target -> {
+                    if (((readInt("cur") == readInt("target")))) {
+                        writeVar("up", false);
+                        this.stop();
+                    }
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class DownControl extends BaseProcess {
+	
+        enum State {
+            check_calls,
+            check_stop,
+            door_cycle,
+            Stop,
+            Error
+        }
+
+        public DownControl(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.check_calls;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case check_calls -> state = State.check_stop;
+                case check_stop -> state = State.door_cycle;
+                case door_cycle -> state = State.check_calls;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case check_calls -> {
+                    if ((((((readInt("cur") == 0) && ((readBool("call0") || readBool("button0"))))) || (((readInt("cur") == 1) && ((readBool("call1") || readBool("button1")))))) || (((readInt("cur") == 2) && ((readBool("call2") || readBool("button2"))))))) {
+                        getProcess("DoorCycle").start();
+                        setState(State.door_cycle);
+                    }
+                    else {
+                        final Object __caseVal = (readInt("cur"));
+                        if (((Number)(__caseVal)).longValue() == ((Number)(0)).longValue()) {
+                            getProcess("UpControl").start();
+                            this.stop();
+                        }
+                        else if (((Number)(__caseVal)).longValue() == ((Number)(1)).longValue()) {
+                            if (((readBool("call0_LED") || readBool("button0_LED")))) {
+                                getProcess("DownMotion").start();
+                                setNext();
+                            }
+                            else if (((readBool("call2_LED") || readBool("button2_LED")))) {
+                                getProcess("UpControl").start();
+                                this.stop();
+                            }
+                        }
+                        else if (((Number)(__caseVal)).longValue() == ((Number)(2)).longValue()) {
+                            if (((((readBool("call1_LED") || readBool("button1_LED"))) || ((readBool("call0_LED") || readBool("button0_LED")))))) {
+                                getProcess("DownMotion").start();
+                                setNext();
+                            }
+                        }
+                    }
+                }
+                case check_stop -> {
+                    if ((isInactive(getProcess("DownMotion")))) {
+                        getProcess("DoorCycle").start();
+                        setNext();
+                    }
+                }
+                case door_cycle -> {
+                    if ((isInactive(getProcess("DoorCycle")))) {
+                        this.start();
+                    }
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class DownMotion extends BaseProcess {
+	
+        enum State {
+            start,
+            chech_next,
+            Stop,
+            Error
+        }
+
+        public DownMotion(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.start;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case start -> state = State.chech_next;
+                case chech_next -> state = State.start;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case start -> {
+                    writeVar("down", true);
+                    final Object __caseVal = (readInt("cur"));
+                    if (((Number)(__caseVal)).longValue() == ((Number)(0)).longValue()) {
+                        writeVar("target", 0);
+                        setNext();
+                    }
+                    else if (((Number)(__caseVal)).longValue() == ((Number)(1)).longValue()) {
+                        if (((readBool("call0_LED") || readBool("button0_LED")))) {
+                            writeVar("target", 0);
+                            setNext();
+                        }
+                    }
+                    else if (((Number)(__caseVal)).longValue() == ((Number)(2)).longValue()) {
+                        if (((readBool("call1_LED") || readBool("button1_LED")))) {
+                            writeVar("target", 1);
+                            setNext();
+                        }
+                    }
+                }
+                case chech_next -> {
+                    if (((readInt("cur") == readInt("target")))) {
+                        writeVar("down", false);
+                        this.stop();
+                    }
+                }
+                case Stop, Error -> { }
+            }
+        }
+
+        @Override
+        public void dumpStates(Map<String,String> out) {
+            out.put(instanceName + "_state", state.name());
+        }
+
+        @Override
+        public void dumpTimers(Map<String,Long> out) {
+            out.put(instanceName + "_time", timerBaseTime);
+        }
+
+        @Override
+        public String getStateName() {
+            return state.name();
+        }
+
+    }
+
+    class DoorCycle extends BaseProcess {
+	
+        enum State {
+            choose_door_to_open,
+            delay3s,
+            check_closed,
+            Stop,
+            Error
+        }
+
+        public DoorCycle(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+            super(instanceName, memory, aliases, globalProcesses);
+        }
+
+        private State state = State.Stop;
+
+        private long timerBaseTime;
+
+        public void start() {
+            state = State.choose_door_to_open;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void stop() {
+            state = State.Stop;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void error() {
+            state = State.Error;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setState(State s) {
+            state = s;
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public void setNext() {
+
+            switch(state) {
+                case choose_door_to_open -> state = State.delay3s;
+                case delay3s -> state = State.check_closed;
+                case check_closed -> state = State.choose_door_to_open;
+                default -> { }
+            }
+
+            timerBaseTime = ((Long)memory.get("_global_time"));
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        @Override
+        public void run() {
+
+            switch(state) {
+                case choose_door_to_open -> {
+                    final Object __caseVal = (readInt("cur"));
+                    if (((Number)(__caseVal)).longValue() == ((Number)(0)).longValue()) {
+                        writeVar("open0", true);
+                    }
+                    else if (((Number)(__caseVal)).longValue() == ((Number)(1)).longValue()) {
+                        writeVar("open1", true);
+                    }
+                    else if (((Number)(__caseVal)).longValue() == ((Number)(2)).longValue()) {
+                        writeVar("open2", true);
+                    }
+                    setNext();
+                }
+                case delay3s -> {
+                    if (((Long)memory.get("_global_time")) - this.timerBaseTime >= 3000L) {
+                        writeVar("open0", false);
+                        writeVar("open1", false);
+                        writeVar("open2", false);
+                        setNext();
+                    }
+                }
+                case check_closed -> {
+                    if ((((readBool("door0closed") && readBool("door1closed")) && readBool("door2closed")))) {
+                        this.stop();
                     }
                 }
                 case Stop, Error -> { }

@@ -24,7 +24,7 @@ public class StopProcessStatementGenerator implements IStatementGenerator {
         final String name = s.getProcess().getName();
         StringConcatenation _builder = new StringConcatenation();
         _builder.append(indent);
-        _builder.append("processRefs.get(\"");
+        _builder.append("getProcess(\"");
         _builder.append(name);
         _builder.append("\").stop();");
         _builder.newLineIfNotEmpty();
