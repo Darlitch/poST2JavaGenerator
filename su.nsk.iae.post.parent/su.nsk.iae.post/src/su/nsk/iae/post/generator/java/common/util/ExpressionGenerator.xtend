@@ -618,7 +618,7 @@ class ExpressionGenerator {
 //	        return '''isStop(«fieldName»)'''
 //	
 //	    '''isError(«fieldName»)'''
-		val name = exp.process.name
+		val name = ctx.resolveProcess(exp.process.name)
 
 		if (exp.active)
 		    return '''isActive(getProcess("«name»"))'''

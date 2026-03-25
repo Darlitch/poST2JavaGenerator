@@ -208,14 +208,14 @@ public class Controller {
 
             switch(state) {
                 case begin -> {
-                    getProcess("Call0Latch").start();
-                    getProcess("Call1Latch").start();
-                    getProcess("Call2Latch").start();
-                    getProcess("Button0Latch").start();
-                    getProcess("Button1Latch").start();
-                    getProcess("Button2Latch").start();
-                    getProcess("CheckCurFloor").start();
-                    getProcess("UpControl").start();
+                    getProcess("call0Latch").start();
+                    getProcess("call1Latch").start();
+                    getProcess("call2Latch").start();
+                    getProcess("button0Latch").start();
+                    getProcess("button1Latch").start();
+                    getProcess("button2Latch").start();
+                    getProcess("checkCurFloor").start();
+                    getProcess("upControl").start();
                     this.stop();
                 }
                 case Stop, Error -> { }
@@ -946,41 +946,41 @@ public class Controller {
             switch(state) {
                 case check_calls -> {
                     if ((((((readInt("cur") == 0) && ((readBool("call0_LED") || readBool("button0_LED"))))) || (((readInt("cur") == 1) && ((readBool("call1_LED") || readBool("button1_LED")))))) || (((readInt("cur") == 2) && ((readBool("call2_LED") || readBool("button2_LED"))))))) {
-                        getProcess("DoorCycle").start();
+                        getProcess("doorCycle").start();
                         setState(State.door_cycle);
                     }
                     else {
                         final Object __caseVal = (readInt("cur"));
                         if (((Number)(__caseVal)).longValue() == ((Number)(0)).longValue()) {
                             if (((((readBool("call1_LED") || readBool("button1_LED"))) || ((readBool("call2_LED") || readBool("button2_LED")))))) {
-                                getProcess("UpMotion").start();
+                                getProcess("upMotion").start();
                                 setNext();
                             }
                         }
                         else if (((Number)(__caseVal)).longValue() == ((Number)(1)).longValue()) {
                             if (((readBool("call2_LED") || readBool("button2_LED")))) {
-                                getProcess("UpMotion").start();
+                                getProcess("upMotion").start();
                                 setNext();
                             }
                             else if (((readBool("call0_LED") || readBool("button0_LED")))) {
-                                getProcess("DownControl").start();
+                                getProcess("downControl").start();
                                 this.stop();
                             }
                         }
                         else if (((Number)(__caseVal)).longValue() == ((Number)(2)).longValue()) {
-                            getProcess("DownControl").start();
+                            getProcess("downControl").start();
                             this.stop();
                         }
                     }
                 }
                 case check_stop -> {
-                    if ((isInactive(getProcess("UpMotion")))) {
-                        getProcess("DoorCycle").start();
+                    if ((isInactive(getProcess("upMotion")))) {
+                        getProcess("doorCycle").start();
                         setNext();
                     }
                 }
                 case door_cycle -> {
-                    if ((isInactive(getProcess("DoorCycle")))) {
+                    if ((isInactive(getProcess("doorCycle")))) {
                         this.start();
                     }
                 }
@@ -1168,41 +1168,41 @@ public class Controller {
             switch(state) {
                 case check_calls -> {
                     if ((((((readInt("cur") == 0) && ((readBool("call0") || readBool("button0"))))) || (((readInt("cur") == 1) && ((readBool("call1") || readBool("button1")))))) || (((readInt("cur") == 2) && ((readBool("call2") || readBool("button2"))))))) {
-                        getProcess("DoorCycle").start();
+                        getProcess("doorCycle").start();
                         setState(State.door_cycle);
                     }
                     else {
                         final Object __caseVal = (readInt("cur"));
                         if (((Number)(__caseVal)).longValue() == ((Number)(0)).longValue()) {
-                            getProcess("UpControl").start();
+                            getProcess("upControl").start();
                             this.stop();
                         }
                         else if (((Number)(__caseVal)).longValue() == ((Number)(1)).longValue()) {
                             if (((readBool("call0_LED") || readBool("button0_LED")))) {
-                                getProcess("DownMotion").start();
+                                getProcess("downMotion").start();
                                 setNext();
                             }
                             else if (((readBool("call2_LED") || readBool("button2_LED")))) {
-                                getProcess("UpControl").start();
+                                getProcess("upControl").start();
                                 this.stop();
                             }
                         }
                         else if (((Number)(__caseVal)).longValue() == ((Number)(2)).longValue()) {
                             if (((((readBool("call1_LED") || readBool("button1_LED"))) || ((readBool("call0_LED") || readBool("button0_LED")))))) {
-                                getProcess("DownMotion").start();
+                                getProcess("downMotion").start();
                                 setNext();
                             }
                         }
                     }
                 }
                 case check_stop -> {
-                    if ((isInactive(getProcess("DownMotion")))) {
-                        getProcess("DoorCycle").start();
+                    if ((isInactive(getProcess("downMotion")))) {
+                        getProcess("doorCycle").start();
                         setNext();
                     }
                 }
                 case door_cycle -> {
-                    if ((isInactive(getProcess("DoorCycle")))) {
+                    if ((isInactive(getProcess("doorCycle")))) {
                         this.start();
                     }
                 }

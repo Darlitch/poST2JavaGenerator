@@ -894,7 +894,7 @@ public class ExpressionGenerator {
   private static String generateProcessStatus(final ProcessStatusExpression exp, final GenerationContext ctx) {
     String _xblockexpression = null;
     {
-      final String name = exp.getProcess().getName();
+      final String name = ctx.resolveProcess(exp.getProcess().getName());
       boolean _isActive = exp.isActive();
       if (_isActive) {
         StringConcatenation _builder = new StringConcatenation();
