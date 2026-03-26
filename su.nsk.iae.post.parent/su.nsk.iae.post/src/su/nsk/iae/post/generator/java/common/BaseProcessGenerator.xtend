@@ -26,6 +26,13 @@ public abstract class BaseProcess implements IProcess {
         this.globalProcesses = globalProcesses;
     }
     
+    @Override
+    public void dumpLocalVars(Map<String,Object> out) {
+        for (Map.Entry<String,Object> e : localMemory.entrySet()) {
+            out.put(instanceName + "_" + e.getKey(), e.getValue());
+        }
+    }
+    
     public void setProcess(String name, IProcess p) {
         processRefs.put(name, p);
     }
@@ -92,7 +99,7 @@ public abstract class BaseProcess implements IProcess {
     }
 
     protected boolean loopCond(String var, int end, int step) {
-        int value = ((Number)memory.get(var)).intValue();
+        int value = readInt(var);
         return (step >= 0 && value <= end)
             || (step < 0 && value >= end);
     }

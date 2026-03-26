@@ -71,9 +71,6 @@ public class ProgramGenerator {
       _builder.append(ProgramGenerator.INDENT);
       _builder.append("private final Set<String> globalNames = new HashSet<>();");
       _builder.newLineIfNotEmpty();
-      _builder.append(ProgramGenerator.INDENT);
-      _builder.append("private final Set<String> varNames = new HashSet<>();");
-      _builder.newLineIfNotEmpty();
       _builder.newLine();
       _builder.append(ProgramGenerator.INDENT);
       _builder.append("private void registerTo(Set<String> target, String name) {");
@@ -196,21 +193,11 @@ public class ProgramGenerator {
         _builder_3.newLineIfNotEmpty();
         builder.append(_builder_3);
       }
-      Set<String> _localVars = ctx.getLocalVars();
-      for (final String n_3 : _localVars) {
-        StringConcatenation _builder_4 = new StringConcatenation();
-        _builder_4.append(ProgramGenerator.INDENT);
-        _builder_4.append("    varNames.add(\"");
-        _builder_4.append(n_3);
-        _builder_4.append("\");");
-        _builder_4.newLineIfNotEmpty();
-        builder.append(_builder_4);
-      }
-      StringConcatenation _builder_5 = new StringConcatenation();
-      _builder_5.append(ProgramGenerator.INDENT);
-      _builder_5.append("}");
-      _builder_5.newLineIfNotEmpty();
-      builder.append(_builder_5);
+      StringConcatenation _builder_4 = new StringConcatenation();
+      _builder_4.append(ProgramGenerator.INDENT);
+      _builder_4.append("}");
+      _builder_4.newLineIfNotEmpty();
+      builder.append(_builder_4);
       _xblockexpression = builder.toString();
     }
     return _xblockexpression;
@@ -389,10 +376,10 @@ public class ProgramGenerator {
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append(ProgramGenerator.INDENT);
-    _builder.append("    for (String n : varNames)");
+    _builder.append("    for (IProcess p : processes)");
     _builder.newLineIfNotEmpty();
     _builder.append(ProgramGenerator.INDENT);
-    _builder.append("        res.put(n, memory.get(n));");
+    _builder.append("        p.dumpLocalVars(res);");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append(ProgramGenerator.INDENT);

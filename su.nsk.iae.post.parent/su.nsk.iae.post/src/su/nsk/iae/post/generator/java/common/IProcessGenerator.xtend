@@ -13,6 +13,8 @@ public interface IProcess {
 
     void dumpTimers(java.util.Map<String,Long> out);
     
+    void dumpLocalVars(Map<String,Object> out);
+    
     String getStateName();
     
     void start();

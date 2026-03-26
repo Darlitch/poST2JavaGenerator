@@ -23,6 +23,11 @@ public class IProcessGenerator {
     _builder.append("    ");
     _builder.newLine();
     _builder.append("    ");
+    _builder.append("void dumpLocalVars(Map<String,Object> out);");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.newLine();
+    _builder.append("    ");
     _builder.append("String getStateName();");
     _builder.newLine();
     _builder.append("    ");

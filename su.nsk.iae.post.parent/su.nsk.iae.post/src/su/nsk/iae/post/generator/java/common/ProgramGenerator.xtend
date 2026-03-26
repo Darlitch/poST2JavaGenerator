@@ -38,7 +38,7 @@ public class «name» {
 «INDENT»private final Set<String> inputNames = new HashSet<>();
 «INDENT»private final Set<String> outputNames = new HashSet<>();
 «INDENT»private final Set<String> globalNames = new HashSet<>();
-«INDENT»private final Set<String> varNames = new HashSet<>();
+««««INDENT»private final Set<String> varNames = new HashSet<>();
 
 «INDENT»private void registerTo(Set<String> target, String name) {
 «INDENT»    Object value = memory.get(name);
@@ -55,7 +55,6 @@ public class «name» {
 '''
         )
 
-//        builder.append(generateProcessFields(program))
         builder.append(generateConstructor(program, ctx))
         builder.append("\n")
         builder.append(generateRunIter())
@@ -259,13 +258,13 @@ public class «name» {
             )
         }
 
-        for (n : ctx.localVars) {
-            builder.append(
-'''
-«INDENT»    varNames.add("«n»");
-'''
-            )
-        }
+//        for (n : ctx.localVars) {
+//            builder.append(
+//'''
+//«INDENT»    varNames.add("«n»");
+//'''
+//            )
+//        }
 
         // ===== ïðîöåññû =====
 
@@ -393,8 +392,8 @@ public class «name» {
 
 «INDENT»    Map<String,Object> res = new HashMap<>();
 
-«INDENT»    for (String n : varNames)
-«INDENT»        res.put(n, memory.get(n));
+«INDENT»    for (IProcess p : processes)
+«INDENT»        p.dumpLocalVars(res);
 
 «INDENT»    return res;
 «INDENT»}

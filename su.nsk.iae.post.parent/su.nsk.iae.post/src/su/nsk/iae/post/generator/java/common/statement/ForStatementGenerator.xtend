@@ -53,14 +53,11 @@ class ForStatementGenerator implements IStatementGenerator {
 «indent»if (__step == 0)
 «indent»    throw new RuntimeException("FOR step cannot be zero");
 
-«indent»memory.put("«resolved»", __start);
+«indent»writeVar("«resolved»", __start);
 
 «indent»while (loopCond("«resolved»", __end, __step)) {
 «stmtGen.generate(s.statement, ctx, nextIndent)»
-«nextIndent»memory.put(
-«nextIndent»    "«resolved»",
-«nextIndent»    «readVar(varName, ctx)» + __step
-«nextIndent»);
+«nextIndent»writeVar("«resolved»", «readVar(varName, ctx)» + __step);
 «indent»}
 '''
 		)
