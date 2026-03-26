@@ -3,49 +3,83 @@ package su.nsk.iae.post.generator.java.configuration
 import su.nsk.iae.post.poST.TemplateProcessConfElement
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.vars.BindingGenerator
+import su.nsk.iae.post.poST.AttachVariableConfElement
+import su.nsk.iae.post.poST.TemplateProcessAttachVariableConfElement
 
 class ProcessConfGenerator {
 
-    def String generate(TemplateProcessConfElement conf, GenerationContext ctx) {
-
-        val builder = new StringBuilder
-
-        val name = conf.name
-        val type = conf.process.name
-
-        // ===== èìÿ ïîëÿ â Java =====
-        val fieldName = name
-
-        // ===== ðåãèñòðàöèÿ ïðîöåññà â êîíòåêñòå =====
-        ctx.registerProcess(name, fieldName, type)
-
-        // ===== ñîçäàíèå ïðîöåññà =====
-        builder.append(
+    def String generate(
+	    TemplateProcessConfElement proc,
+	    GenerationContext ctx,
+	    String programInstance,
+	    String indent
+	) {
+	
+	    val builder = new StringBuilder
+	
+	    val procName = proc.name
+	    val procType = proc.process.name
+	
+	    ctx.registerProcess(procName, procName, procType)
+	
+	    // ===== alias map =====
+	    builder.append(
 '''
-«type» «fieldName» = new «type»(memory);
-processes.add(«fieldName»);
+«indent»
+
+«indent»Map<String,String> «procName»_aliases = new HashMap<>();
 '''
-        )
-
-        // ===== binding ïàðàìåòðîâ =====
-        if (conf.args !== null) {
-
-            for (arg : conf.args.elements) {
-                BindingGenerator.generate(arg, ctx)
-            }
-        }
-
-        // ===== ACTIVE =====
-        if (conf.active) {
-
-            builder.append(
+	    )
+	
+	    // ===== ïàðàìåòðû =====
+	    if (proc.args !== null) {
+	
+	        for (p : proc.args.elements) {
+	            BindingGenerator.generate(p, ctx)
+	        }
+	
+	        for (p : proc.args.elements) {
+	            if (p instanceof AttachVariableConfElement ||
+	                p instanceof TemplateProcessAttachVariableConfElement) {
+	
+	                builder.append(
+	                    BindingGenerator.generateAlias(p, ctx, procName, indent)
+	                )
+	            }
+	        }
+	    }
+	
+	    // ===== ñîçäàíèå =====
+	    builder.append(
 '''
-«fieldName».start();
+«indent»«procType» «procName» = new «procType»("«procName»", memory, «procName»_aliases, processMap);
+«indent»«programInstance».registerProcess(«procName»);
 '''
-            )
-        }
-
-        builder.toString
-    }
+	    )
+	
+	    // ===== process binding =====
+	    if (proc.args !== null) {
+	        for (p : proc.args.elements) {
+	            if (p instanceof AttachVariableConfElement ||
+	                p instanceof TemplateProcessAttachVariableConfElement) {
+	
+	                builder.append(
+	                    BindingGenerator.generateProcessBinding(p, ctx, procName, indent)
+	                )
+	            }
+	        }
+	    }
+	
+	    // ===== ACTIVE =====
+	    if (proc.active) {
+	        builder.append(
+'''
+«indent»«procName».start();
+'''
+	        )
+	    }
+	
+	    return builder.toString
+	}
 
 }
