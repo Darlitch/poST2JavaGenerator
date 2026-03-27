@@ -12,6 +12,7 @@ class ProcessConfGenerator {
 	    TemplateProcessConfElement proc,
 	    GenerationContext ctx,
 	    String programInstance,
+	    String programType,
 	    String indent
 	) {
 	
@@ -52,7 +53,7 @@ class ProcessConfGenerator {
 	    // ===== ñîçäàíèå =====
 	    builder.append(
 '''
-«indent»«procType» «procName» = new «procType»("«procName»", memory, «procName»_aliases, processMap);
+«indent»«programType».«procType» «procName» = new «programType».«procType»("«procName»", memory, «procName»_aliases, processMap);
 «indent»«programInstance».registerProcess(«procName»);
 '''
 	    )

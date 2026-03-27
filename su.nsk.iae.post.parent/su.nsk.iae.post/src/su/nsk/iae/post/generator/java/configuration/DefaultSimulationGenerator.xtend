@@ -92,13 +92,14 @@ public class Simulation {
 		
 		        val procName = proc.name.toFirstLower
 		        val procType = proc.name
+		        val programType = p.name
 		
 		        builder.append("\n")
 		
 		        builder.append(
 '''
 «IND»Map<String,String> «procName»_aliases = new HashMap<>();
-«IND»«procType» «procName» = new «procType»("«procName»", memory, «procName»_aliases, processMap);
+«IND»«programType».«procType» «procName» = new «programType».«procType»("«procName»", memory, «procName»_aliases, processMap);
 «IND»«programInstance».registerProcess(«procName»);
 '''
 		        )

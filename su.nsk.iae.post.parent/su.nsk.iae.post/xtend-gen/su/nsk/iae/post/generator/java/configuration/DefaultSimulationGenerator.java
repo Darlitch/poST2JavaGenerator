@@ -126,6 +126,7 @@ public class DefaultSimulationGenerator {
           {
             final String procName = StringExtensions.toFirstLower(proc_1.getName());
             final String procType = proc_1.getName();
+            final String programType = p_3.getName();
             builder.append("\n");
             StringConcatenation _builder_1 = new StringConcatenation();
             _builder_1.append(IND);
@@ -134,10 +135,14 @@ public class DefaultSimulationGenerator {
             _builder_1.append("_aliases = new HashMap<>();");
             _builder_1.newLineIfNotEmpty();
             _builder_1.append(IND);
+            _builder_1.append(programType);
+            _builder_1.append(".");
             _builder_1.append(procType);
             _builder_1.append(" ");
             _builder_1.append(procName);
             _builder_1.append(" = new ");
+            _builder_1.append(programType);
+            _builder_1.append(".");
             _builder_1.append(procType);
             _builder_1.append("(\"");
             _builder_1.append(procName);

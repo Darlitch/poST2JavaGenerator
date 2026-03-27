@@ -45,8 +45,6 @@ public class ProgramGenerator {
       _builder.newLine();
       _builder.append("import java.util.HashSet;");
       _builder.newLine();
-      _builder.append("import java.util.Objects;");
-      _builder.newLine();
       _builder.newLine();
       _builder.append("public class ");
       _builder.append(name);

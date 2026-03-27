@@ -11,7 +11,7 @@ import su.nsk.iae.post.poST.TemplateProcessElements;
 
 @SuppressWarnings("all")
 public class ProcessConfGenerator {
-  public String generate(final TemplateProcessConfElement proc, final GenerationContext ctx, final String programInstance, final String indent) {
+  public String generate(final TemplateProcessConfElement proc, final GenerationContext ctx, final String programInstance, final String programType, final String indent) {
     final StringBuilder builder = new StringBuilder();
     final String procName = proc.getName();
     final String procType = proc.getProcess().getName();
@@ -44,10 +44,14 @@ public class ProcessConfGenerator {
     }
     StringConcatenation _builder_1 = new StringConcatenation();
     _builder_1.append(indent);
+    _builder_1.append(programType);
+    _builder_1.append(".");
     _builder_1.append(procType);
     _builder_1.append(" ");
     _builder_1.append(procName);
     _builder_1.append(" = new ");
+    _builder_1.append(programType);
+    _builder_1.append(".");
     _builder_1.append(procType);
     _builder_1.append("(\"");
     _builder_1.append(procName);

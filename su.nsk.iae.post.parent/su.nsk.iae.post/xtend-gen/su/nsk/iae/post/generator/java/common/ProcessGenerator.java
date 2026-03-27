@@ -42,7 +42,7 @@ public class ProcessGenerator {
       final String nextIndent = (indent + "    ");
       StringConcatenation _builder = new StringConcatenation();
       _builder.append(indent);
-      _builder.append("class ");
+      _builder.append("static class ");
       _builder.append(name);
       _builder.append(" extends BaseProcess {");
       _builder.newLineIfNotEmpty();

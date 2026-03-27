@@ -6,99 +6,100 @@ public class Simulation {
     public static void main(String[] args) throws Exception {
 
         Map<String,Object> memory = new HashMap<>();
-        
+
         Map<String, IProcess> processMap = new HashMap<>();
-        
+
         memory.put("_global_time", 0L);
-        memory.put("onfloor0", false);
-        memory.put("onfloor1", false);
-        memory.put("onfloor2", false);
-        memory.put("call0", false);
-        memory.put("call1", false);
-        memory.put("call2", false);
-        memory.put("button0", false);
-        memory.put("button1", false);
-        memory.put("button2", false);
-        memory.put("door0closed", false);
-        memory.put("door1closed", false);
-        memory.put("door2closed", false);
-        memory.put("up", false);
-        memory.put("down", false);
-        memory.put("open0", false);
-        memory.put("open1", false);
-        memory.put("open2", false);
-        memory.put("call0_LED", false);
-        memory.put("call1_LED", false);
-        memory.put("call2_LED", false);
-        memory.put("button0_LED", false);
-        memory.put("button1_LED", false);
-        memory.put("button2_LED", false);
-        memory.put("floor0_LED", false);
-        memory.put("floor1_LED", false);
-        memory.put("floor2_LED", false);
-        memory.put("cur", 0);
-        memory.put("target", 0);
+        memory.put("red1", false);
+        memory.put("yellow1", false);
+        memory.put("green1", false);
+        memory.put("red2", false);
+        memory.put("yellow2", false);
+        memory.put("green2", false);
+        memory.put("sensor", false);
+        memory.put("NUMBER_OF_LIGHTS", 3);
+        memory.put(
+            "lightsArray1",
+            new java.util.ArrayList<String>(
+                java.util.List.of(
+                        "red1", 
+                        "yellow1", 
+                        "green1"
+                )
+            )
+        );
+        memory.put(
+            "lightsArray2",
+            new java.util.ArrayList<String>(
+                java.util.List.of(
+                        "green2", 
+                        "yellow2", 
+                        "red2"
+                )
+            )
+        );
 
-        Controller controller = new Controller(memory, processMap);
+        long taskTimeMs = 1000L;
+        Controller traffic_lights_controller = new Controller(memory, processMap);
 
-        Map<String,String> init_aliases = new HashMap<>();
-        Init init = new Init("init", memory, init_aliases, processMap);
-        controller.registerProcess(init);
-        init.start();
+        Map<String,String> red_light1_aliases = new HashMap<>();
+        red_light1_aliases.put("b_light", "red1");
+        Controller.Light red_light1 = new Controller.Light("red_light1", memory, red_light1_aliases, processMap);
+        traffic_lights_controller.registerProcess(red_light1);
+        red_light1.start();
 
-        Map<String,String> call0Latch_aliases = new HashMap<>();
-        Call0Latch call0Latch = new Call0Latch("call0Latch", memory, call0Latch_aliases, processMap);
-        controller.registerProcess(call0Latch);
+        Map<String,String> yellow_light1_aliases = new HashMap<>();
+        yellow_light1_aliases.put("b_light", "yellow1");
+        Controller.Light yellow_light1 = new Controller.Light("yellow_light1", memory, yellow_light1_aliases, processMap);
+        traffic_lights_controller.registerProcess(yellow_light1);
 
-        Map<String,String> call1Latch_aliases = new HashMap<>();
-        Call1Latch call1Latch = new Call1Latch("call1Latch", memory, call1Latch_aliases, processMap);
-        controller.registerProcess(call1Latch);
+        Map<String,String> green_light1_aliases = new HashMap<>();
+        green_light1_aliases.put("b_light", "green1");
+        Controller.Light green_light1 = new Controller.Light("green_light1", memory, green_light1_aliases, processMap);
+        traffic_lights_controller.registerProcess(green_light1);
 
-        Map<String,String> call2Latch_aliases = new HashMap<>();
-        Call2Latch call2Latch = new Call2Latch("call2Latch", memory, call2Latch_aliases, processMap);
-        controller.registerProcess(call2Latch);
+        Map<String,String> red_light2_aliases = new HashMap<>();
+        red_light2_aliases.put("b_light", "red2");
+        Controller.Light red_light2 = new Controller.Light("red_light2", memory, red_light2_aliases, processMap);
+        traffic_lights_controller.registerProcess(red_light2);
 
-        Map<String,String> button0Latch_aliases = new HashMap<>();
-        Button0Latch button0Latch = new Button0Latch("button0Latch", memory, button0Latch_aliases, processMap);
-        controller.registerProcess(button0Latch);
+        Map<String,String> yellow_light2_aliases = new HashMap<>();
+        yellow_light2_aliases.put("b_light", "yellow2");
+        Controller.Light yellow_light2 = new Controller.Light("yellow_light2", memory, yellow_light2_aliases, processMap);
+        traffic_lights_controller.registerProcess(yellow_light2);
 
-        Map<String,String> button1Latch_aliases = new HashMap<>();
-        Button1Latch button1Latch = new Button1Latch("button1Latch", memory, button1Latch_aliases, processMap);
-        controller.registerProcess(button1Latch);
+        Map<String,String> green_light2_aliases = new HashMap<>();
+        green_light2_aliases.put("b_light", "green2");
+        Controller.Light green_light2 = new Controller.Light("green_light2", memory, green_light2_aliases, processMap);
+        traffic_lights_controller.registerProcess(green_light2);
+        green_light2.start();
 
-        Map<String,String> button2Latch_aliases = new HashMap<>();
-        Button2Latch button2Latch = new Button2Latch("button2Latch", memory, button2Latch_aliases, processMap);
-        controller.registerProcess(button2Latch);
+        Map<String,String> control1_aliases = new HashMap<>();
+        control1_aliases.put("control_sensor", "sensor");
+        control1_aliases.put("rLightsArray", "lightsArray1");
+        Controller.Control control1 = new Controller.Control("control1", memory, control1_aliases, processMap);
+        traffic_lights_controller.registerProcess(control1);
+        control1.setProcess("pRed", red_light1);
+        control1.setProcess("pYellow", yellow_light1);
+        control1.setProcess("pGreen", green_light1);
+        control1.start();
 
-        Map<String,String> checkCurFloor_aliases = new HashMap<>();
-        CheckCurFloor checkCurFloor = new CheckCurFloor("checkCurFloor", memory, checkCurFloor_aliases, processMap);
-        controller.registerProcess(checkCurFloor);
-
-        Map<String,String> upControl_aliases = new HashMap<>();
-        UpControl upControl = new UpControl("upControl", memory, upControl_aliases, processMap);
-        controller.registerProcess(upControl);
-
-        Map<String,String> upMotion_aliases = new HashMap<>();
-        UpMotion upMotion = new UpMotion("upMotion", memory, upMotion_aliases, processMap);
-        controller.registerProcess(upMotion);
-
-        Map<String,String> downControl_aliases = new HashMap<>();
-        DownControl downControl = new DownControl("downControl", memory, downControl_aliases, processMap);
-        controller.registerProcess(downControl);
-
-        Map<String,String> downMotion_aliases = new HashMap<>();
-        DownMotion downMotion = new DownMotion("downMotion", memory, downMotion_aliases, processMap);
-        controller.registerProcess(downMotion);
-
-        Map<String,String> doorCycle_aliases = new HashMap<>();
-        DoorCycle doorCycle = new DoorCycle("doorCycle", memory, doorCycle_aliases, processMap);
-        controller.registerProcess(doorCycle);
-
-        long taskTimeMs = 100L;
+        Map<String,String> control2_aliases = new HashMap<>();
+        control2_aliases.put("control_sensor", "sensor");
+        control2_aliases.put("rLightsArray", "lightsArray2");
+        Controller.Control control2 = new Controller.Control("control2", memory, control2_aliases, processMap);
+        traffic_lights_controller.registerProcess(control2);
+        control2.setProcess("pRed", green_light2);
+        control2.setProcess("pYellow", yellow_light2);
+        control2.setProcess("pGreen", red_light2);
+        control2.start();
 
         while (true) {
-            controller.runIter(taskTimeMs);
+
+            traffic_lights_controller.runIter(taskTimeMs);
+
             Thread.sleep(taskTimeMs);
         }
     }
+
 }

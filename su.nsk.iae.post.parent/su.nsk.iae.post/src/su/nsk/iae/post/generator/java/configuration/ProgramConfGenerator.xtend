@@ -31,7 +31,7 @@ class ProgramConfGenerator {
 	        for (arg : conf.args.elements) {
 			    if (arg instanceof TemplateProcessConfElement) {
 			        builder.append(
-			            procGen.generate(arg, ctx, instanceName, indent)
+			            procGen.generate(arg, ctx, instanceName, programType, indent)
 			        )
 			    }
 			}

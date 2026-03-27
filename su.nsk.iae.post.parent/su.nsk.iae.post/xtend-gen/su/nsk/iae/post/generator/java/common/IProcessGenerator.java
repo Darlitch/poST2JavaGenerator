@@ -6,6 +6,9 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 public class IProcessGenerator {
   public static String generate() {
     StringConcatenation _builder = new StringConcatenation();
+    _builder.append("import java.util.Map;");
+    _builder.newLine();
+    _builder.newLine();
     _builder.append("public interface IProcess {");
     _builder.newLine();
     _builder.newLine();

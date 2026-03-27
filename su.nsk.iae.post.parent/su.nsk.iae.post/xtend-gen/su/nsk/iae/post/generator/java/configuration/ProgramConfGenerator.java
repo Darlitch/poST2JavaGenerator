@@ -34,7 +34,7 @@ public class ProgramConfGenerator {
         for (final ProgramConfElement arg : _elements) {
           if ((arg instanceof TemplateProcessConfElement)) {
             builder.append(
-              procGen.generate(((TemplateProcessConfElement)arg), ctx, instanceName, indent));
+              procGen.generate(((TemplateProcessConfElement)arg), ctx, instanceName, programType, indent));
           }
         }
       }

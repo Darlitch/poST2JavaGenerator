@@ -31,7 +31,7 @@ class ProcessGenerator {
 
         builder.append(
 '''
-«indent»class «name» extends BaseProcess {
+«indent»static class «name» extends BaseProcess {
 	
 ««««nextIndent»private final String instanceName;
 «««

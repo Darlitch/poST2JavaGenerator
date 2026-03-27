@@ -1,3 +1,5 @@
+import java.util.Map;
+
 public interface IProcess {
 
     void run();

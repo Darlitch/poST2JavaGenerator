@@ -5,6 +5,8 @@ class IProcessGenerator {
     def static String generate() {
 
 '''
+import java.util.Map;
+
 public interface IProcess {
 
     void run();
