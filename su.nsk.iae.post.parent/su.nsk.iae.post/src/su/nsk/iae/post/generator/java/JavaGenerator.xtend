@@ -12,10 +12,10 @@ import su.nsk.iae.post.generator.IPoSTGenerator
 import su.nsk.iae.post.generator.java.common.ProgramGenerator
 import su.nsk.iae.post.generator.java.common.IProcessGenerator
 import su.nsk.iae.post.generator.java.common.BaseProcessGenerator
-import su.nsk.iae.post.generator.java.configuration.ConfigurationGenerator
 import su.nsk.iae.post.generator.java.configuration.DefaultSimulationGenerator
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator
+import su.nsk.iae.post.generator.java.configuration.ConfigurationSimulationGenerator
 
 class JavaGenerator implements IPoSTGenerator {
 
@@ -57,7 +57,7 @@ class JavaGenerator implements IPoSTGenerator {
         if (model.conf !== null) {
 
             val code =
-                new ConfigurationGenerator()
+                new ConfigurationSimulationGenerator()
                     .generate(model.conf, ctx)
 
             println("Generating Simulation.java")

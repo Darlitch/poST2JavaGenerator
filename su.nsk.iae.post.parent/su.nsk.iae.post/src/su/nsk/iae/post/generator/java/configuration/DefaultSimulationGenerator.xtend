@@ -8,184 +8,176 @@ import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator
 
 class DefaultSimulationGenerator {
 
-    def String generate(Model model, GenerationContext ctx) {
+    val SimulationClassGenerator simulationGen = new SimulationClassGenerator
 
-        val IND = "        "
+    def String generate(Model model, GenerationContext ctx) {
+        val fields = generateFields(model, "    ")
+        val constructorBody = generateConstructorBody(model, ctx, "        ")
+        val programRunBody = generateProgramRunBody(model, "        ")
+
+        simulationGen.generate(
+            fields,
+            constructorBody,
+            programRunBody
+        )
+    }
+
+    private def String generateFields(Model model, String indent) {
         val builder = new StringBuilder
 
+        for (Program p : model.programs) {
+            val instance = p.name.toFirstLower
+            builder.append(
+'''
+«indent»private final «p.name» «instance»;
+'''
+            )
+        }
+
+        builder.toString
+    }
+
+    private def String generateConstructorBody(Model model, GenerationContext ctx, String indent) {
+        val builder = new StringBuilder
+
+        // fixed default step for simulation without CONFIGURATION
         builder.append(
 '''
-import java.util.Map;
-import java.util.HashMap;
-
-public class Simulation {
-
-    public static void main(String[] args) throws Exception {
-
-        Map<String,Object> memory = new HashMap<>();
-        
-        Map<String, IProcess> processMap = new HashMap<>();
-        
-        memory.put("_global_time", 0L);
+«indent»this.taskTimeMs = 100L;
 '''
         )
 
-        // ================= PROGRAM VARS =================
+        // ===== PROGRAM VARS =====
         for (Program p : model.programs) {
 
             for (v : p.progInVars)
                 for (decl : v.vars)
-                    builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+                    builder.append(VarMemoryGenerator.generate(decl, ctx, indent))
 
             for (v : p.progOutVars)
                 for (decl : v.vars)
-                    builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+                    builder.append(VarMemoryGenerator.generate(decl, ctx, indent))
 
             for (v : p.progVars)
                 for (decl : v.vars)
-                    builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+                    builder.append(VarMemoryGenerator.generate(decl, ctx, indent))
 
             for (v : p.progInOutVars)
                 for (decl : v.vars)
-                    builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+                    builder.append(VarMemoryGenerator.generate(decl, ctx, indent))
 
             for (v : p.progTempVars)
                 for (decl : v.vars)
-                    builder.append(VarMemoryGenerator.generate(decl, ctx, IND))
+                    builder.append(VarMemoryGenerator.generate(decl, ctx, indent))
         }
 
-        // ================= PROGRAM INSTANCES =================
-
+        // ===== PROGRAM INSTANCES =====
         for (Program p : model.programs) {
-
             val name = p.name
             val instance = name.toFirstLower
-			
-			builder.append("\n")
+
             builder.append(
 '''
-«IND»«name» «instance» = new «name»(memory, processMap);
+
+«indent»this.«instance» = new «name»(memory, processMap);
 '''
             )
         }
-        
-        // ================= REGISTER PROCESSES =================
 
-		for (Program p : model.programs) {
-		    for (proc : p.processes) {
-		        ctx.registerProcess(
-		            proc.name,
-		            proc.name.toFirstLower,
-		            proc.name
-		        )
-		    }
-		}
-        
-        // ================= PROCESSES =================
+        // ===== REGISTER PROCESSES =====
+        for (Program p : model.programs) {
+            for (proc : p.processes) {
+                ctx.registerProcess(
+                    proc.name,
+                    proc.name.toFirstLower,
+                    proc.name
+                )
+            }
+        }
 
-		for (Program p : model.programs) {
+        // ===== PROCESSES =====
+        for (Program p : model.programs) {
 
-		    val programInstance = p.name.toFirstLower
-		
-		    // ===== PHASE 1: CREATE =====
-		    for (proc : p.processes) {
-		
-		        val procName = proc.name.toFirstLower
-		        val procType = proc.name
-		        val programType = p.name
-		
-		        builder.append("\n")
-		
-		        builder.append(
-'''
-«IND»Map<String,String> «procName»_aliases = new HashMap<>();
-«IND»«programType».«procType» «procName» = new «programType».«procType»("«procName»", memory, «procName»_aliases, processMap);
-«IND»«programInstance».registerProcess(«procName»);
-'''
-		        )
-		
-		        // ===== AUTOSTART =====
-				var boolean hasInit = false
-				
-				// сначала проверяем есть ли Init
-				for (proc2 : p.processes) {
-				    if (proc2.name.equals("Init")) {
-				        hasInit = true
-				    }
-				}
-				
-				// если текущий процесс Init → стартуем
-				if (proc.name.equals("Init")) {
-				    builder.append(
-				'''
-				«IND»«procName».start();
-				'''
-				    )
-				}
-				
-				// если Init нет → стартуем ПЕРВЫЙ процесс
-				else if (!hasInit && proc === p.processes.get(0)) {
-				    builder.append(
-				'''
-				«IND»«procName».start();
-				'''
-				    )
-				}
-		    }
-		
-		    // ===== PHASE 2: BINDING =====
-		    for (proc : p.processes) {
-		
-		        val procName = proc.name.toFirstLower
-		
-		        for (v : proc.procProcessVars) {
-		            for (decl : v.vars) {
-		                for (vname : decl.varList.vars) {
-		
-		                    val target = vname.name
-		                    val resolved = ctx.resolveProcess(target)
-							
-	                    	builder.append(
-'''
-«IND»«procName».setProcess("«target»", «resolved»);
-'''
-		                    )
-		                }
-		            }
-		        }
-		    }
-		}
+            val programInstance = p.name.toFirstLower
 
-        // ================= LOOP =================
+            // create
+            for (proc : p.processes) {
 
-        builder.append(
-'''
-        
-«IND»long taskTimeMs = 100L;
+                val procName = proc.name.toFirstLower
+                val procType = proc.name
+                val programType = p.name
 
-«IND»while (true) {
+                builder.append(
 '''
-        )
+
+«indent»Map<String,String> «procName»_aliases = new HashMap<>();
+«indent»«programType».«procType» «procName» = new «programType».«procType»("«procName»", memory, «procName»_aliases, processMap);
+«indent»«programInstance».registerProcess(«procName»);
+'''
+                )
+
+                var boolean hasInit = false
+
+                for (proc2 : p.processes) {
+                    if (proc2.name.equals("Init")) {
+                        hasInit = true
+                    }
+                }
+
+                if (proc.name.equals("Init")) {
+                    builder.append(
+'''
+«indent»«procName».start();
+'''
+                    )
+                } else if (!hasInit && proc === p.processes.get(0)) {
+                    builder.append(
+'''
+«indent»«procName».start();
+'''
+                    )
+                }
+            }
+
+            // binding
+            for (proc : p.processes) {
+
+                val procName = proc.name.toFirstLower
+
+                for (v : proc.procProcessVars) {
+                    for (decl : v.vars) {
+                        for (vname : decl.varList.vars) {
+
+                            val target = vname.name
+                            val resolved = ctx.resolveProcess(target)
+
+                            builder.append(
+'''
+«indent»«procName».setProcess("«target»", «resolved»);
+'''
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        builder.toString
+    }
+
+    private def String generateProgramRunBody(Model model, String indent) {
+        val builder = new StringBuilder
 
         for (Program p : model.programs) {
             val instance = p.name.toFirstLower
 
             builder.append(
 '''
-«IND»    «instance».runIter(taskTimeMs);
+«indent»«instance».runIter(taskTimeMs);
 '''
             )
         }
 
-        builder.append(
-'''
-«IND»    Thread.sleep(taskTimeMs);
-        }
-    }
-}
-'''
-        )
-
-        return builder.toString
+        builder.toString
     }
 }

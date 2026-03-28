@@ -22,7 +22,7 @@ public class TaskGenerator {
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
       _builder.append(indent);
-      _builder.append("long taskTimeMs = ");
+      _builder.append("this.taskTimeMs = ");
       _builder.append(intervalMs);
       _builder.append(";");
       _builder.newLineIfNotEmpty();

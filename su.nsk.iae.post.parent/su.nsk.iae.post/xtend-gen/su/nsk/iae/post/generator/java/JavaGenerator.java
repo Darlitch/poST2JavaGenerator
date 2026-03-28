@@ -15,7 +15,7 @@ import su.nsk.iae.post.generator.java.common.IProcessGenerator;
 import su.nsk.iae.post.generator.java.common.ProgramGenerator;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator;
-import su.nsk.iae.post.generator.java.configuration.ConfigurationGenerator;
+import su.nsk.iae.post.generator.java.configuration.ConfigurationSimulationGenerator;
 import su.nsk.iae.post.generator.java.configuration.DefaultSimulationGenerator;
 import su.nsk.iae.post.poST.Configuration;
 import su.nsk.iae.post.poST.GlobalVarDeclaration;
@@ -55,7 +55,7 @@ public class JavaGenerator implements IPoSTGenerator {
     Configuration _conf = model.getConf();
     boolean _tripleNotEquals = (_conf != null);
     if (_tripleNotEquals) {
-      final String code = new ConfigurationGenerator().generate(model.getConf(), ctx);
+      final String code = new ConfigurationSimulationGenerator().generate(model.getConf(), ctx);
       InputOutput.<String>println("Generating Simulation.java");
       fsa.generateFile(
         "Simulation.java", code);

@@ -18,7 +18,7 @@ class TaskGenerator {
 
         '''
         
-«indent»long taskTimeMs = «intervalMs»;
+«indent»this.taskTimeMs = «intervalMs»;
 '''
     }
 

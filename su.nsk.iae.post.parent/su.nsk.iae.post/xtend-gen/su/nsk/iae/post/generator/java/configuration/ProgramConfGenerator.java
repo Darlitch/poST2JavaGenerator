@@ -18,8 +18,7 @@ public class ProgramConfGenerator {
       final String programType = conf.getProgram().getName();
       StringConcatenation _builder = new StringConcatenation();
       _builder.append(indent);
-      _builder.append(programType);
-      _builder.append(" ");
+      _builder.append("this.");
       _builder.append(instanceName);
       _builder.append(" = new ");
       _builder.append(programType);

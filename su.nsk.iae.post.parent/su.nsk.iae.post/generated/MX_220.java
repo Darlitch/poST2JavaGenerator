@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Objects;
 
 public class MX_220 {
 
@@ -201,7 +200,7 @@ public class MX_220 {
         return res;
     }
 
-    class AC2AS_Debug extends BaseProcess {
+    static class AC2AS_Debug extends BaseProcess {
 	
         enum State {
             Calc,
@@ -280,7 +279,7 @@ public class MX_220 {
 
     }
 
-    class Compressor extends BaseProcess {
+    static class Compressor extends BaseProcess {
 	
         enum State {
             Calc,
@@ -370,7 +369,7 @@ public class MX_220 {
 
     }
 
-    class Pump extends BaseProcess {
+    static class Pump extends BaseProcess {
 	
         enum State {
             CalcFlow,
@@ -454,7 +453,7 @@ public class MX_220 {
 
     }
 
-    class Tank extends BaseProcess {
+    static class Tank extends BaseProcess {
 	
         enum State {
             CalcTemperatures,
@@ -536,7 +535,7 @@ public class MX_220 {
 
     }
 
-    class Equipment extends BaseProcess {
+    static class Equipment extends BaseProcess {
 	
         enum State {
             CalcTemperature,
@@ -615,7 +614,7 @@ public class MX_220 {
 
     }
 
-    class CoolantHeatTransfer extends BaseProcess {
+    static class CoolantHeatTransfer extends BaseProcess {
 	
         enum State {
             CalcTemperatures,

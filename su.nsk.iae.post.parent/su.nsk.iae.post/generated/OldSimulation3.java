@@ -3,14 +3,13 @@ import java.util.HashMap;
 
 public class Simulation {
 
-    private final Map<String,Object> memory = new HashMap<>();
-    private final Map<String, IProcess> processMap = new HashMap<>();
-    private final long taskTimeMs;
-    private final Controller controller;
+    public static void main(String[] args) throws Exception {
 
-    public Simulation() {
+        Map<String,Object> memory = new HashMap<>();
+        
+        Map<String, IProcess> processMap = new HashMap<>();
+        
         memory.put("_global_time", 0L);
-        this.taskTimeMs = 100L;
         memory.put("onfloor0", false);
         memory.put("onfloor1", false);
         memory.put("onfloor2", false);
@@ -40,7 +39,7 @@ public class Simulation {
         memory.put("cur", 0);
         memory.put("target", 0);
 
-        this.controller = new Controller(memory, processMap);
+        Controller controller = new Controller(memory, processMap);
 
         Map<String,String> init_aliases = new HashMap<>();
         Controller.Init init = new Controller.Init("init", memory, init_aliases, processMap);
@@ -94,10 +93,12 @@ public class Simulation {
         Map<String,String> doorCycle_aliases = new HashMap<>();
         Controller.DoorCycle doorCycle = new Controller.DoorCycle("doorCycle", memory, doorCycle_aliases, processMap);
         controller.registerProcess(doorCycle);
-    }
 
-    public void step() {
-        controller.runIter(taskTimeMs);
-    }
+        long taskTimeMs = 100L;
 
+        while (true) {
+            controller.runIter(taskTimeMs);
+            Thread.sleep(taskTimeMs);
+        }
+    }
 }
