@@ -117,6 +117,8 @@ public class ProgramGenerator {
       builder.append("\n");
       builder.append(this.generateDumpInputs());
       builder.append("\n");
+      builder.append(this.generateUpdateInputs());
+      builder.append("\n");
       builder.append(this.generateDumpOutputs());
       builder.append("\n");
       builder.append(this.generateDumpGlobals());
@@ -304,6 +306,41 @@ public class ProgramGenerator {
     _builder.newLine();
     _builder.append(ProgramGenerator.INDENT);
     _builder.append("    return res;");
+    _builder.newLineIfNotEmpty();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("}");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+
+  private String generateUpdateInputs() {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("public void updateInputs(Map<String,Object> values) {");
+    _builder.newLineIfNotEmpty();
+    _builder.newLine();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("    if (values == null || values.isEmpty())");
+    _builder.newLineIfNotEmpty();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("        return;");
+    _builder.newLineIfNotEmpty();
+    _builder.newLine();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("    for (Map.Entry<String,Object> e : values.entrySet()) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("        String n = e.getKey();");
+    _builder.newLineIfNotEmpty();
+    _builder.newLine();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("        if (inputNames.contains(n))");
+    _builder.newLineIfNotEmpty();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("            memory.put(n, e.getValue());");
+    _builder.newLineIfNotEmpty();
+    _builder.append(ProgramGenerator.INDENT);
+    _builder.append("    }");
     _builder.newLineIfNotEmpty();
     _builder.append(ProgramGenerator.INDENT);
     _builder.append("}");

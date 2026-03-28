@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.vars.GlobalVarDeclarationGenerator;
@@ -34,8 +35,8 @@ public class ConfigurationSimulationGenerator {
     {
       final String fields = this.generateFields(conf, "    ");
       final String constructorBody = this.generateConstructorBody(conf, ctx, "        ");
-      final String programRunBody = this.generateProgramRunBody(conf, "        ");
-      _xblockexpression = this.simulationGen.generate(fields, constructorBody, programRunBody);
+      final String programInstanceName = this.resolveProgramInstanceName(conf);
+      _xblockexpression = this.simulationGen.generate(fields, constructorBody, programInstanceName);
     }
     return _xblockexpression;
   }
@@ -128,25 +129,6 @@ public class ConfigurationSimulationGenerator {
     return _xblockexpression;
   }
 
-  private String generateProgramRunBody(final Configuration conf, final String indent) {
-    String _xblockexpression = null;
-    {
-      final StringBuilder builder = new StringBuilder();
-      List<ProgramConfiguration> _collectProgramConfigurations = this.collectProgramConfigurations(conf);
-      for (final ProgramConfiguration pc : _collectProgramConfigurations) {
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append(indent);
-        String _name = pc.getName();
-        _builder.append(_name);
-        _builder.append(".runIter(taskTimeMs);");
-        _builder.newLineIfNotEmpty();
-        builder.append(_builder);
-      }
-      _xblockexpression = builder.toString();
-    }
-    return _xblockexpression;
-  }
-
   private List<ProgramConfiguration> collectProgramConfigurations(final Configuration conf) {
     ArrayList<ProgramConfiguration> _xblockexpression = null;
     {
@@ -160,6 +142,19 @@ public class ConfigurationSimulationGenerator {
         }
       }
       _xblockexpression = result;
+    }
+    return _xblockexpression;
+  }
+
+  private String resolveProgramInstanceName(final Configuration conf) {
+    String _xblockexpression = null;
+    {
+      final List<ProgramConfiguration> pcs = this.collectProgramConfigurations(conf);
+      boolean _isEmpty = pcs.isEmpty();
+      if (_isEmpty) {
+        throw new IllegalStateException("No PROGRAM instance defined in CONFIGURATION");
+      }
+      _xblockexpression = IterableExtensions.<ProgramConfiguration>head(pcs).getName();
     }
     return _xblockexpression;
   }

@@ -13,12 +13,12 @@ class DefaultSimulationGenerator {
     def String generate(Model model, GenerationContext ctx) {
         val fields = generateFields(model, "    ")
         val constructorBody = generateConstructorBody(model, ctx, "        ")
-        val programRunBody = generateProgramRunBody(model, "        ")
+        val programInstanceName = resolveProgramInstanceName(model)
 
         simulationGen.generate(
             fields,
             constructorBody,
-            programRunBody
+            programInstanceName
         )
     }
 
@@ -164,20 +164,11 @@ class DefaultSimulationGenerator {
 
         builder.toString
     }
-
-    private def String generateProgramRunBody(Model model, String indent) {
-        val builder = new StringBuilder
-
-        for (Program p : model.programs) {
-            val instance = p.name.toFirstLower
-
-            builder.append(
-'''
-«indent»«instance».runIter(taskTimeMs);
-'''
-            )
-        }
-
-        builder.toString
-    }
+    
+    private def String resolveProgramInstanceName(Model model) {
+	    if (model.programs.empty)
+	        throw new IllegalStateException("No PROGRAM defined in model")
+	
+	    model.programs.head.name.toFirstLower
+	}
 }

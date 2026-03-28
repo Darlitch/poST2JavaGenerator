@@ -66,6 +66,8 @@ public class «name» {
         builder.append("\n")
         builder.append(generateDumpInputs())
         builder.append("\n")
+        builder.append(generateUpdateInputs())
+		builder.append("\n")
         builder.append(generateDumpOutputs())
         builder.append("\n")
         builder.append(generateDumpGlobals())
@@ -353,6 +355,24 @@ public class «name» {
 «INDENT»}
 '''
     }
+    
+    private def String generateUpdateInputs() {
+
+'''
+«INDENT»public void updateInputs(Map<String,Object> values) {
+
+«INDENT»    if (values == null || values.isEmpty())
+«INDENT»        return;
+
+«INDENT»    for (Map.Entry<String,Object> e : values.entrySet()) {
+«INDENT»        String n = e.getKey();
+
+«INDENT»        if (inputNames.contains(n))
+«INDENT»            memory.put(n, e.getValue());
+«INDENT»    }
+«INDENT»}
+'''
+	}
 
     private def String generateDumpOutputs() {
 

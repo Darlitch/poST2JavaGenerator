@@ -2,6 +2,7 @@ package su.nsk.iae.post.generator.java.configuration;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator;
@@ -26,8 +27,8 @@ public class DefaultSimulationGenerator {
     {
       final String fields = this.generateFields(model, "    ");
       final String constructorBody = this.generateConstructorBody(model, ctx, "        ");
-      final String programRunBody = this.generateProgramRunBody(model, "        ");
-      _xblockexpression = this.simulationGen.generate(fields, constructorBody, programRunBody);
+      final String programInstanceName = this.resolveProgramInstanceName(model);
+      _xblockexpression = this.simulationGen.generate(fields, constructorBody, programInstanceName);
     }
     return _xblockexpression;
   }
@@ -237,23 +238,14 @@ public class DefaultSimulationGenerator {
     return _xblockexpression;
   }
 
-  private String generateProgramRunBody(final Model model, final String indent) {
+  private String resolveProgramInstanceName(final Model model) {
     String _xblockexpression = null;
     {
-      final StringBuilder builder = new StringBuilder();
-      EList<Program> _programs = model.getPrograms();
-      for (final Program p : _programs) {
-        {
-          final String instance = StringExtensions.toFirstLower(p.getName());
-          StringConcatenation _builder = new StringConcatenation();
-          _builder.append(indent);
-          _builder.append(instance);
-          _builder.append(".runIter(taskTimeMs);");
-          _builder.newLineIfNotEmpty();
-          builder.append(_builder);
-        }
+      boolean _isEmpty = model.getPrograms().isEmpty();
+      if (_isEmpty) {
+        throw new IllegalStateException("No PROGRAM defined in model");
       }
-      _xblockexpression = builder.toString();
+      _xblockexpression = StringExtensions.toFirstLower(IterableExtensions.<Program>head(model.getPrograms()).getName());
     }
     return _xblockexpression;
   }

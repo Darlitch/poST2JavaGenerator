@@ -17,12 +17,12 @@ class ConfigurationSimulationGenerator {
     def String generate(Configuration conf, GenerationContext ctx) {
         val fields = generateFields(conf, "    ")
         val constructorBody = generateConstructorBody(conf, ctx, "        ")
-        val programRunBody = generateProgramRunBody(conf, "        ")
+        val programInstanceName = resolveProgramInstanceName(conf)
 
         simulationGen.generate(
             fields,
             constructorBody,
-            programRunBody
+            programInstanceName
         )
     }
 
@@ -88,20 +88,6 @@ class ConfigurationSimulationGenerator {
 	    builder.toString
 	}
 
-    private def String generateProgramRunBody(Configuration conf, String indent) {
-        val builder = new StringBuilder
-
-        for (pc : collectProgramConfigurations(conf)) {
-            builder.append(
-'''
-«indent»«pc.name».runIter(taskTimeMs);
-'''
-            )
-        }
-
-        builder.toString
-    }
-
     private def List<ProgramConfiguration> collectProgramConfigurations(Configuration conf) {
         val result = new ArrayList<ProgramConfiguration>
 
@@ -113,4 +99,13 @@ class ConfigurationSimulationGenerator {
 
         result
     }
+    
+    private def String resolveProgramInstanceName(Configuration conf) {
+	    val pcs = collectProgramConfigurations(conf)
+	
+	    if (pcs.empty)
+	        throw new IllegalStateException("No PROGRAM instance defined in CONFIGURATION")
+	
+	    pcs.head.name
+	}
 }
