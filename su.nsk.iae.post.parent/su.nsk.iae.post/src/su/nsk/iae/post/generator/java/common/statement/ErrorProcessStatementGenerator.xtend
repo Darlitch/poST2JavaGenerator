@@ -18,7 +18,14 @@ class ErrorProcessStatementGenerator implements IStatementGenerator {
 		// ===== ERROR PROCESS p =====
 		if (s.process !== null) {
 
-			val fieldName = ctx.resolveProcess(s.process.name)
+			val processName = s.process.name
+
+			if (!ctx.hasProcess(processName))
+			    throw new IllegalStateException(
+			        "Unknown process in ERROR PROCESS: " + processName
+			    )
+			
+			val fieldName = ctx.resolveProcess(processName)
 
 			return '''
 «indent»«fieldName».error();

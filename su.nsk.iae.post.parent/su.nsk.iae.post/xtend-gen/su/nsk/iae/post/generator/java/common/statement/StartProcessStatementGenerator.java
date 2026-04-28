@@ -18,7 +18,14 @@ public class StartProcessStatementGenerator implements IStatementGenerator {
     String _xblockexpression = null;
     {
       final StartProcessStatement s = ((StartProcessStatement) stmt);
-      final String name = ctx.resolveProcess(s.getProcess().getName());
+      final String processName = s.getProcess().getName();
+      boolean _hasProcess = ctx.hasProcess(processName);
+      boolean _not = (!_hasProcess);
+      if (_not) {
+        throw new IllegalStateException(
+          ("Unknown process in START PROCESS: " + processName));
+      }
+      final String name = ctx.resolveProcess(processName);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append(indent);
       _builder.append("getProcess(\"");

@@ -605,7 +605,14 @@ class ExpressionGenerator {
 		ProcessStatusExpression exp,
 		GenerationContext ctx
 	) {
-		val name = ctx.resolveProcess(exp.process.name)
+		val processName = exp.process.name
+
+		if (!ctx.hasProcess(processName))
+		    throw new IllegalStateException(
+		        "Unknown process in process status expression: " + processName
+		    )
+		
+		val name = ctx.resolveProcess(processName)
 
 		if (exp.active)
 		    return '''isActive(getProcess("«name»"))'''

@@ -19,7 +19,7 @@ public class Simulation implements ISimulationRuntime {
         memory.put("yellow2", false);
         memory.put("green2", false);
         memory.put("sensor", false);
-        memory.put("NUMBER_OF_LIGHTS", 3);
+        memory.put("NUMBER_OF_LIGHTS", 2);
         memory.put(
             "lightsArray1",
             new java.util.ArrayList<String>(
@@ -75,16 +75,6 @@ public class Simulation implements ISimulationRuntime {
         Controller.LightProcess green_light2 = new Controller.LightProcess("green_light2", memory, green_light2_aliases, processMap);
         traffic_lights_controller.registerProcess(green_light2);
         green_light2.start();
-
-        Map<String,String> control1_aliases = new HashMap<>();
-        control1_aliases.put("control_sensor", "sensor");
-        control1_aliases.put("rLightsArray", "lightsArray1");
-        Controller.ControlProcess control1 = new Controller.ControlProcess("control1", memory, control1_aliases, processMap);
-        traffic_lights_controller.registerProcess(control1);
-        control1.setProcess("pRed", red_light1);
-        control1.setProcess("pYellow", yellow_light1);
-        control1.setProcess("pGreen", green_light1);
-        control1.start();
 
         Map<String,String> control2_aliases = new HashMap<>();
         control2_aliases.put("control_sensor", "sensor");

@@ -21,7 +21,14 @@ public class StopProcessStatementGenerator implements IStatementGenerator {
       Variable _process = s.getProcess();
       boolean _tripleNotEquals = (_process != null);
       if (_tripleNotEquals) {
-        final String name = s.getProcess().getName();
+        final String processName = s.getProcess().getName();
+        boolean _hasProcess = ctx.hasProcess(processName);
+        boolean _not = (!_hasProcess);
+        if (_not) {
+          throw new IllegalStateException(
+            ("Unknown process in STOP PROCESS: " + processName));
+        }
+        final String name = ctx.resolveProcess(processName);
         StringConcatenation _builder = new StringConcatenation();
         _builder.append(indent);
         _builder.append("getProcess(\"");

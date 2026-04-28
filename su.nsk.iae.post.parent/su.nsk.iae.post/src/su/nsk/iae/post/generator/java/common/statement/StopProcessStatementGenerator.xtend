@@ -18,7 +18,14 @@ class StopProcessStatementGenerator implements IStatementGenerator {
 		// ===== STOP PROCESS p =====
 		if (s.process !== null) {
 
-			val name = s.process.name
+			val processName = s.process.name
+
+			if (!ctx.hasProcess(processName))
+			    throw new IllegalStateException(
+			        "Unknown process in STOP PROCESS: " + processName
+			    )
+			
+			val name = ctx.resolveProcess(processName)
 
 			return '''
 «indent»getProcess("«name»").stop();

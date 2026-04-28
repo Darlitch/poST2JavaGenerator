@@ -19,7 +19,14 @@ class StartProcessStatementGenerator implements IStatementGenerator {
 		val s = stmt as StartProcessStatement
 
 		// ===== èìÿ ïðîöåññà =====
-		val name = ctx.resolveProcess(s.process.name)
+		val processName = s.process.name
+
+		if (!ctx.hasProcess(processName))
+		    throw new IllegalStateException(
+		        "Unknown process in START PROCESS: " + processName
+		    )
+		
+		val name = ctx.resolveProcess(processName)
 
 		'''
 «indent»getProcess("«name»").start();

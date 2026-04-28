@@ -21,7 +21,14 @@ public class ErrorProcessStatementGenerator implements IStatementGenerator {
       Variable _process = s.getProcess();
       boolean _tripleNotEquals = (_process != null);
       if (_tripleNotEquals) {
-        final String fieldName = ctx.resolveProcess(s.getProcess().getName());
+        final String processName = s.getProcess().getName();
+        boolean _hasProcess = ctx.hasProcess(processName);
+        boolean _not = (!_hasProcess);
+        if (_not) {
+          throw new IllegalStateException(
+            ("Unknown process in ERROR PROCESS: " + processName));
+        }
+        final String fieldName = ctx.resolveProcess(processName);
         StringConcatenation _builder = new StringConcatenation();
         _builder.append(indent);
         _builder.append(fieldName);

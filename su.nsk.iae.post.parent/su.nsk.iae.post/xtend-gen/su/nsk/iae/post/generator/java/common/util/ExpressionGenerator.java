@@ -894,7 +894,14 @@ public class ExpressionGenerator {
   private static String generateProcessStatus(final ProcessStatusExpression exp, final GenerationContext ctx) {
     String _xblockexpression = null;
     {
-      final String name = ctx.resolveProcess(exp.getProcess().getName());
+      final String processName = exp.getProcess().getName();
+      boolean _hasProcess = ctx.hasProcess(processName);
+      boolean _not = (!_hasProcess);
+      if (_not) {
+        throw new IllegalStateException(
+          ("Unknown process in process status expression: " + processName));
+      }
+      final String name = ctx.resolveProcess(processName);
       boolean _isActive = exp.isActive();
       if (_isActive) {
         StringConcatenation _builder = new StringConcatenation();
