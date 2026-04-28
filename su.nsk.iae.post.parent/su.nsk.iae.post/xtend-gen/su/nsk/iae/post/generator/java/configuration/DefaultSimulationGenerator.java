@@ -131,7 +131,7 @@ public class DefaultSimulationGenerator {
           ctx.registerProcess(
             proc.getName(), 
             StringExtensions.toFirstLower(proc.getName()), 
-            proc.getName());
+            this.processJavaTypeName(proc.getName()));
         }
       }
       EList<Program> _programs_3 = model.getPrograms();
@@ -142,7 +142,7 @@ public class DefaultSimulationGenerator {
           for (final su.nsk.iae.post.poST.Process proc_1 : _processes_1) {
             {
               final String procName = StringExtensions.toFirstLower(proc_1.getName());
-              final String procType = proc_1.getName();
+              final String procType = this.processJavaTypeName(proc_1.getName());
               final String programType = p_3.getName();
               StringConcatenation _builder_1 = new StringConcatenation();
               _builder_1.newLine();
@@ -248,5 +248,9 @@ public class DefaultSimulationGenerator {
       _xblockexpression = StringExtensions.toFirstLower(IterableExtensions.<Program>head(model.getPrograms()).getName());
     }
     return _xblockexpression;
+  }
+
+  private String processJavaTypeName(final String processName) {
+    return (processName + "Process");
   }
 }

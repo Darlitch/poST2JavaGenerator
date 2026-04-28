@@ -14,7 +14,7 @@ public class ProcessConfGenerator {
   public String generate(final TemplateProcessConfElement proc, final GenerationContext ctx, final String programInstance, final String programType, final String indent) {
     final StringBuilder builder = new StringBuilder();
     final String procName = proc.getName();
-    final String procType = proc.getProcess().getName();
+    final String procType = this.processJavaTypeName(proc.getProcess().getName());
     ctx.registerProcess(procName, procName, procType);
     StringConcatenation _builder = new StringConcatenation();
     _builder.append(indent);
@@ -88,5 +88,9 @@ public class ProcessConfGenerator {
       builder.append(_builder_2);
     }
     return builder.toString();
+  }
+
+  private String processJavaTypeName(final String processName) {
+    return (processName + "Process");
   }
 }

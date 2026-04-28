@@ -19,7 +19,7 @@ class ProcessConfGenerator {
 	    val builder = new StringBuilder
 	
 	    val procName = proc.name
-	    val procType = proc.process.name
+	    val procType = processJavaTypeName(proc.process.name)
 	
 	    ctx.registerProcess(procName, procName, procType)
 	
@@ -81,6 +81,10 @@ class ProcessConfGenerator {
 	    }
 	
 	    return builder.toString
+	}
+	
+	private def String processJavaTypeName(String processName) {
+	    processName + "Process"
 	}
 
 }

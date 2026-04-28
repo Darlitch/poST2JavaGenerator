@@ -143,7 +143,7 @@ public class Controller {
         return res;
     }
 
-    static class Light extends BaseProcess {
+    static class LightProcess extends BaseProcess {
 	
         enum State {
             Light,
@@ -151,7 +151,7 @@ public class Controller {
             Error
         }
 
-        public Light(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+        public LightProcess(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
 
         }
@@ -222,7 +222,7 @@ public class Controller {
 
     }
 
-    static class Control extends BaseProcess {
+    static class ControlProcess extends BaseProcess {
 	
         enum State {
             Work,
@@ -232,7 +232,7 @@ public class Controller {
             Error
         }
 
-        public Control(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
+        public ControlProcess(String instanceName, Map<String,Object> memory, Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
             super(instanceName, memory, aliases, globalProcesses);
 
             localMemory.put("prev_light", 0);

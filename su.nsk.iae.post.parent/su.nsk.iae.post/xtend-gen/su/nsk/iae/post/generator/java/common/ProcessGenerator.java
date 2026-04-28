@@ -38,7 +38,8 @@ public class ProcessGenerator {
         throw new IllegalStateException(_plus);
       }
       final StringBuilder builder = new StringBuilder();
-      final String name = p.getName();
+      String _name_1 = p.getName();
+      final String name = (_name_1 + "Process");
       final String nextIndent = (indent + "    ");
       StringConcatenation _builder = new StringConcatenation();
       _builder.append(indent);

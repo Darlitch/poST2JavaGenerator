@@ -443,6 +443,10 @@ public class ProgramGenerator {
     return _builder.toString();
   }
 
+  private String processJavaTypeName(final String processName) {
+    return (processName + "Process");
+  }
+
   public void registerAll(final Program program, final GenerationContext ctx) {
     EList<InputVarDeclaration> _progInVars = program.getProgInVars();
     for (final InputVarDeclaration v : _progInVars) {
@@ -499,7 +503,8 @@ public class ProgramGenerator {
     for (final su.nsk.iae.post.poST.Process p : _processes) {
       {
         final String field = StringExtensions.toFirstLower(p.getName());
-        ctx.registerProcess(p.getName(), field, p.getName());
+        final String processType = this.processJavaTypeName(p.getName());
+        ctx.registerProcess(p.getName(), field, processType);
       }
     }
     EList<su.nsk.iae.post.poST.Process> _processes_1 = program.getProcesses();
@@ -548,7 +553,7 @@ public class ProgramGenerator {
             EList<ProcessVariable> _vars_10 = decl_9.getVarList().getVars();
             for (final ProcessVariable vname : _vars_10) {
               {
-                final String procType = decl_9.getProcess().getName();
+                final String procType = this.processJavaTypeName(decl_9.getProcess().getName());
                 final String field = vname.getName();
                 ctx.registerProcess(field, field, procType);
               }

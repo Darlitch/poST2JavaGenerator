@@ -26,7 +26,7 @@ class ProcessGenerator {
 
         val builder = new StringBuilder
 
-        val name = p.name
+        val name = p.name + "Process"
         val nextIndent = indent + "    "
 
         builder.append(

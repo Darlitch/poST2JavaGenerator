@@ -428,6 +428,10 @@ public class «name» {
 «INDENT»}
 '''
 
+	private def String processJavaTypeName(String processName) {
+	    processName + "Process"
+	}
+
     def void registerAll(Program program, GenerationContext ctx) {
 
         for (v : program.progInVars)
@@ -455,7 +459,8 @@ public class «name» {
 
         for (p : program.processes) {
             val field = p.name.toFirstLower
-            ctx.registerProcess(p.name, field, p.name)
+            val processType = processJavaTypeName(p.name)
+    		ctx.registerProcess(p.name, field, processType)
         }
 
         for (p : program.processes) {
@@ -479,7 +484,7 @@ public class «name» {
             for (v : p.procProcessVars)
                 for (decl : v.vars)
                     for (vname : decl.varList.vars) {
-                        val procType = decl.process.name
+                        val procType = processJavaTypeName(decl.process.name)
                         val field = vname.name
                         ctx.registerProcess(field, field, procType)
                     }

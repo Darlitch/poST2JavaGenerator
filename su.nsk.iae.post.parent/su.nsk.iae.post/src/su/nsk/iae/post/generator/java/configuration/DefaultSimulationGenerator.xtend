@@ -90,7 +90,7 @@ class DefaultSimulationGenerator {
                 ctx.registerProcess(
                     proc.name,
                     proc.name.toFirstLower,
-                    proc.name
+                    processJavaTypeName(proc.name)
                 )
             }
         }
@@ -104,7 +104,7 @@ class DefaultSimulationGenerator {
             for (proc : p.processes) {
 
                 val procName = proc.name.toFirstLower
-                val procType = proc.name
+                val procType = processJavaTypeName(proc.name)
                 val programType = p.name
 
                 builder.append(
@@ -170,5 +170,9 @@ class DefaultSimulationGenerator {
 	        throw new IllegalStateException("No PROGRAM defined in model")
 	
 	    model.programs.head.name.toFirstLower
+	}
+	
+	private def String processJavaTypeName(String processName) {
+	    processName + "Process"
 	}
 }
