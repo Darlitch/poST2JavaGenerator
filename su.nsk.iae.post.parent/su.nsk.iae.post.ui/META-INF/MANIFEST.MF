@@ -24,9 +24,10 @@ Require-Bundle: su.nsk.iae.post,
  org.eclipse.ui.forms
 Import-Package: com.google.inject;version="[1.4.0,2.0.0)",
  org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: su.nsk.iae.post.ui.contentassist,
  su.nsk.iae.post.ui.internal,
  su.nsk.iae.post.ui.quickfix,
  su.nsk.iae.post.ui.wizard
 Bundle-Activator: su.nsk.iae.post.ui.internal.PostActivator
+

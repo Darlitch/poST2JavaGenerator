@@ -25,7 +25,7 @@
 	</listAttribute>
 	<stringAttribute
 		key="org.eclipse.jdt.launching.JRE_CONTAINER"
-		value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11" />
+		value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17" />
 	<stringAttribute
 		key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS"
 		value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}" />
@@ -48,3 +48,5 @@
 	<booleanAttribute key="useProduct" value="true" />
 	<booleanAttribute key="usefeatures" value="false" />
 </launchConfiguration>
+
+
