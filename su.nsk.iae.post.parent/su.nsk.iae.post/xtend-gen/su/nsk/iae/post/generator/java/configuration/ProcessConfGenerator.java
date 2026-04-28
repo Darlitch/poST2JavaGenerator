@@ -16,7 +16,7 @@ public class ProcessConfGenerator {
     String _name = proc.getName();
     final String procName = ("proc_" + _name);
     final String procType = this.processJavaTypeName(proc.getProcess().getName());
-    ctx.registerProcess(procName, procName, procType);
+    ctx.registerProcess(proc.getName(), procName, procType);
     StringConcatenation _builder = new StringConcatenation();
     _builder.append(indent);
     _builder.newLineIfNotEmpty();

@@ -141,37 +141,36 @@ public class DefaultSimulationGenerator {
           EList<su.nsk.iae.post.poST.Process> _processes_1 = p_3.getProcesses();
           for (final su.nsk.iae.post.poST.Process proc_1 : _processes_1) {
             {
+              final String procInstanceName = StringExtensions.toFirstLower(proc_1.getName());
               String _firstLower = StringExtensions.toFirstLower(proc_1.getName());
-              final String procName = ("proc_" + _firstLower);
+              final String procVarName = ("proc_" + _firstLower);
               final String procType = this.processJavaTypeName(proc_1.getName());
               final String programType = p_3.getName();
               StringConcatenation _builder_1 = new StringConcatenation();
               _builder_1.newLine();
               _builder_1.append(indent);
               _builder_1.append("Map<String,String> ");
-              _builder_1.append(procName);
+              _builder_1.append(procVarName);
               _builder_1.append("_aliases = new HashMap<>();");
               _builder_1.newLineIfNotEmpty();
-              _builder_1.append(indent);
               _builder_1.append(programType);
               _builder_1.append(".");
               _builder_1.append(procType);
               _builder_1.append(" ");
-              _builder_1.append(procName);
+              _builder_1.append(procVarName);
               _builder_1.append(" = new ");
               _builder_1.append(programType);
               _builder_1.append(".");
               _builder_1.append(procType);
               _builder_1.append("(\"");
-              _builder_1.append(procName);
+              _builder_1.append(procInstanceName);
               _builder_1.append("\", memory, ");
-              _builder_1.append(procName);
+              _builder_1.append(procVarName);
               _builder_1.append("_aliases, processMap);");
               _builder_1.newLineIfNotEmpty();
-              _builder_1.append(indent);
               _builder_1.append(programInstance);
               _builder_1.append(".registerProcess(");
-              _builder_1.append(procName);
+              _builder_1.append(procVarName);
               _builder_1.append(");");
               _builder_1.newLineIfNotEmpty();
               builder.append(_builder_1);
@@ -187,7 +186,7 @@ public class DefaultSimulationGenerator {
               if (_equals_1) {
                 StringConcatenation _builder_2 = new StringConcatenation();
                 _builder_2.append(indent);
-                _builder_2.append(procName);
+                _builder_2.append(procVarName);
                 _builder_2.append(".start();");
                 _builder_2.newLineIfNotEmpty();
                 builder.append(_builder_2);
@@ -195,7 +194,7 @@ public class DefaultSimulationGenerator {
                 if (((!hasInit) && (proc_1 == p_3.getProcesses().get(0)))) {
                   StringConcatenation _builder_3 = new StringConcatenation();
                   _builder_3.append(indent);
-                  _builder_3.append(procName);
+                  _builder_3.append(procVarName);
                   _builder_3.append(".start();");
                   _builder_3.newLineIfNotEmpty();
                   builder.append(_builder_3);

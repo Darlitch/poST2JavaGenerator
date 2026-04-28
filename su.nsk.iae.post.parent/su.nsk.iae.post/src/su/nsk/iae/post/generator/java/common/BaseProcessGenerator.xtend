@@ -12,6 +12,7 @@ import java.util.HashMap;
 public abstract class BaseProcess implements IProcess {
 
     protected final String instanceName;
+    protected final String debugName;
     protected final Map<String,IProcess> processRefs = new HashMap<>();
     protected final Map<String,Object> memory;
     protected final Map<String,Object> localMemory = new HashMap<>();
@@ -21,6 +22,9 @@ public abstract class BaseProcess implements IProcess {
     protected BaseProcess(String instanceName, Map<String,Object> memory, 
     	Map<String,String> aliases, Map<String, IProcess> globalProcesses) {
         this.instanceName = instanceName;
+        this.debugName = instanceName.startsWith("proc_")
+            ? instanceName.substring(5)
+            : instanceName;
         this.memory = memory;
         this.aliases = aliases;
         this.globalProcesses = globalProcesses;
@@ -36,7 +40,7 @@ public abstract class BaseProcess implements IProcess {
     @Override
     public void dumpLocalVars(Map<String,Object> out) {
         for (Map.Entry<String,Object> e : localMemory.entrySet()) {
-            out.put(instanceName + "_" + e.getKey(), e.getValue());
+            out.put(debugName + "_" + e.getKey(), e.getValue());
         }
     }
     

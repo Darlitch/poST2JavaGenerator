@@ -21,7 +21,7 @@ class ProcessConfGenerator {
 	    val procName = "proc_" + proc.name
 	    val procType = processJavaTypeName(proc.process.name)
 	
-	    ctx.registerProcess(procName, procName, procType)
+	    ctx.registerProcess(proc.name, procName, procType)
 	
 	    // ===== alias map =====
 	    builder.append(

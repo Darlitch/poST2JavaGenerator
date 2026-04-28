@@ -20,6 +20,9 @@ public class BaseProcessGenerator {
     _builder.append("protected final String instanceName;");
     _builder.newLine();
     _builder.append("    ");
+    _builder.append("protected final String debugName;");
+    _builder.newLine();
+    _builder.append("    ");
     _builder.append("protected final Map<String,IProcess> processRefs = new HashMap<>();");
     _builder.newLine();
     _builder.append("    ");
@@ -43,6 +46,15 @@ public class BaseProcessGenerator {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("this.instanceName = instanceName;");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("this.debugName = instanceName.startsWith(\"proc_\")");
+    _builder.newLine();
+    _builder.append("            ");
+    _builder.append("? instanceName.substring(5)");
+    _builder.newLine();
+    _builder.append("            ");
+    _builder.append(": instanceName;");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("this.memory = memory;");
@@ -87,7 +99,7 @@ public class BaseProcessGenerator {
     _builder.append("for (Map.Entry<String,Object> e : localMemory.entrySet()) {");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("out.put(instanceName + \"_\" + e.getKey(), e.getValue());");
+    _builder.append("out.put(debugName + \"_\" + e.getKey(), e.getValue());");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("}");

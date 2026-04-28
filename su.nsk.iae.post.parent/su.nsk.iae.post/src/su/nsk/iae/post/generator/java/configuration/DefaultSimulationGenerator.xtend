@@ -103,16 +103,17 @@ class DefaultSimulationGenerator {
             // create
             for (proc : p.processes) {
 
-                val procName = "proc_" + proc.name.toFirstLower
+                val procInstanceName = proc.name.toFirstLower
+				val procVarName = "proc_" + proc.name.toFirstLower
                 val procType = processJavaTypeName(proc.name)
                 val programType = p.name
 
                 builder.append(
 '''
 
-«indent»Map<String,String> «procName»_aliases = new HashMap<>();
-«indent»«programType».«procType» «procName» = new «programType».«procType»("«procName»", memory, «procName»_aliases, processMap);
-«indent»«programInstance».registerProcess(«procName»);
+«indent»Map<String,String> «procVarName»_aliases = new HashMap<>();
+«programType».«procType» «procVarName» = new «programType».«procType»("«procInstanceName»", memory, «procVarName»_aliases, processMap);
+«programInstance».registerProcess(«procVarName»);
 '''
                 )
 
@@ -127,13 +128,13 @@ class DefaultSimulationGenerator {
                 if (proc.name.equals("Init")) {
                     builder.append(
 '''
-«indent»«procName».start();
+«indent»«procVarName».start();
 '''
                     )
                 } else if (!hasInit && proc === p.processes.get(0)) {
                     builder.append(
 '''
-«indent»«procName».start();
+«indent»«procVarName».start();
 '''
                     )
                 }

@@ -246,7 +246,7 @@ class ProcessGenerator {
         '''
 «indent»@Override
 «indent»public void dumpStates(Map<String,String> out) {
-«indent»    out.put(instanceName + "_state", state.name());
+«indent»    out.put(debugName + "_state", state.name());
 «indent»}
 '''
     }
@@ -256,7 +256,7 @@ class ProcessGenerator {
         '''
 «indent»@Override
 «indent»public void dumpTimers(Map<String,Long> out) {
-«indent»    out.put(instanceName + "_time", timerBaseTime);
+«indent»    out.put(debugName + "_time", timerBaseTime);
 «indent»}
 '''
     }

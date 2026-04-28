@@ -355,7 +355,7 @@ public class ProcessGenerator {
     _builder.append("public void dumpStates(Map<String,String> out) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
-    _builder.append("    out.put(instanceName + \"_state\", state.name());");
+    _builder.append("    out.put(debugName + \"_state\", state.name());");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("}");
@@ -372,7 +372,7 @@ public class ProcessGenerator {
     _builder.append("public void dumpTimers(Map<String,Long> out) {");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
-    _builder.append("    out.put(instanceName + \"_time\", timerBaseTime);");
+    _builder.append("    out.put(debugName + \"_time\", timerBaseTime);");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("}");
