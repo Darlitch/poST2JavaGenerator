@@ -12,7 +12,6 @@ import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import su.nsk.iae.post.generator.IPoSTGenerator;
 import su.nsk.iae.post.generator.java.common.BaseProcessGenerator;
 import su.nsk.iae.post.generator.java.common.IProcessGenerator;
-import su.nsk.iae.post.generator.java.common.ISimulationRuntimeGenerator;
 import su.nsk.iae.post.generator.java.common.ProgramGenerator;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator;
@@ -48,10 +47,6 @@ public class JavaGenerator implements IPoSTGenerator {
     fsa.generateFile(
       "BaseProcess.java", 
       BaseProcessGenerator.generate());
-    InputOutput.<String>println("Generating ISimulationRuntime.java");
-    fsa.generateFile(
-      "ISimulationRuntime.java", 
-      ISimulationRuntimeGenerator.generate());
     this.registerGlobals(model, ctx);
     EList<Program> _programs = model.getPrograms();
     for (final Program p : _programs) {

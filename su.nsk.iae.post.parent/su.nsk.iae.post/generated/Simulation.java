@@ -1,6 +1,8 @@
 import java.util.Map;
 import java.util.HashMap;
 
+import runtime.ISimulationRuntime;
+
 public class Simulation implements ISimulationRuntime {
 
     private final Map<String,Object> memory = new HashMap<>();

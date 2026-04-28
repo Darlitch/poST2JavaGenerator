@@ -14,6 +14,9 @@ public class SimulationClassGenerator {
       _builder.append("import java.util.HashMap;");
       _builder.newLine();
       _builder.newLine();
+      _builder.append("import runtime.ISimulationRuntime;");
+      _builder.newLine();
+      _builder.newLine();
       _builder.append("public class Simulation implements ISimulationRuntime {");
       _builder.newLine();
       _builder.newLine();

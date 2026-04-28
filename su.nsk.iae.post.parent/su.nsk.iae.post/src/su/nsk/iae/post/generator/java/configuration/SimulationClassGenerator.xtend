@@ -13,6 +13,8 @@ class SimulationClassGenerator {
 import java.util.Map;
 import java.util.HashMap;
 
+import runtime.ISimulationRuntime;
+
 public class Simulation implements ISimulationRuntime {
 
 «IND»private final Map<String,Object> memory = new HashMap<>();

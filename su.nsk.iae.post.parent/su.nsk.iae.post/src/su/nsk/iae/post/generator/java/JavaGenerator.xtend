@@ -16,7 +16,6 @@ import su.nsk.iae.post.generator.java.configuration.DefaultSimulationGenerator
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator
 import su.nsk.iae.post.generator.java.configuration.ConfigurationSimulationGenerator
-import su.nsk.iae.post.generator.java.common.ISimulationRuntimeGenerator
 
 class JavaGenerator implements IPoSTGenerator {
 
@@ -46,12 +45,6 @@ class JavaGenerator implements IPoSTGenerator {
 		fsa.generateFile(
 		    "BaseProcess.java",
 		    BaseProcessGenerator.generate()
-		)
-		
-		println("Generating ISimulationRuntime.java")
-		fsa.generateFile(
-		    "ISimulationRuntime.java",
-		    ISimulationRuntimeGenerator.generate()
 		)
 		        
         registerGlobals(model, ctx)
