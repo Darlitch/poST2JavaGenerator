@@ -62,7 +62,6 @@ class JavaGenerator implements IPoSTGenerator {
 
             println("Generating Simulation.java")
             fsa.generateFile(
-//                model.conf.name + "Simulation.java",
 				"Simulation.java",
                 code
             )
@@ -73,7 +72,6 @@ class JavaGenerator implements IPoSTGenerator {
 
             println("Generating Simulation.java")
             fsa.generateFile(
-//                model.conf.name + "Simulation.java",
 				"Simulation.java",
                 code
             )

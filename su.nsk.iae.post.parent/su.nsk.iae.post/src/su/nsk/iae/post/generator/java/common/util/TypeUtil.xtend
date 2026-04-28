@@ -138,7 +138,6 @@ class TypeUtil {
 	
 	    // числовые типы
 	    if (target.isNumeric && source.isNumeric)
-//	        return numericRank(target) >= numericRank(source)
 			return true
 	
 	    return false

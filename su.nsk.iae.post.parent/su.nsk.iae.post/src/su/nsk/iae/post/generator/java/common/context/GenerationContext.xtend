@@ -21,11 +21,6 @@ class GenerationContext {
 		varTypes.put(memoryName, postType)
 	}
 
-	// получить тип переменной
-//	private def String getType(String memoryName) {
-//		varTypes.get(memoryName)
-//	}
-
 	// есть ли информация о типе
 	def boolean hasType(String memoryName) {
 		varTypes.containsKey(memoryName)

@@ -98,21 +98,6 @@ class CompileTimeEvaluator {
 			"Unsupported compile-time integer expression: " + expr
 		)
 	}
-	
-//	def static Object evalExpression(Expression expr) {
-//
-//	    // ===== PrimaryExpression =====
-//	    if (expr instanceof PrimaryExpression) {
-//	        val pe = expr as PrimaryExpression
-//	
-//	        if (pe.const !== null)
-//	            return eval(pe.const)
-//	    }
-//	
-//	    throw new IllegalStateException(
-//	        "Unsupported constant expression: " + expr
-//	    )
-//	}
 
 	def static Object evalExpression(Expression expr, GenerationContext ctx) {
 

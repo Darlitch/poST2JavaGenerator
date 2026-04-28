@@ -137,11 +137,6 @@ class BindingGenerator {
         if (c.oth == "TRUE" || c.oth == "FALSE")
             return "BOOL"
 
-//        СТРОКОВЫХ ЛИТЕРАЛОВ НЕТ
-//        if (c.oth !== null && c.oth.startsWith("\""))
-//            return "STRING"
-
-        // fallback
         "INT"
     }
     

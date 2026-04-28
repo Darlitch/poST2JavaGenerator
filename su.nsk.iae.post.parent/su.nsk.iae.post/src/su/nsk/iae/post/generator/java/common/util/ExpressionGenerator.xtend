@@ -605,19 +605,6 @@ class ExpressionGenerator {
 		ProcessStatusExpression exp,
 		GenerationContext ctx
 	) {
-	
-//		val fieldName = ctx.resolveProcess(exp.process.name)
-//
-//	    if (exp.active)
-//	        return '''isActive(«fieldName»)'''
-//	
-//	    if (exp.inactive)
-//	        return '''isInactive(«fieldName»)'''
-//	
-//	    if (exp.stop)
-//	        return '''isStop(«fieldName»)'''
-//	
-//	    '''isError(«fieldName»)'''
 		val name = ctx.resolveProcess(exp.process.name)
 
 		if (exp.active)
