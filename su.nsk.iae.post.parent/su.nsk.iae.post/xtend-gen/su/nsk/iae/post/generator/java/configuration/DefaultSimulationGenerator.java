@@ -141,7 +141,8 @@ public class DefaultSimulationGenerator {
           EList<su.nsk.iae.post.poST.Process> _processes_1 = p_3.getProcesses();
           for (final su.nsk.iae.post.poST.Process proc_1 : _processes_1) {
             {
-              final String procName = StringExtensions.toFirstLower(proc_1.getName());
+              String _firstLower = StringExtensions.toFirstLower(proc_1.getName());
+              final String procName = ("proc_" + _firstLower);
               final String procType = this.processJavaTypeName(proc_1.getName());
               final String programType = p_3.getName();
               StringConcatenation _builder_1 = new StringConcatenation();

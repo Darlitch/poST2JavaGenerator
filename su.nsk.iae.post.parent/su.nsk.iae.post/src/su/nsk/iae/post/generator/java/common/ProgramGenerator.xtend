@@ -6,6 +6,7 @@ import su.nsk.iae.post.poST.VarInitDeclaration
 
 import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator
+import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator
 
 class ProgramGenerator {
 
@@ -377,8 +378,20 @@ public class «name» {
             ctx.registerVar(vname.name, type)
             registry.apply(vname.name)
 
-            if (decl.arrSpec !== null && !ctx.hasArrayElementType(vname.name)) {
-			    ctx.registerArrayType(vname.name, type)
+            if (decl.arrSpec !== null) {
+			    if (!ctx.hasArrayElementType(vname.name)) {
+			        ctx.registerArrayType(vname.name, type)
+			    }
+			
+			    if (!ctx.hasArrayStart(vname.name)) {
+			        val interval = decl.arrSpec.init.interval
+			        val start =
+			            if (interval !== null)
+			                CompileTimeEvaluator.evalInt(interval.start, ctx)
+			            else
+			                0
+			        ctx.registerArrayStart(vname.name, start)
+			    }
 			}
         }
     }

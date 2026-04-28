@@ -103,7 +103,7 @@ class DefaultSimulationGenerator {
             // create
             for (proc : p.processes) {
 
-                val procName = proc.name.toFirstLower
+                val procName = "proc_" + proc.name.toFirstLower
                 val procType = processJavaTypeName(proc.name)
                 val programType = p.name
 

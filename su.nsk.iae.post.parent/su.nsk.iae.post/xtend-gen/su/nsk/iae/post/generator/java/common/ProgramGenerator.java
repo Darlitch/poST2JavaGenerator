@@ -6,6 +6,8 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
+import su.nsk.iae.post.generator.java.common.util.CompileTimeEvaluator;
+import su.nsk.iae.post.poST.ArrayInterval;
 import su.nsk.iae.post.poST.ArraySpecificationInit;
 import su.nsk.iae.post.poST.InputOutputVarDeclaration;
 import su.nsk.iae.post.poST.InputVarDeclaration;
@@ -605,8 +607,27 @@ public class ProgramGenerator {
       {
         ctx.registerVar(vname.getName(), type);
         registry.apply(vname.getName());
-        if (((decl.getArrSpec() != null) && (!ctx.hasArrayElementType(vname.getName())))) {
-          ctx.registerArrayType(vname.getName(), type);
+        ArraySpecificationInit _arrSpec = decl.getArrSpec();
+        boolean _tripleNotEquals = (_arrSpec != null);
+        if (_tripleNotEquals) {
+          boolean _hasArrayElementType = ctx.hasArrayElementType(vname.getName());
+          boolean _not = (!_hasArrayElementType);
+          if (_not) {
+            ctx.registerArrayType(vname.getName(), type);
+          }
+          boolean _hasArrayStart = ctx.hasArrayStart(vname.getName());
+          boolean _not_1 = (!_hasArrayStart);
+          if (_not_1) {
+            final ArrayInterval interval = decl.getArrSpec().getInit().getInterval();
+            int _xifexpression = (int) 0;
+            if ((interval != null)) {
+              _xifexpression = CompileTimeEvaluator.evalInt(interval.getStart(), ctx);
+            } else {
+              _xifexpression = 0;
+            }
+            final int start = _xifexpression;
+            ctx.registerArrayStart(vname.getName(), start);
+          }
         }
       }
     }

@@ -6,6 +6,7 @@ import su.nsk.iae.post.generator.java.common.context.GenerationContext
 import su.nsk.iae.post.generator.java.common.statement.StatementListGenerator
 import su.nsk.iae.post.generator.java.common.util.MemoryUtil
 import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator
+import su.nsk.iae.post.generator.java.common.vars.ArrayMemoryGenerator
 
 class ProcessGenerator {
 
@@ -91,10 +92,15 @@ class ProcessGenerator {
 
 	    // ===== procVars (локальные переменные) =====
 	    for (v : p.procVars)
-	        for (decl : v.vars)
-	            builder.append(
-	                VarMemoryGenerator.generateLocal(decl, ctx, indent)
-	            )
+        for (decl : v.vars)
+            if (decl.arrSpec !== null)
+                builder.append(
+                    ArrayMemoryGenerator.generateLocal(decl, ctx, indent)
+                )
+            else
+                builder.append(
+                    VarMemoryGenerator.generateLocal(decl, ctx, indent)
+                )
 	
 	    return builder.toString
 	}

@@ -26,6 +26,14 @@ public class ArrayMemoryGenerator {
   private static final int MAX_ARRAY_SIZE = 1_000_000;
 
   public static String generate(final VarInitDeclaration decl, final GenerationContext ctx, final String indent) {
+    return ArrayMemoryGenerator.generateInternal(decl, ctx, indent, "memory");
+  }
+
+  public static String generateLocal(final VarInitDeclaration decl, final GenerationContext ctx, final String indent) {
+    return ArrayMemoryGenerator.generateInternal(decl, ctx, indent, "localMemory");
+  }
+
+  public static String generateInternal(final VarInitDeclaration decl, final GenerationContext ctx, final String indent, final String target) {
     String _xblockexpression = null;
     {
       final StringBuilder builder = new StringBuilder();
@@ -38,13 +46,15 @@ public class ArrayMemoryGenerator {
           {
             StringConcatenation _builder = new StringConcatenation();
             _builder.append(indent);
-            _builder.append("memory.put(\"");
+            _builder.append(target);
+            _builder.append(".put(\"");
             String _name = v.getName();
             _builder.append(_name);
             _builder.append("\", new java.util.ArrayList<String>());");
             _builder.newLineIfNotEmpty();
             builder.append(_builder);
             ctx.registerArrayStart(v.getName(), 0);
+            ctx.registerArrayType(v.getName(), arrSpec.getInit().getType());
           }
         }
         return builder.toString();
@@ -130,7 +140,8 @@ public class ArrayMemoryGenerator {
               }
               StringConcatenation _builder = new StringConcatenation();
               _builder.append(indent);
-              _builder.append("memory.put(");
+              _builder.append(target);
+              _builder.append(".put(");
               _builder.newLineIfNotEmpty();
               _builder.append(indent);
               _builder.append("    \"");
@@ -170,10 +181,10 @@ public class ArrayMemoryGenerator {
               _builder.newLineIfNotEmpty();
               builder.append(_builder);
             } else {
-              ArrayMemoryGenerator.generateValueArray(builder, arrName, start, end, type, values, ctx, indent);
+              ArrayMemoryGenerator.generateValueArray(builder, arrName, start, end, type, values, ctx, indent, target);
             }
           } else {
-            ArrayMemoryGenerator.generateDefaultArray(builder, arrName, start, end, type, ctx, indent);
+            ArrayMemoryGenerator.generateDefaultArray(builder, arrName, start, end, type, ctx, indent, target);
           }
         }
       }
@@ -182,7 +193,7 @@ public class ArrayMemoryGenerator {
     return _xblockexpression;
   }
 
-  private static void generateValueArray(final StringBuilder builder, final String arrName, final int start, final int end, final String type, final List<Expression> values, final GenerationContext ctx, final String indent) {
+  private static void generateValueArray(final StringBuilder builder, final String arrName, final int start, final int end, final String type, final List<Expression> values, final GenerationContext ctx, final String indent, final String target) {
     final ArrayList<String> cellNames = CollectionLiterals.<String>newArrayList();
     int idx = 0;
     IntegerRange _upTo = new IntegerRange(start, end);
@@ -201,7 +212,8 @@ public class ArrayMemoryGenerator {
         final String init = _xifexpression;
         StringConcatenation _builder = new StringConcatenation();
         _builder.append(indent);
-        _builder.append("memory.put(\"");
+        _builder.append(target);
+        _builder.append(".put(\"");
         _builder.append(cell);
         _builder.append("\", ");
         _builder.append(init);
@@ -214,7 +226,8 @@ public class ArrayMemoryGenerator {
     }
     StringConcatenation _builder = new StringConcatenation();
     _builder.append(indent);
-    _builder.append("memory.put(");
+    _builder.append(target);
+    _builder.append(".put(");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("    \"");
@@ -254,7 +267,7 @@ public class ArrayMemoryGenerator {
     builder.append(_builder);
   }
 
-  private static void generateDefaultArray(final StringBuilder builder, final String arrName, final int start, final int end, final String type, final GenerationContext ctx, final String indent) {
+  private static void generateDefaultArray(final StringBuilder builder, final String arrName, final int start, final int end, final String type, final GenerationContext ctx, final String indent, final String target) {
     final ArrayList<String> cellNames = CollectionLiterals.<String>newArrayList();
     IntegerRange _upTo = new IntegerRange(start, end);
     for (final Integer i : _upTo) {
@@ -263,7 +276,8 @@ public class ArrayMemoryGenerator {
         cellNames.add(cell);
         StringConcatenation _builder = new StringConcatenation();
         _builder.append(indent);
-        _builder.append("memory.put(\"");
+        _builder.append(target);
+        _builder.append(".put(\"");
         _builder.append(cell);
         _builder.append("\", ");
         String _defaultValue = TypeUtil.defaultValue(type);
@@ -276,7 +290,8 @@ public class ArrayMemoryGenerator {
     }
     StringConcatenation _builder = new StringConcatenation();
     _builder.append(indent);
-    _builder.append("memory.put(");
+    _builder.append(target);
+    _builder.append(".put(");
     _builder.newLineIfNotEmpty();
     _builder.append(indent);
     _builder.append("    \"");

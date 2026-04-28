@@ -10,7 +10,9 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 import su.nsk.iae.post.generator.java.common.context.GenerationContext;
 import su.nsk.iae.post.generator.java.common.statement.StatementListGenerator;
 import su.nsk.iae.post.generator.java.common.util.MemoryUtil;
+import su.nsk.iae.post.generator.java.common.vars.ArrayMemoryGenerator;
 import su.nsk.iae.post.generator.java.common.vars.VarMemoryGenerator;
+import su.nsk.iae.post.poST.ArraySpecificationInit;
 import su.nsk.iae.post.poST.State;
 import su.nsk.iae.post.poST.VarDeclaration;
 import su.nsk.iae.post.poST.VarInitDeclaration;
@@ -120,8 +122,15 @@ public class ProcessGenerator {
     for (final VarDeclaration v : _procVars) {
       EList<VarInitDeclaration> _vars = v.getVars();
       for (final VarInitDeclaration decl : _vars) {
-        builder.append(
-          VarMemoryGenerator.generateLocal(decl, ctx, indent));
+        ArraySpecificationInit _arrSpec = decl.getArrSpec();
+        boolean _tripleNotEquals = (_arrSpec != null);
+        if (_tripleNotEquals) {
+          builder.append(
+            ArrayMemoryGenerator.generateLocal(decl, ctx, indent));
+        } else {
+          builder.append(
+            VarMemoryGenerator.generateLocal(decl, ctx, indent));
+        }
       }
     }
     return builder.toString();

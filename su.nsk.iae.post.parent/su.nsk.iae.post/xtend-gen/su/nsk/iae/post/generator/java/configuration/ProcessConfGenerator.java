@@ -13,7 +13,8 @@ import su.nsk.iae.post.poST.TemplateProcessElements;
 public class ProcessConfGenerator {
   public String generate(final TemplateProcessConfElement proc, final GenerationContext ctx, final String programInstance, final String programType, final String indent) {
     final StringBuilder builder = new StringBuilder();
-    final String procName = proc.getName();
+    String _name = proc.getName();
+    final String procName = ("proc_" + _name);
     final String procType = this.processJavaTypeName(proc.getProcess().getName());
     ctx.registerProcess(procName, procName, procType);
     StringConcatenation _builder = new StringConcatenation();

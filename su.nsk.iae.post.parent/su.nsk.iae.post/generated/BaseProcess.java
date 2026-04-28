@@ -19,6 +19,13 @@ public abstract class BaseProcess implements IProcess {
         this.globalProcesses = globalProcesses;
     }
     
+    protected List<String> getArrayRef(String name) {
+        if (localMemory.containsKey(name))
+            return (List<String>) localMemory.get(name);
+    
+        return (List<String>) memory.get(resolve(name));
+    }
+    
     @Override
     public void dumpLocalVars(Map<String,Object> out) {
         for (Map.Entry<String,Object> e : localMemory.entrySet()) {
@@ -135,11 +142,23 @@ public abstract class BaseProcess implements IProcess {
     }
     
     protected void setArrayValue(String name, int index, int start, Object value) {
-        memory.put(resolveArrayCell(name, index, start), value);
+        String cell = resolveArrayCell(name, index, start);
+    
+        if (localMemory.containsKey(cell)) {
+            localMemory.put(cell, value);
+            return;
+        }
+    
+        memory.put(cell, value);
     }
     
     protected Object getArrayValue(String name, int index, int start) {
-        return memory.get(resolveArrayCell(name, index, start));
+        String cell = resolveArrayCell(name, index, start);
+    
+        if (localMemory.containsKey(cell))
+            return localMemory.get(cell);
+    
+        return memory.get(cell);
     }
     
     protected int getArrayInt(String name, int index, int start) {
@@ -178,7 +197,7 @@ public abstract class BaseProcess implements IProcess {
     }
     
     private String resolveArrayCell(String name, int index, int start) {
-        List<String> list = (List<String>) memory.get(resolve(name));
+        List<String> list = getArrayRef(name);
     
         int offset = index - start;
     
